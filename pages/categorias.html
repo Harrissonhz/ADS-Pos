@@ -525,29 +525,6 @@
                 }
 
                 console.log('✅ Consulta exitosa:', data);
-                
-                // Probar insert de prueba para verificar RLS
-                console.log('🧪 ===== PROBANDO INSERT DE PRUEBA =====');
-                const testData = {
-                    nombre: 'Test RLS',
-                    descripcion: 'Prueba de RLS',
-                    activa: true
-                };
-                
-                const testResult = await window.supabaseClient
-                    .from('categorias')
-                    .insert([testData])
-                    .select();
-                
-                console.log('🧪 Resultado de insert de prueba:', testResult);
-                
-                if (testResult.error) {
-                    console.error('❌ Error en insert de prueba:', testResult.error);
-                    console.error('❌ Código:', testResult.error.code);
-                    console.error('❌ Mensaje:', testResult.error.message);
-                } else {
-                    console.log('✅ Insert de prueba exitoso:', testResult.data);
-                }
                 isConnected = true;
                 showMessage('✅ Conexión exitosa con Supabase', 'success');
                 await loadCategories();
@@ -701,20 +678,7 @@
                     throw directResult.error;
                 }
 
-                console.log('✅ Datos guardados exitosamente (directo):', directResult.data);
-                
-                // También probar con el servicio
-                console.log('💾 Llamando a window.db.createCategory...');
-                const { data, error } = await window.db.createCategory(categoryData);
-                
-                console.log('💾 Resultado del servicio:', { data, error });
-                
-                if (error) {
-                    console.error('❌ Error del servicio:', error);
-                    throw error;
-                }
-
-                console.log('✅ Datos guardados exitosamente (servicio):', data);
+                console.log('✅ Datos guardados exitosamente:', directResult.data);
                 showMessage('✅ Categoría guardada exitosamente', 'success');
                     form.reset();
                     document.getElementById('categoryColor').value = '#007bff';
