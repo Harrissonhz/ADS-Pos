@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Categorías - ADS Store POS</title>
+    <title>Categorías - ADS Store POS v3.0</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -440,9 +440,9 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
     <!-- Scripts del sistema -->
-    <script src="../assets/js/supabase-config.js?v=2"></script>
-    <script src="../assets/js/database.js?v=2"></script>
-    <script src="../assets/js/auth.js?v=2"></script>
+    <script src="../assets/js/supabase-config.js?v=3"></script>
+    <script src="../assets/js/database.js?v=3"></script>
+    <script src="../assets/js/auth.js?v=3"></script>
     <script>
         // Prevenir el parpadeo del offcanvas
         document.addEventListener('DOMContentLoaded', function() {
@@ -648,7 +648,7 @@
                     return;
                 }
 
-                const categoryData = {
+                    const categoryData = {
                     nombre: document.getElementById('categoryName').value.trim(),
                     descripcion: document.getElementById('categoryDescription').value.trim(),
                     activa: document.getElementById('categoryStatus').value === 'activa'
@@ -716,8 +716,8 @@
 
                 console.log('✅ Datos guardados exitosamente (servicio):', data);
                 showMessage('✅ Categoría guardada exitosamente', 'success');
-                form.reset();
-                document.getElementById('categoryColor').value = '#007bff';
+                    form.reset();
+                    document.getElementById('categoryColor').value = '#007bff';
                 await loadCategories();
             } catch (error) {
                 console.error('❌ ===== ERROR COMPLETO =====');
@@ -824,7 +824,7 @@
 
         // Inicializar cuando se carga la página
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Inicializando página de categorías - Versión 2.0');
+            console.log('🚀 Inicializando página de categorías - Versión 3.0 - SIN AUTENTICACIÓN');
             console.log('📅 Timestamp:', new Date().toISOString());
             
             // Configurar event listeners
