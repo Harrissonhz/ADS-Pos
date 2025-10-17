@@ -1,0 +1,507 @@
+/*
+    Archivo: pos.css
+    Descripción: Estilos específicos para el sistema POS de ADS-POS
+    Versión: 1.0.0
+    Autor: ADS Solutions
+    Fecha: 2024
+*/
+
+/* ===== LAYOUTS PRINCIPALES ===== */
+body.pos-auth {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background-image: url('../img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.pos-app {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background-image: url('../img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    padding-bottom: 3rem;
+    padding-top: 60px;
+}
+
+/* ===== COMPONENTES DE LOGIN ===== */
+.pos-login-wrapper {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    color: #fff;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.25);
+    backdrop-filter: blur(10px);
+}
+
+.pos-login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.pos-login-header .logo-icon {
+    width: 95px;
+    height: 80px;
+    background-color: #2c3e50;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.pos-logo-img {
+    width: 87px;
+    height: 70px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.pos-login-header h1,
+.pos-login-header h2 {
+    margin-top: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.pos-main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pos-login-wrapper .form-control {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+.pos-login-wrapper .form-control::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.pos-login-wrapper .form-control:focus {
+    background-color: rgba(255,255,255,0.15);
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+    color: #fff;
+}
+
+.pos-login-wrapper .form-check-label {
+    color: #e9ecef;
+}
+
+.btn-login {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.pos-login-footer {
+    margin-top: 1rem !important;
+    text-align: center;
+}
+
+.pos-login-footer a { 
+    color: #fff; 
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.pos-login-footer a:hover { 
+    color: #007bff; 
+}
+
+/* ===== FORMULARIOS Y LABELS ===== */
+body.pos-auth .form-label,
+body.pos-auth label,
+body.pos-auth .form-check-label,
+body.pos-app .form-label,
+body.pos-app label,
+body.pos-app .form-check-label {
+    color: #ffffff !important;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== CARDS DE CONTENIDO ===== */
+.pos-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #fff;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.pos-card .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: #fff;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+.pos-card .card-body {
+    padding: 1.5rem;
+}
+
+/* ===== TABLAS ===== */
+.pos-card .table { 
+    color: #fff; 
+    margin-bottom: 0;
+}
+
+.pos-card .table thead th { 
+    color: #e9ecef; 
+    font-weight: 600;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.pos-card .table,
+.pos-card .table thead th,
+.pos-card .table thead td,
+.pos-card .table tbody th,
+.pos-card .table tbody td {
+    background-color: transparent !important;
+    border-color: rgba(255,255,255,0.15) !important;
+}
+
+.pos-card .table tbody tr:hover {
+    background-color: rgba(255,255,255,0.06) !important;
+}
+
+.pos-card .table td, 
+.pos-card .table th {
+    color: #ffffff !important;
+    padding: 0.75rem;
+}
+
+.pos-card .it-vat-amt,
+.pos-card .it-subtotal,
+.pos-card .pay-amt {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* ===== FORMULARIOS EN CARDS ===== */
+.pos-card .form-control, 
+.pos-card .form-select {
+    background-color: rgba(255,255,255,0.08);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+    border-radius: 8px;
+}
+
+.pos-card .form-control:focus, 
+.pos-card .form-select:focus {
+    background-color: rgba(255,255,255,0.12);
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+    color: #fff;
+}
+
+.pos-card .form-control::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.pos-card .form-select option {
+    background-color: #fff;
+    color: #333;
+}
+
+/* ===== BOTONES ===== */
+.pos-card .btn-outline-primary {
+    color: #0d6efd;
+    border-color: rgba(13,110,253,0.7);
+    transition: all 0.3s ease;
+}
+
+.pos-card .btn-outline-primary:hover,
+.pos-card .btn-outline-primary:focus,
+.pos-card .btn-outline-primary:active {
+    background-color: #0d6efd;
+    color: #fff !important;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+    transform: translateY(-1px);
+}
+
+.pos-card .btn-outline-secondary {
+    color: #adb5bd;
+    border-color: rgba(173,181,189,0.7);
+    transition: all 0.3s ease;
+}
+
+.pos-card .btn-outline-secondary:hover {
+    background-color: #adb5bd;
+    color: #212529;
+    transform: translateY(-1px);
+}
+
+/* ===== NAVBAR Y SIDEBAR ===== */
+.pos-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pos-menu-toggle {
+    color: #fff !important;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    transition: all 0.3s ease;
+}
+
+.pos-menu-toggle:hover {
+    color: #007bff !important;
+    transform: scale(1.1);
+}
+
+.pos-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pos-home-btn {
+    color: #fff !important;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.pos-home-btn:hover {
+    color: #007bff !important;
+    transform: scale(1.1);
+}
+
+.pos-sidebar {
+    background-color: rgba(0, 0, 0, 0.95);
+    color: #fff;
+    width: 280px;
+    backdrop-filter: blur(15px);
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+}
+
+.pos-sidebar.show {
+    transform: translateX(0);
+}
+
+/* Prevenir el parpadeo del offcanvas */
+.offcanvas {
+    visibility: hidden;
+    transition: visibility 0s linear 0.3s;
+}
+
+.offcanvas.show {
+    visibility: visible;
+    transition: visibility 0s linear 0s;
+}
+
+/* Mejorar la transición del offcanvas */
+.offcanvas-backdrop {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Asegurar que el offcanvas esté oculto por defecto */
+.offcanvas:not(.show) {
+    transform: translateX(-100%);
+    visibility: hidden;
+}
+
+/* Transición suave para el offcanvas */
+.offcanvas.show {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.pos-sidebar-header {
+    background-color: rgba(44, 62, 80, 0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1rem;
+}
+
+.pos-sidebar-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.pos-sidebar-body {
+    padding: 0;
+}
+
+.pos-sidebar .nav-link {
+    color: #e9ecef;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.pos-sidebar .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    padding-left: 2rem;
+}
+
+.pos-sidebar .nav-link.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.pos-sidebar .nav-header {
+    color: #adb5bd;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.5rem 0.5rem;
+    margin: 0;
+}
+
+/* ===== MENÚS COLAPSABLES ===== */
+.pos-sidebar .nav-header-collapse {
+    color: #adb5bd !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.5rem 0.5rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.pos-sidebar .nav-header-collapse:hover {
+    color: #fff !important;
+    background-color: rgba(255,255,255,0.1);
+    padding-left: 2rem;
+}
+
+.pos-sidebar .nav-header-collapse i.fa-chevron-down {
+    transition: transform 0.3s ease;
+    font-size: 0.7rem;
+}
+
+.pos-sidebar .nav-header-collapse[aria-expanded="true"] i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.pos-sidebar .collapse .nav-link {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    color: #e9ecef;
+}
+
+.pos-sidebar .collapse .nav-link:hover {
+    background-color: rgba(255,255,255,0.05);
+    color: #fff;
+    padding-left: 2rem;
+}
+
+.pos-sidebar .collapse .nav-link.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .pos-sidebar {
+        width: 100%;
+    }
+    
+    .pos-card .card-body {
+        padding: 1rem;
+    }
+    
+    .pos-login-wrapper {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.pos-sidebar.show {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #fff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

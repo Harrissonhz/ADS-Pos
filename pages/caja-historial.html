@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Caja - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Historial de caja del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Historial de Caja</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Resumen General -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-calendar-day fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Sesiones Hoy</h5>
+                            <h3 class="text-primary">3</h3>
+                            <small class="text-muted">Aperturas/Cierres</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Total Vendido</h5>
+                            <h3 class="text-success">$ 8.2M</h3>
+                            <small class="text-muted">Hoy</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-cash-register fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Promedio por Sesión</h5>
+                            <h3 class="text-info">$ 2.7M</h3>
+                            <small class="text-muted">Valor promedio</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Tiempo Promedio</h5>
+                            <h3 class="text-warning">6h 15m</h3>
+                            <small class="text-muted">Por sesión</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="historyForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-filter"></i>
+                        <strong>Filtros de Búsqueda</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Buscar</label>
+                                <input type="text" class="form-control" id="searchTerm" placeholder="Cajero, observaciones...">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Tipo de operación</label>
+                                <select class="form-select" id="filterType">
+                                    <option value="">Todas</option>
+                                    <option value="apertura">Apertura</option>
+                                    <option value="cierre">Cierre</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Cajero</label>
+                                <select class="form-select" id="filterCashier">
+                                    <option value="">Todos</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="vendedor1">Vendedor 1</option>
+                                    <option value="vendedor2">Vendedor 2</option>
+                                    <option value="cajero1">Cajero 1</option>
+                                    <option value="cajero2">Cajero 2</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha desde</label>
+                                <input type="date" class="form-control" id="dateFrom">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha hasta</label>
+                                <input type="date" class="form-control" id="dateTo">
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary w-100" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Historial de Operaciones de Caja</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Cajero</th>
+                                        <th class="text-end">Fondo Inicial</th>
+                                        <th class="text-end">Fondo Final</th>
+                                        <th class="text-end">Ventas</th>
+                                        <th class="text-end">Diferencia</th>
+                                        <th>Estado</th>
+                                        <th style="width: 120px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBody">
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:30 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Cierre</span></td>
+                                        <td>admin</td>
+                                        <td class="text-end">$ 500,000</td>
+                                        <td class="text-end">$ 2,340,000</td>
+                                        <td class="text-end">$ 2,745,000</td>
+                                        <td class="text-end text-success">+$ 1,840,000</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">08:00 AM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Apertura</span></td>
+                                        <td>admin</td>
+                                        <td class="text-end">$ 500,000</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-14</strong><br>
+                                                <small class="text-muted">19:15 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Cierre</span></td>
+                                        <td>vendedor1</td>
+                                        <td class="text-end">$ 300,000</td>
+                                        <td class="text-end">$ 1,200,000</td>
+                                        <td class="text-end">$ 1,850,000</td>
+                                        <td class="text-end text-success">+$ 900,000</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-14</strong><br>
+                                                <small class="text-muted">08:15 AM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Apertura</span></td>
+                                        <td>vendedor1</td>
+                                        <td class="text-end">$ 300,000</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-13</strong><br>
+                                                <small class="text-muted">18:45 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Cierre</span></td>
+                                        <td>cajero1</td>
+                                        <td class="text-end">$ 400,000</td>
+                                        <td class="text-end">$ 1,100,000</td>
+                                        <td class="text-end">$ 2,100,000</td>
+                                        <td class="text-end text-success">+$ 700,000</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-13</strong><br>
+                                                <small class="text-muted">07:45 AM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Apertura</span></td>
+                                        <td>cajero1</td>
+                                        <td class="text-end">$ 400,000</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td class="text-end">-</td>
+                                        <td><span class="badge bg-success">Completado</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <strong>Estadísticas por Período</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Esta Semana</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">15</h5>
+                                            <small class="text-muted">Sesiones</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 45.2M</h5>
+                                            <small class="text-muted">Total Vendido</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Este Mes</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">65</h5>
+                                            <small class="text-muted">Sesiones</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 195.8M</h5>
+                                            <small class="text-muted">Total Vendido</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Promedio Diario</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">3.2</h5>
+                                            <small class="text-muted">Sesiones</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 6.3M</h5>
+                                            <small class="text-muted">Por Día</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-pie"></i>
+                        <strong>Top Cajeros</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>admin</strong><br>
+                                            <small class="text-muted">Administrador</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 45.2M</strong><br>
+                                        <small class="text-muted">25 sesiones</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>vendedor1</strong><br>
+                                            <small class="text-muted">Vendedor</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 38.7M</strong><br>
+                                        <small class="text-muted">22 sesiones</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>cajero1</strong><br>
+                                            <small class="text-muted">Cajero</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 32.1M</strong><br>
+                                        <small class="text-muted">18 sesiones</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>vendedor2</strong><br>
+                                            <small class="text-muted">Vendedor</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 28.9M</strong><br>
+                                        <small class="text-muted">15 sesiones</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar Filtros
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn2">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="exportBtn">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                            <button type="button" class="btn btn-success" id="reportBtn">
+                                <i class="fas fa-chart-line me-1"></i>Generar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('historyForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchBtn2 = document.getElementById('searchBtn2');
+            const exportBtn = document.getElementById('exportBtn');
+            const reportBtn = document.getElementById('reportBtn');
+            const searchTerm = document.getElementById('searchTerm');
+            const filterType = document.getElementById('filterType');
+            const filterCashier = document.getElementById('filterCashier');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+
+            // Búsqueda en tiempo real
+            searchTerm.addEventListener('input', () => {
+                const searchValue = searchTerm.value.toLowerCase();
+                const rows = document.querySelectorAll('#historyBody tr');
+                
+                rows.forEach(row => {
+                    const cashier = row.cells[2].textContent.toLowerCase();
+                    const type = row.cells[1].textContent.toLowerCase();
+                    
+                    if (cashier.includes(searchValue) || type.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Aplicar filtros
+            function applyFilters() {
+                const type = filterType.value;
+                const cashier = filterCashier.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                const rows = document.querySelectorAll('#historyBody tr');
+                
+                rows.forEach(row => {
+                    const typeCell = row.cells[1].textContent.trim();
+                    const cashierCell = row.cells[2].textContent.trim();
+                    const dateCell = row.cells[0].textContent.trim();
+                    
+                    let showRow = true;
+                    
+                    if (type && !typeCell.includes(type)) {
+                        showRow = false;
+                    }
+                    
+                    if (cashier && !cashierCell.includes(cashier)) {
+                        showRow = false;
+                    }
+                    
+                    if (fromDate && dateCell < fromDate) {
+                        showRow = false;
+                    }
+                    
+                    if (toDate && dateCell > toDate) {
+                        showRow = false;
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            // Event listeners para filtros
+            filterType.addEventListener('change', applyFilters);
+            filterCashier.addEventListener('change', applyFilters);
+            dateFrom.addEventListener('change', applyFilters);
+            dateTo.addEventListener('change', applyFilters);
+
+            // Buscar
+            function performSearch() {
+                const search = searchTerm.value.trim();
+                const type = filterType.value;
+                const cashier = filterCashier.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                
+                if (search || type || cashier || fromDate || toDate) {
+                    alert(`Buscando en historial: "${search}" tipo: "${type || 'Todos'}" cajero: "${cashier || 'Todos'}" desde: "${fromDate || 'Todos'}" hasta: "${toDate || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese criterios de búsqueda');
+                }
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+            searchBtn2.addEventListener('click', performSearch);
+
+            // Exportar
+            exportBtn.addEventListener('click', () => {
+                alert('Exportando historial de caja a Excel...');
+            });
+
+            // Generar reporte
+            reportBtn.addEventListener('click', () => {
+                alert('Generando reporte detallado de historial de caja...');
+            });
+
+            // Limpiar filtros
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                // Mostrar todas las filas
+                const rows = document.querySelectorAll('#historyBody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+            });
+
+            // Establecer fechas por defecto
+            const today = new Date();
+            const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            dateFrom.valueAsDate = lastWeek;
+            dateTo.valueAsDate = today;
+
+            // Actualizar resumen (simulación)
+            function updateSummary() {
+                console.log('Actualizando resumen del historial de caja...');
+            }
+
+            // Inicializar
+            updateSummary();
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Gestión de productos del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Productos</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <form id="productForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-box"></i>
+                        <strong>Información Básica del Producto</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Nombre del producto</label>
+                                <input type="text" class="form-control" id="productName" placeholder="Ej: Laptop HP Pavilion 15" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Código de barras</label>
+                                <input type="text" class="form-control" id="barcode" placeholder="1234567890123">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Código interno</label>
+                                <input type="text" class="form-control" id="internalCode" placeholder="LAP-HP-001">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Categoría</label>
+                                <select class="form-select" id="category" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="1">Electrónicos</option>
+                                    <option value="2">Ropa y Accesorios</option>
+                                    <option value="3">Hogar y Jardín</option>
+                                    <option value="4">Deportes</option>
+                                    <option value="5">Libros y Oficina</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="brand" placeholder="HP, Samsung, Nike, etc.">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="model" placeholder="Pavilion 15, Galaxy S21, etc.">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="description" rows="3" placeholder="Descripción detallada del producto"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-dollar-sign"></i>
+                        <strong>Precios y Costos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Precio de venta</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="salePrice" min="0" step="0.01" placeholder="0.00" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Costo de compra</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="purchasePrice" min="0" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Margen de ganancia</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="profitMargin" min="0" max="100" step="0.01" placeholder="0.00" readonly>
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Precio al por mayor</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="wholesalePrice" min="0" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Descuento máximo</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="maxDiscount" min="0" max="100" step="0.01" placeholder="0.00">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Impuesto (IVA)</label>
+                                <select class="form-select" id="taxRate" required>
+                                    <option value="0" selected>0% (Exento)</option>
+                                    <option value="5">5% (Tasa reducida)</option>
+                                    <option value="19">19% (General)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-warehouse"></i>
+                        <strong>Inventario y Stock</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Stock actual</label>
+                                <input type="number" class="form-control" id="currentStock" min="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Stock mínimo</label>
+                                <input type="number" class="form-control" id="minStock" min="0" placeholder="5">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Stock máximo</label>
+                                <input type="number" class="form-control" id="maxStock" min="0" placeholder="100">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Unidad de medida</label>
+                                <select class="form-select" id="unit" required>
+                                    <option value="unidad" selected>Unidad</option>
+                                    <option value="kg">Kilogramo (kg)</option>
+                                    <option value="g">Gramo (g)</option>
+                                    <option value="l">Litro (l)</option>
+                                    <option value="ml">Mililitro (ml)</option>
+                                    <option value="m">Metro (m)</option>
+                                    <option value="cm">Centímetro (cm)</option>
+                                    <option value="par">Par</option>
+                                    <option value="docena">Docena</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Ubicación en almacén</label>
+                                <input type="text" class="form-control" id="location" placeholder="A-1-15, Estante 3, etc.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-cogs"></i>
+                        <strong>Configuración Adicional</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Estado del producto</label>
+                                <select class="form-select" id="status" required>
+                                    <option value="activo" selected>Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                    <option value="descontinuado">Descontinuado</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Proveedor principal</label>
+                                <select class="form-select" id="supplier">
+                                    <option value="">Seleccionar proveedor</option>
+                                    <option value="1">Proveedor A</option>
+                                    <option value="2">Proveedor B</option>
+                                    <option value="3">Proveedor C</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="weight" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Dimensiones (L x A x H cm)</label>
+                                <input type="text" class="form-control" id="dimensions" placeholder="30 x 20 x 5">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="trackStock">
+                                    <label class="form-check-label" for="trackStock">
+                                        Controlar stock automáticamente
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowNegativeStock">
+                                    <label class="form-check-label" for="allowNegativeStock">
+                                        Permitir stock negativo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Lista de Productos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Buscar producto</label>
+                                <input type="text" class="form-control" id="searchProduct" placeholder="Nombre, código o marca">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Filtrar por categoría</label>
+                                <select class="form-select" id="filterCategory">
+                                    <option value="">Todas las categorías</option>
+                                    <option value="1">Electrónicos</option>
+                                    <option value="2">Ropa y Accesorios</option>
+                                    <option value="3">Hogar y Jardín</option>
+                                    <option value="4">Deportes</option>
+                                    <option value="5">Libros y Oficina</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Filtrar por estado</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Todos</option>
+                                    <option value="activo">Activos</option>
+                                    <option value="inactivo">Inactivos</option>
+                                    <option value="descontinuado">Descontinuados</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>Producto</th>
+                                        <th>Código</th>
+                                        <th>Categoría</th>
+                                        <th>Stock</th>
+                                        <th>Precio</th>
+                                        <th>Estado</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsBody">
+                                    <tr>
+                                        <td><i class="fas fa-laptop text-primary"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Laptop HP Pavilion 15</strong><br>
+                                                <small class="text-muted">HP - Pavilion 15</small>
+                                            </div>
+                                        </td>
+                                        <td>LAP-HP-001</td>
+                                        <td>Electrónicos</td>
+                                        <td>
+                                            <span class="badge bg-success">15</span>
+                                        </td>
+                                        <td>$ 2,500,000</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-mobile-alt text-info"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Samsung Galaxy S21</strong><br>
+                                                <small class="text-muted">Samsung - Galaxy S21</small>
+                                            </div>
+                                        </td>
+                                        <td>CEL-SAM-001</td>
+                                        <td>Electrónicos</td>
+                                        <td>
+                                            <span class="badge bg-warning">3</span>
+                                        </td>
+                                        <td>$ 1,800,000</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-tshirt text-warning"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Camiseta Nike Dri-FIT</strong><br>
+                                                <small class="text-muted">Nike - Dri-FIT</small>
+                                            </div>
+                                        </td>
+                                        <td>CAM-NIK-001</td>
+                                        <td>Ropa y Accesorios</td>
+                                        <td>
+                                            <span class="badge bg-danger">0</span>
+                                        </td>
+                                        <td>$ 89,900</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="importBtn">
+                                <i class="fas fa-file-import me-1"></i>Importar
+                            </button>
+                            <button type="button" class="btn btn-success" id="saveBtn">
+                                <i class="fas fa-save me-1"></i>Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('productForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const importBtn = document.getElementById('importBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const searchInput = document.getElementById('searchProduct');
+            const filterCategory = document.getElementById('filterCategory');
+            const filterStatus = document.getElementById('filterStatus');
+            
+            const salePrice = document.getElementById('salePrice');
+            const purchasePrice = document.getElementById('purchasePrice');
+            const profitMargin = document.getElementById('profitMargin');
+
+            // Calcular margen de ganancia automáticamente
+            function calculateProfitMargin() {
+                const sale = parseFloat(salePrice.value) || 0;
+                const purchase = parseFloat(purchasePrice.value) || 0;
+                
+                if (purchase > 0) {
+                    const margin = ((sale - purchase) / purchase) * 100;
+                    profitMargin.value = margin.toFixed(2);
+                } else {
+                    profitMargin.value = '';
+                }
+            }
+
+            salePrice.addEventListener('input', calculateProfitMargin);
+            purchasePrice.addEventListener('input', calculateProfitMargin);
+
+            // Limpiar formulario
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+            });
+
+            // Buscar productos
+            searchBtn.addEventListener('click', () => {
+                const searchTerm = searchInput.value.trim();
+                const category = filterCategory.value;
+                const status = filterStatus.value;
+                
+                if (searchTerm || category || status) {
+                    alert(`Buscando productos: "${searchTerm}" en categoría: "${category || 'Todas'}" con estado: "${status || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese un término de búsqueda o seleccione filtros');
+                }
+            });
+
+            // Importar productos
+            importBtn.addEventListener('click', () => {
+                alert('Función de importación de productos (Excel/CSV) - Próximamente');
+            });
+
+            // Guardar producto
+            saveBtn.addEventListener('click', () => {
+                if (form.checkValidity()) {
+                    const productData = {
+                        name: document.getElementById('productName').value,
+                        barcode: document.getElementById('barcode').value,
+                        internalCode: document.getElementById('internalCode').value,
+                        category: document.getElementById('category').value,
+                        brand: document.getElementById('brand').value,
+                        model: document.getElementById('model').value,
+                        description: document.getElementById('description').value,
+                        salePrice: document.getElementById('salePrice').value,
+                        purchasePrice: document.getElementById('purchasePrice').value,
+                        wholesalePrice: document.getElementById('wholesalePrice').value,
+                        maxDiscount: document.getElementById('maxDiscount').value,
+                        taxRate: document.getElementById('taxRate').value,
+                        currentStock: document.getElementById('currentStock').value,
+                        minStock: document.getElementById('minStock').value,
+                        maxStock: document.getElementById('maxStock').value,
+                        unit: document.getElementById('unit').value,
+                        location: document.getElementById('location').value,
+                        status: document.getElementById('status').value,
+                        supplier: document.getElementById('supplier').value,
+                        weight: document.getElementById('weight').value,
+                        dimensions: document.getElementById('dimensions').value,
+                        trackStock: document.getElementById('trackStock').checked,
+                        allowNegativeStock: document.getElementById('allowNegativeStock').checked
+                    };
+                    
+                    console.log('Datos del producto:', productData);
+                    alert('Producto guardado exitosamente');
+                    form.reset();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Búsqueda en tiempo real
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#productsBody tr');
+                
+                rows.forEach(row => {
+                    const productName = row.cells[1].textContent.toLowerCase();
+                    const code = row.cells[2].textContent.toLowerCase();
+                    
+                    if (productName.includes(searchTerm) || code.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Filtro por categoría
+            filterCategory.addEventListener('change', () => {
+                applyFilters();
+            });
+
+            // Filtro por estado
+            filterStatus.addEventListener('change', () => {
+                applyFilters();
+            });
+
+            function applyFilters() {
+                const category = filterCategory.value;
+                const status = filterStatus.value;
+                const rows = document.querySelectorAll('#productsBody tr');
+                
+                rows.forEach(row => {
+                    const categoryCell = row.cells[3].textContent.trim();
+                    const statusCell = row.cells[6].textContent.trim();
+                    
+                    let showRow = true;
+                    
+                    if (category && !categoryCell.includes(category)) {
+                        showRow = false;
+                    }
+                    
+                    if (status && !statusCell.includes(status)) {
+                        showRow = false;
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+        })();
+    </script>
+</body>
+</html>

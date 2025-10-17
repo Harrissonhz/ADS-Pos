@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ADS-POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Dashboard principal del sistema POS ADS-POS">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Dashboard Principal</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Información de Bienvenida -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h4 class="text-white mb-2">¡Bienvenido al Sistema POS!</h4>
+                                    <p class="text-white-50 mb-0">Aquí tienes un resumen completo de tu negocio. Última actualización: <span id="fechaActual"></span></p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-primary" onclick="actualizarDashboard()">
+                                        <i class="fas fa-sync-alt me-2"></i>Actualizar Datos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Principales -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                            <h3 class="text-white">$2,450,000</h3>
+                            <p class="text-white-50 mb-1">Ventas Hoy</p>
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+12.5% vs ayer
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
+                            <h3 class="text-white">156</h3>
+                            <p class="text-white-50 mb-1">Transacciones</p>
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+8.3% vs ayer
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h3 class="text-white">89</h3>
+                            <p class="text-white-50 mb-1">Clientes Atendidos</p>
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+5.7% vs ayer
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-box fa-3x text-warning mb-3"></i>
+                            <h3 class="text-white">1,234</h3>
+                            <p class="text-white-50 mb-1">Productos Vendidos</p>
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+15.2% vs ayer
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Principales -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-line me-2"></i>
+                                <h5 class="mb-0">Ventas de los Últimos 7 Días</h5>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-light active" onclick="cambiarPeriodo('7d')">7D</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('30d')">30D</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('90d')">90D</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="ventasChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            <h5 class="mb-0">Ventas por Categoría</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoriasChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de Caja -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-cash-register me-2"></i>
+                            <h5 class="mb-0">Estado de Caja</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h4 class="text-success">$1,250,000</h4>
+                                    <p class="text-white-50 mb-0">Efectivo</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-primary">$850,000</h4>
+                                    <p class="text-white-50 mb-0">Tarjeta</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-info">$350,000</h4>
+                                    <p class="text-white-50 mb-0">Transferencia</p>
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-white-50">Total en Caja:</span>
+                                <span class="text-white fw-bold">$2,450,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <h5 class="mb-0">Alertas del Sistema</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning d-flex align-items-center mb-2" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <small>5 productos con stock bajo</small>
+                            </div>
+                            <div class="alert alert-info d-flex align-items-center mb-2" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <small>3 facturas pendientes de pago</small>
+                            </div>
+                            <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <small>Sistema funcionando correctamente</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos Rápidos -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-bolt me-2"></i>
+                            <h5 class="mb-0">Accesos Rápidos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./facturacion.html" class="btn btn-success w-100">
+                                        <i class="fas fa-file-invoice me-2"></i>Nueva Factura
+                                    </a>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./ventas.html" class="btn btn-primary w-100">
+                                        <i class="fas fa-shopping-cart me-2"></i>Nueva Venta
+                                    </a>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./caja-apertura.html" class="btn btn-warning w-100">
+                                        <i class="fas fa-unlock me-2"></i>Abrir Caja
+                                    </a>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./productos.html" class="btn btn-info w-100">
+                                        <i class="fas fa-box me-2"></i>Productos
+                                    </a>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./clientes.html" class="btn btn-secondary w-100">
+                                        <i class="fas fa-users me-2"></i>Clientes
+                                    </a>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <a href="./reportes.html" class="btn btn-dark w-100">
+                                        <i class="fas fa-chart-bar me-2"></i>Reportes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Ventas Recientes -->
+            <div class="card pos-card mb-4">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-history me-2"></i>
+                        <h5 class="mb-0">Ventas Recientes</h5>
+                    </div>
+                    <a href="./ventas-historial.html" class="btn btn-sm btn-outline-light">Ver Todas</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th># Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Productos</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#001234</td>
+                                    <td>Juan Pérez</td>
+                                    <td>3</td>
+                                    <td>$125,000</td>
+                                    <td><span class="badge bg-success">Pagado</span></td>
+                                    <td>14:30</td>
+                                </tr>
+                                <tr>
+                                    <td>#001235</td>
+                                    <td>María García</td>
+                                    <td>1</td>
+                                    <td>$85,000</td>
+                                    <td><span class="badge bg-success">Pagado</span></td>
+                                    <td>14:15</td>
+                                </tr>
+                                <tr>
+                                    <td>#001236</td>
+                                    <td>Carlos López</td>
+                                    <td>5</td>
+                                    <td>$320,000</td>
+                                    <td><span class="badge bg-warning">Pendiente</span></td>
+                                    <td>14:00</td>
+                                </tr>
+                                <tr>
+                                    <td>#001237</td>
+                                    <td>Ana Martínez</td>
+                                    <td>2</td>
+                                    <td>$95,000</td>
+                                    <td><span class="badge bg-success">Pagado</span></td>
+                                    <td>13:45</td>
+                                </tr>
+                                <tr>
+                                    <td>#001238</td>
+                                    <td>Luis Rodríguez</td>
+                                    <td>4</td>
+                                    <td>$180,000</td>
+                                    <td><span class="badge bg-success">Pagado</span></td>
+                                    <td>13:30</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="text-center mt-4 pos-login-footer">
+        <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+        <div class="text-center mt-3"></div>
+            <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+            <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-white-50 mb-0">
+                <i class="fas fa-copyright me-1"></i>
+                2024 ADS-POS. Sistema de Punto de Venta Profesional.
+            </p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        // Configurar fecha actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const fecha = new Date();
+            const opciones = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('fechaActual').textContent = fecha.toLocaleDateString('es-ES', opciones);
+            
+            // Inicializar gráficos
+            inicializarGraficos();
+        });
+
+        // Gráfico de Ventas
+        function inicializarGraficos() {
+            // Gráfico de Ventas por Día
+            const ventasCtx = document.getElementById('ventasChart').getContext('2d');
+            new Chart(ventasCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: [180000, 220000, 190000, 250000, 300000, 280000, 320000],
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff',
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'K';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Categorías
+            const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
+            new Chart(categoriasCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electrónicos', 'Accesorios', 'Audio', 'Otros'],
+                    datasets: [{
+                        data: [45, 30, 15, 10],
+                        backgroundColor: [
+                            '#007bff',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Cambiar período del gráfico
+        function cambiarPeriodo(periodo) {
+            // Remover clase active de todos los botones
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Agregar clase active al botón clickeado
+            event.target.classList.add('active');
+            
+            // Aquí se actualizaría el gráfico según el período seleccionado
+            console.log('Cambiando período a:', periodo);
+        }
+
+        // Actualizar dashboard
+        function actualizarDashboard() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Actualizando...';
+            btn.disabled = true;
+            
+            // Simular actualización
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                // Actualizar fecha
+                const fecha = new Date();
+                const opciones = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                document.getElementById('fechaActual').textContent = fecha.toLocaleDateString('es-ES', opciones);
+                
+                alert('Dashboard actualizado correctamente');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

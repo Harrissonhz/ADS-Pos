@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Sistema - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Configuración del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Configuración del Sistema</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Información del Sistema -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-server fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Estado del Sistema</h5>
+                            <h3 class="text-success">Online</h3>
+                            <small class="text-muted">Funcionando correctamente</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-database fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Base de Datos</h5>
+                            <h3 class="text-info">Conectada</h3>
+                            <small class="text-muted">Última actualización: 2 min</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Seguridad</h5>
+                            <h3 class="text-success">Activa</h3>
+                            <small class="text-muted">Cifrado SSL habilitado</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Tiempo Activo</h5>
+                            <h3 class="text-warning">15d 8h</h3>
+                            <small class="text-muted">Sin interrupciones</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="configForm" class="p-3" novalidate>
+                <!-- Configuración General -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-cog"></i>
+                        <strong>Configuración General</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Nombre de la empresa *</label>
+                                <input type="text" class="form-control" id="companyName" value="ADS Store" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">NIT/RUC *</label>
+                                <input type="text" class="form-control" id="companyNit" value="900123456-7" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Dirección *</label>
+                                <textarea class="form-control" id="companyAddress" rows="2" required>Calle 123 #45-67, Bogotá, Colombia</textarea>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="companyPhone" value="+57 1 234 5678" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="companyEmail" value="info@adsstore.com" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Sitio web</label>
+                                <input type="url" class="form-control" id="companyWebsite" value="https://adsstore.com">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Facturación -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-file-invoice"></i>
+                        <strong>Configuración de Facturación</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Resolución DIAN *</label>
+                                <input type="text" class="form-control" id="dianResolution" value="18764000001" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Rango desde *</label>
+                                <input type="number" class="form-control" id="rangeFrom" value="1" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Rango hasta *</label>
+                                <input type="number" class="form-control" id="rangeTo" value="10000" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Fecha de vencimiento *</label>
+                                <input type="date" class="form-control" id="expirationDate" value="2024-12-31" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Prefijo *</label>
+                                <input type="text" class="form-control" id="prefix" value="FAC" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Número actual</label>
+                                <input type="number" class="form-control" id="currentNumber" value="1234" readonly>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Tipo de documento por defecto</label>
+                                <select class="form-select" id="defaultDocType">
+                                    <option value="factura" selected>Factura</option>
+                                    <option value="factura_venta">Factura de Venta</option>
+                                    <option value="nota_credito">Nota Crédito</option>
+                                    <option value="nota_debito">Nota Débito</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Formato de numeración</label>
+                                <select class="form-select" id="numberFormat">
+                                    <option value="consecutivo" selected>Consecutivo (1, 2, 3...)</option>
+                                    <option value="prefijo_consecutivo">Prefijo + Consecutivo (FAC-0001)</option>
+                                    <option value="fecha_consecutivo">Fecha + Consecutivo (20240115-0001)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Impuestos -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-percentage"></i>
+                        <strong>Configuración de Impuestos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">IVA por defecto (%) *</label>
+                                <input type="number" class="form-control" id="defaultIva" value="19" min="0" max="100" step="0.01" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">IVA reducido (%)</label>
+                                <input type="number" class="form-control" id="reducedIva" value="5" min="0" max="100" step="0.01">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">IVA exento (%)</label>
+                                <input type="number" class="form-control" id="exemptIva" value="0" min="0" max="100" step="0.01">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Cálculo de impuestos</label>
+                                <select class="form-select" id="taxCalculation">
+                                    <option value="inclusive" selected>Incluido en el precio</option>
+                                    <option value="exclusive">Agregado al precio</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Redondeo de impuestos</label>
+                                <select class="form-select" id="taxRounding">
+                                    <option value="normal" selected>Redondeo normal</option>
+                                    <option value="up">Redondear hacia arriba</option>
+                                    <option value="down">Redondear hacia abajo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Caja -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-cash-register"></i>
+                        <strong>Configuración de Caja</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Fondo inicial por defecto</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="defaultInitialFund" value="500000" min="0">
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Moneda principal</label>
+                                <select class="form-select" id="mainCurrency">
+                                    <option value="COP" selected>Peso Colombiano (COP)</option>
+                                    <option value="USD">Dólar Americano (USD)</option>
+                                    <option value="EUR">Euro (EUR)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Formato de moneda</label>
+                                <select class="form-select" id="currencyFormat">
+                                    <option value="$ #,##0" selected>$ 1,000,000</option>
+                                    <option value="#,##0 $">1,000,000 $</option>
+                                    <option value="$#,##0">$1,000,000</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Métodos de pago permitidos</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowCash" checked>
+                                    <label class="form-check-label" for="allowCash">
+                                        Efectivo
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowCard" checked>
+                                    <label class="form-check-label" for="allowCard">
+                                        Tarjeta de crédito/débito
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowTransfer" checked>
+                                    <label class="form-check-label" for="allowTransfer">
+                                        Transferencia bancaria
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowDigital" checked>
+                                    <label class="form-check-label" for="allowDigital">
+                                        Billeteras digitales
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Configuración de descuentos</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowDiscounts" checked>
+                                    <label class="form-check-label" for="allowDiscounts">
+                                        Permitir descuentos
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="requireDiscountAuth">
+                                    <label class="form-check-label" for="requireDiscountAuth">
+                                        Requerir autorización para descuentos > 10%
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowNegativeStock">
+                                    <label class="form-check-label" for="allowNegativeStock">
+                                        Permitir ventas con stock negativo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Inventario -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-warehouse"></i>
+                        <strong>Configuración de Inventario</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Control de stock</label>
+                                <select class="form-select" id="stockControl">
+                                    <option value="automatic" selected>Automático</option>
+                                    <option value="manual">Manual</option>
+                                    <option value="disabled">Deshabilitado</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Stock mínimo por defecto</label>
+                                <input type="number" class="form-control" id="defaultMinStock" value="5" min="0">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Alertas de stock bajo</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="lowStockAlert" checked>
+                                    <label class="form-check-label" for="lowStockAlert">
+                                        Activar alertas de stock bajo
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Actualización automática</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoUpdateStock" checked>
+                                    <label class="form-check-label" for="autoUpdateStock">
+                                        Actualizar stock automáticamente en ventas
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Seguridad -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>Configuración de Seguridad</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Tiempo de sesión (minutos)</label>
+                                <input type="number" class="form-control" id="sessionTimeout" value="30" min="5" max="480">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Intentos de login fallidos</label>
+                                <input type="number" class="form-control" id="maxLoginAttempts" value="3" min="1" max="10">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Cifrado de contraseñas</label>
+                                <select class="form-select" id="passwordEncryption">
+                                    <option value="bcrypt" selected>BCrypt (Recomendado)</option>
+                                    <option value="sha256">SHA-256</option>
+                                    <option value="md5">MD5 (No recomendado)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Log de auditoría</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="auditLog" checked>
+                                    <label class="form-check-label" for="auditLog">
+                                        Activar log de auditoría
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Backup -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-database"></i>
+                        <strong>Configuración de Backup</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Frecuencia de backup</label>
+                                <select class="form-select" id="backupFrequency">
+                                    <option value="daily" selected>Diario</option>
+                                    <option value="weekly">Semanal</option>
+                                    <option value="monthly">Mensual</option>
+                                    <option value="manual">Solo manual</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Hora de backup</label>
+                                <input type="time" class="form-control" id="backupTime" value="02:00">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Retener backups por (días)</label>
+                                <input type="number" class="form-control" id="backupRetention" value="30" min="1" max="365">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Último backup</label>
+                                <input type="text" class="form-control" value="2024-01-15 02:00:00" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Guardar Configuración
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                <i class="fas fa-undo me-1"></i>Restaurar Valores
+                            </button>
+                            <button type="button" class="btn btn-info" id="backupBtn">
+                                <i class="fas fa-database me-1"></i>Crear Backup
+                            </button>
+                            <button type="button" class="btn btn-warning" id="testBtn">
+                                <i class="fas fa-vial me-1"></i>Probar Conexión
+                            </button>
+                            <button type="button" class="btn btn-success" id="exportConfigBtn">
+                                <i class="fas fa-download me-1"></i>Exportar Config
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('configForm');
+            const resetBtn = document.getElementById('resetBtn');
+            const backupBtn = document.getElementById('backupBtn');
+            const testBtn = document.getElementById('testBtn');
+            const exportConfigBtn = document.getElementById('exportConfigBtn');
+
+            // Restaurar valores por defecto
+            resetBtn.addEventListener('click', () => {
+                if (confirm('¿Está seguro de que desea restaurar todos los valores por defecto? Esta acción no se puede deshacer.')) {
+                    form.reset();
+                    // Restaurar valores específicos
+                    document.getElementById('companyName').value = 'ADS Store';
+                    document.getElementById('companyNit').value = '900123456-7';
+                    document.getElementById('companyAddress').value = 'Calle 123 #45-67, Bogotá, Colombia';
+                    document.getElementById('companyPhone').value = '+57 1 234 5678';
+                    document.getElementById('companyEmail').value = 'info@adsstore.com';
+                    document.getElementById('companyWebsite').value = 'https://adsstore.com';
+                    document.getElementById('dianResolution').value = '18764000001';
+                    document.getElementById('rangeFrom').value = '1';
+                    document.getElementById('rangeTo').value = '10000';
+                    document.getElementById('expirationDate').value = '2024-12-31';
+                    document.getElementById('prefix').value = 'FAC';
+                    document.getElementById('currentNumber').value = '1234';
+                    document.getElementById('defaultIva').value = '19';
+                    document.getElementById('reducedIva').value = '5';
+                    document.getElementById('exemptIva').value = '0';
+                    document.getElementById('defaultInitialFund').value = '500000';
+                    document.getElementById('sessionTimeout').value = '30';
+                    document.getElementById('maxLoginAttempts').value = '3';
+                    document.getElementById('backupRetention').value = '30';
+                    document.getElementById('backupTime').value = '02:00';
+                    
+                    alert('Valores restaurados correctamente');
+                }
+            });
+
+            // Crear backup
+            backupBtn.addEventListener('click', () => {
+                if (confirm('¿Crear un backup manual de la base de datos?')) {
+                    alert('Iniciando backup manual... Esto puede tomar varios minutos.');
+                    // Simular proceso de backup
+                    setTimeout(() => {
+                        alert('Backup completado exitosamente');
+                    }, 2000);
+                }
+            });
+
+            // Probar conexión
+            testBtn.addEventListener('click', () => {
+                alert('Probando conexión a la base de datos...');
+                // Simular prueba de conexión
+                setTimeout(() => {
+                    alert('Conexión exitosa. Base de datos respondiendo correctamente.');
+                }, 1500);
+            });
+
+            // Exportar configuración
+            exportConfigBtn.addEventListener('click', () => {
+                alert('Exportando configuración del sistema...');
+            });
+
+            // Envío del formulario
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                if (form.checkValidity()) {
+                    const formData = new FormData(form);
+                    const configData = Object.fromEntries(formData);
+                    
+                    // Simular guardado
+                    alert('Configuración guardada exitosamente');
+                    console.log('Configuración del sistema:', configData);
+                } else {
+                    alert('Por favor complete todos los campos requeridos');
+                }
+                
+                form.classList.add('was-validated');
+            });
+
+            // Validaciones en tiempo real
+            const rangeFrom = document.getElementById('rangeFrom');
+            const rangeTo = document.getElementById('rangeTo');
+            
+            rangeTo.addEventListener('input', () => {
+                if (parseInt(rangeTo.value) <= parseInt(rangeFrom.value)) {
+                    rangeTo.setCustomValidity('El rango hasta debe ser mayor que el rango desde');
+                } else {
+                    rangeTo.setCustomValidity('');
+                }
+            });
+
+            // Actualizar estado del sistema (simulación)
+            function updateSystemStatus() {
+                console.log('Actualizando estado del sistema...');
+            }
+
+            // Inicializar
+            updateSystemStatus();
+
+        })();
+    </script>
+</body>
+</html>

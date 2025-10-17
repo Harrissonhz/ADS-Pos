@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - ADS-POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales de la tienda para mantener look & feel -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <!-- Estilos del módulo POS -->
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Login del sistema POS de ADS Store para acceso seguro.">
+</head>
+<body class="pos-auth">
+    <main class="container py-5">
+        <div class="pos-login-wrapper">
+            <div class="pos-login-header">
+                <div class="logo-icon">
+                    <i class="fas fa-cash-register fa-lg text-white"></i>
+                </div>
+                <h2>ADS-POS</h2>
+                <p class="mb-0 text-light">Sistema de Punto de Venta Profesional</p>
+            </div>
+            <form id="posLoginForm" novalidate>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="email" placeholder="tu@correo.com" required>
+                    <div class="invalid-feedback">Ingresa un correo válido.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+                    <div class="invalid-feedback">La contraseña es obligatoria.</div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">Recordar mi sesión</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-login w-100">Iniciar Sesión</button>
+                <div class="text-center mt-3 pos-login-footer">
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+            </form>
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-arrow-left me-2"></i>Volver al Sistema</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validación básica del formulario y ejemplo de manejo de login (placeholder)
+        (function() {
+            const form = document.getElementById('posLoginForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+                // Simulación de autenticación simple (reemplazar por lógica real)
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                if (email && password) {
+                    // Mostrar mensaje de éxito
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
+                    submitBtn.disabled = true;
+                    
+                    // Simular tiempo de autenticación y redirigir
+                    setTimeout(() => {
+                        // Redirige al sistema principal ADS-POS
+                        window.location.href = '../index.html';
+                    }, 1500);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+
+

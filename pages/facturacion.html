@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturación - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Facturación del sistema POS de ADS Store con IVA Colombia.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Facturación</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <form id="invoiceForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <strong>Documento</strong>
+                    </div>
+                    <div class="card-body">
+                <!-- Encabezado -->
+                <div class="row g-3">
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Tipo de comprobante</label>
+                        <select class="form-select" id="docType" required>
+                            <option value="factura" selected>Factura electrónica</option>
+                            <option value="boleta">Venta POS</option>
+                            <option value="nc">Nota crédito</option>
+                            <option value="nd">Nota débito</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Serie</label>
+                        <input type="text" class="form-control" id="series" placeholder="F001" required>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-control" id="number" placeholder="000123" required>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="issueDate" required>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Moneda</label>
+                        <select class="form-select" id="currency">
+                            <option value="COP" selected>COP</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Condición de venta</label>
+                        <select class="form-select" id="saleCondition">
+                            <option value="contado" selected>Contado</option>
+                            <option value="credito">Crédito</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-6 col-lg-2 d-none" id="creditTermsWrap">
+                        <label class="form-label">Días de crédito</label>
+                        <input type="number" class="form-control" id="creditDays" min="0" placeholder="30">
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-id-card"></i>
+                        <strong>Datos Cliente</strong>
+                    </div>
+                    <div class="card-body">
+                <!-- Datos Cliente -->
+                <div class="row g-3">
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">Tipo de identificación</label>
+                        <select class="form-select" id="idType" required>
+                            <option value="CC" selected>Cédula (CC)</option>
+                            <option value="NIT">NIT</option>
+                            <option value="CE">C. de Extranjería</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="PP">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-control" id="idNumber" placeholder="123456789" required>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label">Nombre / Razón social</label>
+                        <input type="text" class="form-control" id="customerName" placeholder="Cliente S.A.S." required>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="customerAddress" placeholder="Calle 123 #45-67, Ciudad">
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="customerEmail" placeholder="cliente@correo.com">
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="customerPhone" placeholder="300 000 0000">
+                    </div>
+                </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <strong>Ítems</strong>
+                    </div>
+                    <div class="card-body">
+                <!-- Ítems -->
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-lg-4">
+                        <label class="form-label">Buscar/escaneo</label>
+                        <input type="text" class="form-control" id="search" placeholder="Código de barras o nombre">
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="qty" min="1" value="1">
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Precio unitario</label>
+                        <input type="number" class="form-control" id="price" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">IVA</label>
+                        <select class="form-select" id="vatRate">
+                            <option value="0" selected>0% (Exento)</option>
+                            <option value="5">5% (Tasa reducida)</option>
+                            <option value="19">19% (General)</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Descuento %</label>
+                        <input type="number" class="form-control" id="discountPct" min="0" max="100" value="0">
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <button type="button" class="btn btn-outline-primary w-100" id="addItem">
+                            <i class="fas fa-plus me-1"></i>Agregar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 34px;"></th>
+                                <th>Descripción</th>
+                                <th class="text-end">Cant.</th>
+                                <th class="text-end">P. Unit.</th>
+                                <th class="text-end">Desc. %</th>
+                                <th class="text-end">IVA %</th>
+                                <th class="text-end">IVA $</th>
+                                <th class="text-end">Subtotal</th>
+                                <th style="width: 34px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                        </tbody>
+                    </table>
+                </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-scale-balanced"></i>
+                        <strong>Totales y observaciones</strong>
+                    </div>
+                    <div class="card-body">
+                <!-- Totales -->
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="notes" rows="3" placeholder="Notas visibles en el comprobante"></textarea>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="card p-3">
+                            <div class="d-flex justify-content-between"><span>Subtotal</span><strong id="uiSubtotal">$ 0</strong></div>
+                            <div class="d-flex justify-content-between"><span>Descuento global</span>
+                                <div class="d-flex gap-2">
+                                    <input type="number" class="form-control form-control-sm" id="globalDiscountPct" min="0" max="100" value="0" style="width: 90px;">
+                                    <span class="align-self-center">%</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between"><span>IVA total</span><strong id="uiVat">$ 0</strong></div>
+                            <div class="d-flex justify-content-between fs-5 border-top pt-2"><span>Total a pagar</span><strong id="uiTotal">$ 0</strong></div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-wallet"></i>
+                        <strong>Pagos</strong>
+                    </div>
+                    <div class="card-body">
+                <!-- Pagos -->
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-lg-3">
+                        <label class="form-label">Método</label>
+                        <select class="form-select" id="payMethod">
+                            <option>Efectivo</option>
+                            <option>Tarjeta</option>
+                            <option>Transferencia</option>
+                            <option>Nequi</option>
+                            <option>Daviplata</option>
+                            <option>Otros</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="payAmount" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label class="form-label">N° operación</label>
+                        <input type="text" class="form-control" id="payRef" placeholder="Referencia">
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <button type="button" class="btn btn-outline-primary w-100" id="addPayment">
+                            <i class="fas fa-plus me-1"></i>Agregar pago
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Método</th>
+                                        <th class="text-end">Monto</th>
+                                        <th>Referencia</th>
+                                        <th style="width: 34px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <div><strong>Pagado:</strong> <span id="uiPaid">$ 0</span></div>
+                            <div><strong>Cambio:</strong> <span id="uiChange">$ 0</span></div>
+                            <div><strong>Pendiente:</strong> <span id="uiDue">$ 0</span></div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="draftBtn"><i class="fas fa-save me-1"></i>Guardar borrador</button>
+                            <button type="button" class="btn btn-success" id="emitBtn"><i class="fas fa-check me-1"></i>Emitir</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            
+            // Manejar eventos del offcanvas
+            offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                this.classList.add('show');
+            });
+            
+            offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                this.classList.remove('show');
+            });
+        });
+    </script>
+    <script>
+        (function() {
+            const itemsBody = document.getElementById('itemsBody');
+            const paymentsBody = document.getElementById('paymentsBody');
+            const addItemBtn = document.getElementById('addItem');
+            const addPaymentBtn = document.getElementById('addPayment');
+            const saleCondition = document.getElementById('saleCondition');
+            const creditWrap = document.getElementById('creditTermsWrap');
+
+            const uiSubtotal = document.getElementById('uiSubtotal');
+            const uiVat = document.getElementById('uiVat');
+            const uiTotal = document.getElementById('uiTotal');
+            const uiPaid = document.getElementById('uiPaid');
+            const uiChange = document.getElementById('uiChange');
+            const uiDue = document.getElementById('uiDue');
+
+            const globalDiscountPct = document.getElementById('globalDiscountPct');
+
+            const fmt = (n) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n || 0);
+
+            saleCondition.addEventListener('change', () => {
+                creditWrap.classList.toggle('d-none', saleCondition.value !== 'credito');
+            });
+
+            function recalcTotals() {
+                let subtotal = 0;
+                let totalVat = 0;
+
+                for (const row of itemsBody.querySelectorAll('tr')) {
+                    const qty = Number(row.querySelector('.it-qty').value || 0);
+                    const price = Number(row.querySelector('.it-price').value || 0);
+                    const discPct = Number(row.querySelector('.it-disc').value || 0);
+                    const vatPct = Number(row.querySelector('.it-vat').value || 0);
+
+                    const baseUnit = price * (1 - discPct / 100);
+                    const lineBase = baseUnit * qty;
+                    const lineVat = Math.round(lineBase * vatPct / 100);
+                    const lineTotal = lineBase + lineVat;
+
+                    row.querySelector('.it-vat-amt').textContent = fmt(lineVat);
+                    row.querySelector('.it-subtotal').textContent = fmt(lineTotal);
+
+                    subtotal += lineBase;
+                    totalVat += lineVat;
+                }
+
+                // Descuento global
+                const gDiscPct = Number(globalDiscountPct.value || 0);
+                const discountAmt = Math.max(0, Math.round(subtotal * gDiscPct / 100));
+                subtotal -= discountAmt;
+
+                const total = subtotal + totalVat;
+
+                uiSubtotal.textContent = fmt(subtotal);
+                uiVat.textContent = fmt(totalVat);
+                uiTotal.textContent = fmt(total);
+
+                // Recalc pagos
+                let paid = 0;
+                for (const row of paymentsBody.querySelectorAll('tr')) {
+                    paid += Number(row.querySelector('.pay-amt').dataset.value || 0);
+                }
+                const change = Math.max(0, paid - total);
+                const due = Math.max(0, total - paid);
+                uiPaid.textContent = fmt(paid);
+                uiChange.textContent = fmt(change);
+                uiDue.textContent = fmt(due);
+            }
+
+            function addItem() {
+                const desc = document.getElementById('search').value.trim() || 'Ítem sin nombre';
+                const qty = Number(document.getElementById('qty').value || 1);
+                const price = Number(document.getElementById('price').value || 0);
+                const vatRate = Number(document.getElementById('vatRate').value || 0);
+                const discPct = Number(document.getElementById('discountPct').value || 0);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><button type="button" class="btn btn-sm btn-outline-danger it-del"><i class="fas fa-times"></i></button></td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm it-desc" value="${desc}">
+                    </td>
+                    <td class="text-end" style="max-width:100px">
+                        <input type="number" class="form-control form-control-sm text-end it-qty" min="1" value="${qty}">
+                    </td>
+                    <td class="text-end" style="max-width:140px">
+                        <input type="number" class="form-control form-control-sm text-end it-price" min="0" step="0.01" value="${price}">
+                    </td>
+                    <td class="text-end" style="max-width:120px">
+                        <input type="number" class="form-control form-control-sm text-end it-disc" min="0" max="100" value="${discPct}">
+                    </td>
+                    <td class="text-end" style="max-width:120px">
+                        <select class="form-select form-select-sm it-vat">
+                            <option ${vatRate===0?'selected':''} value="0">0</option>
+                            <option ${vatRate===5?'selected':''} value="5">5</option>
+                            <option ${vatRate===19?'selected':''} value="19">19</option>
+                        </select>
+                    </td>
+                    <td class="text-end it-vat-amt">$ 0</td>
+                    <td class="text-end it-subtotal">$ 0</td>
+                    <td><button type="button" class="btn btn-sm btn-outline-secondary it-edit"><i class="fas fa-pen"></i></button></td>
+                `;
+
+                itemsBody.appendChild(tr);
+
+                tr.addEventListener('input', recalcTotals);
+                tr.querySelector('.it-del').addEventListener('click', () => { tr.remove(); recalcTotals(); });
+                recalcTotals();
+            }
+
+            addItemBtn.addEventListener('click', addItem);
+            globalDiscountPct.addEventListener('input', recalcTotals);
+
+            function addPayment() {
+                const method = document.getElementById('payMethod').value;
+                const amount = Number(document.getElementById('payAmount').value || 0);
+                const ref = document.getElementById('payRef').value.trim();
+                if (amount <= 0) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${method}</td>
+                    <td class="text-end pay-amt" data-value="${amount}">${fmt(amount)}</td>
+                    <td>${ref || ''}</td>
+                    <td><button type="button" class="btn btn-sm btn-outline-danger pay-del"><i class="fas fa-times"></i></button></td>
+                `;
+                paymentsBody.appendChild(tr);
+                tr.querySelector('.pay-del').addEventListener('click', () => { tr.remove(); recalcTotals(); });
+                document.getElementById('payAmount').value = '';
+                document.getElementById('payRef').value = '';
+                recalcTotals();
+            }
+
+            addPaymentBtn.addEventListener('click', addPayment);
+
+            document.getElementById('issueDate').valueAsDate = new Date();
+
+        })();
+    </script>
+</body>
+</html>
+
+

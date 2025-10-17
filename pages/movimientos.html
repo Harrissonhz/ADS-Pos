@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimientos de Inventario - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Movimientos de inventario del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Movimientos de Inventario</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Resumen de Movimientos -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-arrow-up fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Entradas Hoy</h5>
+                            <h3 class="text-success">45</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-arrow-down fa-2x text-danger mb-2"></i>
+                            <h5 class="card-title">Salidas Hoy</h5>
+                            <h3 class="text-danger">32</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-exchange-alt fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Ajustes Hoy</h5>
+                            <h3 class="text-info">8</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Total Movimientos</h5>
+                            <h3 class="text-primary">85</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="movementsForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-filter"></i>
+                        <strong>Filtros de Búsqueda</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Buscar</label>
+                                <input type="text" class="form-control" id="searchTerm" placeholder="Producto, usuario o referencia">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Tipo de movimiento</label>
+                                <select class="form-select" id="filterType">
+                                    <option value="">Todos</option>
+                                    <option value="entrada">Entrada</option>
+                                    <option value="salida">Salida</option>
+                                    <option value="ajuste">Ajuste</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Producto</label>
+                                <select class="form-select" id="filterProduct">
+                                    <option value="">Todos</option>
+                                    <option value="LAP-HP-001">Laptop HP Pavilion 15</option>
+                                    <option value="CEL-SAM-001">Samsung Galaxy S21</option>
+                                    <option value="CAM-NIK-001">Camiseta Nike Dri-FIT</option>
+                                    <option value="LAM-PHI-001">Lámpara LED Moderna</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha desde</label>
+                                <input type="date" class="form-control" id="dateFrom">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha hasta</label>
+                                <input type="date" class="form-control" id="dateTo">
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary w-100" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <strong>Nuevo Movimiento</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Tipo de movimiento</label>
+                                <select class="form-select" id="movementType" required>
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="entrada">Entrada (Compra/Devolución)</option>
+                                    <option value="salida">Salida (Venta/Descuento)</option>
+                                    <option value="ajuste">Ajuste de inventario</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Producto</label>
+                                <input type="text" class="form-control" id="productCode" placeholder="Código o nombre del producto" required>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" placeholder="Cantidad" required>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Motivo/Referencia</label>
+                                <input type="text" class="form-control" id="reason" placeholder="Motivo del movimiento" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="observations" rows="2" placeholder="Observaciones adicionales"></textarea>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Usuario responsable</label>
+                                <select class="form-select" id="user" required>
+                                    <option value="">Seleccionar usuario</option>
+                                    <option value="admin">Administrador</option>
+                                    <option value="vendedor1">Vendedor 1</option>
+                                    <option value="vendedor2">Vendedor 2</option>
+                                    <option value="inventario">Personal de Inventario</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-history"></i>
+                        <strong>Historial de Movimientos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Producto</th>
+                                        <th class="text-end">Cantidad</th>
+                                        <th class="text-end">Stock Anterior</th>
+                                        <th class="text-end">Stock Nuevo</th>
+                                        <th>Usuario</th>
+                                        <th>Referencia</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="movementsBody">
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">14:30:25</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Entrada</span></td>
+                                        <td>
+                                            <div>
+                                                <strong>Laptop HP Pavilion 15</strong><br>
+                                                <small class="text-muted">LAP-HP-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end"><strong>+5</strong></td>
+                                        <td class="text-end">10</td>
+                                        <td class="text-end"><strong>15</strong></td>
+                                        <td>admin</td>
+                                        <td>OC-001</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">11:15:42</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Salida</span></td>
+                                        <td>
+                                            <div>
+                                                <strong>Samsung Galaxy S21</strong><br>
+                                                <small class="text-muted">CEL-SAM-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end"><strong>-2</strong></td>
+                                        <td class="text-end">5</td>
+                                        <td class="text-end"><strong>3</strong></td>
+                                        <td>vendedor1</td>
+                                        <td>VTA-001</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">09:45:18</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-warning">Ajuste</span></td>
+                                        <td>
+                                            <div>
+                                                <strong>Camiseta Nike Dri-FIT</strong><br>
+                                                <small class="text-muted">CAM-NIK-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end"><strong>-3</strong></td>
+                                        <td class="text-end">3</td>
+                                        <td class="text-end"><strong>0</strong></td>
+                                        <td>inventario</td>
+                                        <td>AJ-001</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-14</strong><br>
+                                                <small class="text-muted">16:20:33</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-info">Transferencia</span></td>
+                                        <td>
+                                            <div>
+                                                <strong>Lámpara LED Moderna</strong><br>
+                                                <small class="text-muted">LAM-PHI-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end"><strong>+10</strong></td>
+                                        <td class="text-end">15</td>
+                                        <td class="text-end"><strong>25</strong></td>
+                                        <td>admin</td>
+                                        <td>TRF-001</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-14</strong><br>
+                                                <small class="text-muted">13:55:07</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-danger">Salida</span></td>
+                                        <td>
+                                            <div>
+                                                <strong>Laptop HP Pavilion 15</strong><br>
+                                                <small class="text-muted">LAP-HP-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end"><strong>-1</strong></td>
+                                        <td class="text-end">11</td>
+                                        <td class="text-end"><strong>10</strong></td>
+                                        <td>vendedor2</td>
+                                        <td>VTA-002</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <strong>Reportes de Movimientos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <button type="button" class="btn btn-outline-primary w-100" id="dailyReportBtn">
+                                    <i class="fas fa-calendar-day me-2"></i>Reporte Diario
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <button type="button" class="btn btn-outline-success w-100" id="monthlyReportBtn">
+                                    <i class="fas fa-calendar-alt me-2"></i>Reporte Mensual
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <button type="button" class="btn btn-outline-warning w-100" id="productReportBtn">
+                                    <i class="fas fa-box me-2"></i>Por Producto
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <button type="button" class="btn btn-outline-info w-100" id="userReportBtn">
+                                    <i class="fas fa-user me-2"></i>Por Usuario
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn2">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="addMovementBtn">
+                                <i class="fas fa-plus me-1"></i>Agregar Movimiento
+                            </button>
+                            <button type="button" class="btn btn-success" id="exportBtn">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('movementsForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchBtn2 = document.getElementById('searchBtn2');
+            const addMovementBtn = document.getElementById('addMovementBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const searchTerm = document.getElementById('searchTerm');
+            const filterType = document.getElementById('filterType');
+            const filterProduct = document.getElementById('filterProduct');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            const movementType = document.getElementById('movementType');
+            const productCode = document.getElementById('productCode');
+            const quantity = document.getElementById('quantity');
+            const reason = document.getElementById('reason');
+            const observations = document.getElementById('observations');
+            const user = document.getElementById('user');
+
+            // Búsqueda en tiempo real
+            searchTerm.addEventListener('input', () => {
+                const searchValue = searchTerm.value.toLowerCase();
+                const rows = document.querySelectorAll('#movementsBody tr');
+                
+                rows.forEach(row => {
+                    const productName = row.cells[2].textContent.toLowerCase();
+                    const userText = row.cells[6].textContent.toLowerCase();
+                    const reference = row.cells[7].textContent.toLowerCase();
+                    
+                    if (productName.includes(searchValue) || userText.includes(searchValue) || reference.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Aplicar filtros
+            function applyFilters() {
+                const type = filterType.value;
+                const product = filterProduct.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                const rows = document.querySelectorAll('#movementsBody tr');
+                
+                rows.forEach(row => {
+                    const typeCell = row.cells[1].textContent.trim();
+                    const productCell = row.cells[2].textContent.trim();
+                    const dateCell = row.cells[0].textContent.trim();
+                    
+                    let showRow = true;
+                    
+                    if (type && !typeCell.includes(type)) {
+                        showRow = false;
+                    }
+                    
+                    if (product && !productCell.includes(product)) {
+                        showRow = false;
+                    }
+                    
+                    if (fromDate && dateCell < fromDate) {
+                        showRow = false;
+                    }
+                    
+                    if (toDate && dateCell > toDate) {
+                        showRow = false;
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            // Event listeners para filtros
+            filterType.addEventListener('change', applyFilters);
+            filterProduct.addEventListener('change', applyFilters);
+            dateFrom.addEventListener('change', applyFilters);
+            dateTo.addEventListener('change', applyFilters);
+
+            // Buscar
+            function performSearch() {
+                const search = searchTerm.value.trim();
+                const type = filterType.value;
+                const product = filterProduct.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                
+                if (search || type || product || fromDate || toDate) {
+                    alert(`Buscando movimientos: "${search}" tipo: "${type || 'Todos'}" producto: "${product || 'Todos'}" desde: "${fromDate || 'Todos'}" hasta: "${toDate || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese criterios de búsqueda');
+                }
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+            searchBtn2.addEventListener('click', performSearch);
+
+            // Agregar movimiento
+            addMovementBtn.addEventListener('click', () => {
+                if (form.checkValidity()) {
+                    const movementData = {
+                        type: movementType.value,
+                        product: productCode.value,
+                        quantity: quantity.value,
+                        reason: reason.value,
+                        observations: observations.value,
+                        user: user.value
+                    };
+                    
+                    console.log('Datos del movimiento:', movementData);
+                    alert('Movimiento agregado exitosamente');
+                    form.reset();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Exportar
+            exportBtn.addEventListener('click', () => {
+                alert('Exportando movimientos a Excel...');
+            });
+
+            // Reportes
+            document.getElementById('dailyReportBtn').addEventListener('click', () => {
+                alert('Generando reporte diario de movimientos...');
+            });
+
+            document.getElementById('monthlyReportBtn').addEventListener('click', () => {
+                alert('Generando reporte mensual de movimientos...');
+            });
+
+            document.getElementById('productReportBtn').addEventListener('click', () => {
+                alert('Generando reporte de movimientos por producto...');
+            });
+
+            document.getElementById('userReportBtn').addEventListener('click', () => {
+                alert('Generando reporte de movimientos por usuario...');
+            });
+
+            // Limpiar formulario
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                // Mostrar todas las filas
+                const rows = document.querySelectorAll('#movementsBody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+            });
+
+            // Establecer fechas por defecto
+            const today = new Date();
+            const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            dateFrom.valueAsDate = lastWeek;
+            dateTo.valueAsDate = today;
+
+            // Actualizar resumen (simulación)
+            function updateSummary() {
+                console.log('Actualizando resumen de movimientos...');
+            }
+
+            // Inicializar
+            updateSummary();
+
+        })();
+    </script>
+</body>
+</html>

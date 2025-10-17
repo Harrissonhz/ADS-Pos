@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Perfil de usuario del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Mi Perfil</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Información del Usuario -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-4">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <div class="position-relative d-inline-block mb-3">
+                                <img src="../assets/img/logo.png" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle" style="width: 35px; height: 35px;" title="Cambiar foto">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                            <h4 class="card-title">María González</h4>
+                            <p class="text-muted">Vendedor</p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <span class="badge bg-success">Activo</span>
+                                <span class="badge bg-info">En línea</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-chart-line"></i>
+                            <strong>Estadísticas de Actividad</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-6 col-lg-3">
+                                    <div class="text-center">
+                                        <h5 class="text-primary">156</h5>
+                                        <small class="text-muted">Ventas Hoy</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <div class="text-center">
+                                        <h5 class="text-success">$ 2.4M</h5>
+                                        <small class="text-muted">Ventas Hoy</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <div class="text-center">
+                                        <h5 class="text-info">8h 30m</h5>
+                                        <small class="text-muted">Tiempo Activo</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <div class="text-center">
+                                        <h5 class="text-warning">23</h5>
+                                        <small class="text-muted">Días Consecutivos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="profileForm" class="p-3" novalidate>
+                <!-- Información Personal -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-user"></i>
+                        <strong>Información Personal</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Nombre completo *</label>
+                                <input type="text" class="form-control" id="fullName" value="María González" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Usuario *</label>
+                                <input type="text" class="form-control" id="username" value="vendedor1" required readonly>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Correo electrónico *</label>
+                                <input type="email" class="form-control" id="email" value="maria@adsstore.com" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="phone" value="+57 300 123 4567">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Cédula/ID</label>
+                                <input type="text" class="form-control" id="documentId" value="12345678">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" id="birthDate" value="1990-05-15">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Dirección</label>
+                                <textarea class="form-control" id="address" rows="2">Calle 123 #45-67, Bogotá, Colombia</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Acceso -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-key"></i>
+                        <strong>Configuración de Acceso</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Contraseña actual</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="currentPassword">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Nueva contraseña</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="newPassword">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Confirmar nueva contraseña</label>
+                                <input type="password" class="form-control" id="confirmNewPassword">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Rol actual</label>
+                                <input type="text" class="form-control" value="Vendedor" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferencias del Sistema -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-cog"></i>
+                        <strong>Preferencias del Sistema</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Idioma</label>
+                                <select class="form-select" id="language">
+                                    <option value="es" selected>Español</option>
+                                    <option value="en">English</option>
+                                    <option value="pt">Português</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Zona horaria</label>
+                                <select class="form-select" id="timezone">
+                                    <option value="America/Bogota" selected>Bogotá (GMT-5)</option>
+                                    <option value="America/New_York">Nueva York (GMT-5)</option>
+                                    <option value="America/Los_Angeles">Los Ángeles (GMT-8)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Formato de fecha</label>
+                                <select class="form-select" id="dateFormat">
+                                    <option value="dd/mm/yyyy" selected>DD/MM/YYYY</option>
+                                    <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                                    <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Formato de moneda</label>
+                                <select class="form-select" id="currencyFormat">
+                                    <option value="COP" selected>Peso Colombiano (COP)</option>
+                                    <option value="USD">Dólar Americano (USD)</option>
+                                    <option value="EUR">Euro (EUR)</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="notifications" checked>
+                                    <label class="form-check-label" for="notifications">
+                                        Recibir notificaciones del sistema
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                    <label class="form-check-label" for="emailNotifications">
+                                        Recibir notificaciones por correo
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoLogout">
+                                    <label class="form-check-label" for="autoLogout">
+                                        Cerrar sesión automáticamente después de 30 minutos de inactividad
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actividad Reciente -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-history"></i>
+                        <strong>Actividad Reciente</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Acción</th>
+                                        <th>Módulo</th>
+                                        <th>Detalle</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:30 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Login</span></td>
+                                        <td>Sistema</td>
+                                        <td>Inicio de sesión exitoso</td>
+                                        <td>192.168.1.100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:25 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-primary">Venta</span></td>
+                                        <td>Facturación</td>
+                                        <td>Factura #001-0001234</td>
+                                        <td>192.168.1.100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:20 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-info">Consulta</span></td>
+                                        <td>Inventario</td>
+                                        <td>Consulta de producto</td>
+                                        <td>192.168.1.100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:15 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-warning">Actualización</span></td>
+                                        <td>Clientes</td>
+                                        <td>Cliente actualizado</td>
+                                        <td>192.168.1.100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:10 PM</small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Login</span></td>
+                                        <td>Sistema</td>
+                                        <td>Inicio de sesión exitoso</td>
+                                        <td>192.168.1.100</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Guardar Cambios
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                <i class="fas fa-undo me-1"></i>Restaurar
+                            </button>
+                            <button type="button" class="btn btn-info" id="exportDataBtn">
+                                <i class="fas fa-download me-1"></i>Exportar Datos
+                            </button>
+                            <button type="button" class="btn btn-warning" id="changePasswordBtn">
+                                <i class="fas fa-key me-1"></i>Cambiar Contraseña
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('profileForm');
+            const resetBtn = document.getElementById('resetBtn');
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
+            const toggleNewPassword = document.getElementById('toggleNewPassword');
+            const currentPassword = document.getElementById('currentPassword');
+            const newPassword = document.getElementById('newPassword');
+            const confirmNewPassword = document.getElementById('confirmNewPassword');
+
+            // Toggle password visibility
+            toggleCurrentPassword.addEventListener('click', () => {
+                const type = currentPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                currentPassword.setAttribute('type', type);
+                const icon = toggleCurrentPassword.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            toggleNewPassword.addEventListener('click', () => {
+                const type = newPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                newPassword.setAttribute('type', type);
+                const icon = toggleNewPassword.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            // Validación de contraseñas
+            confirmNewPassword.addEventListener('input', () => {
+                if (newPassword.value !== confirmNewPassword.value) {
+                    confirmNewPassword.setCustomValidity('Las contraseñas no coinciden');
+                } else {
+                    confirmNewPassword.setCustomValidity('');
+                }
+            });
+
+            // Cambiar contraseña
+            changePasswordBtn.addEventListener('click', () => {
+                const currentPass = currentPassword.value;
+                const newPass = newPassword.value;
+                const confirmPass = confirmNewPassword.value;
+                
+                if (!currentPass) {
+                    alert('Por favor ingrese la contraseña actual');
+                    return;
+                }
+                
+                if (!newPass) {
+                    alert('Por favor ingrese la nueva contraseña');
+                    return;
+                }
+                
+                if (newPass !== confirmPass) {
+                    alert('Las contraseñas nuevas no coinciden');
+                    return;
+                }
+                
+                if (newPass.length < 6) {
+                    alert('La nueva contraseña debe tener al menos 6 caracteres');
+                    return;
+                }
+                
+                alert('Contraseña cambiada exitosamente');
+                currentPassword.value = '';
+                newPassword.value = '';
+                confirmNewPassword.value = '';
+            });
+
+            // Exportar datos
+            exportDataBtn.addEventListener('click', () => {
+                alert('Exportando datos del perfil...');
+            });
+
+            // Restaurar formulario
+            resetBtn.addEventListener('click', () => {
+                if (confirm('¿Está seguro de que desea restaurar los valores originales?')) {
+                    form.reset();
+                    // Restaurar valores por defecto
+                    document.getElementById('fullName').value = 'María González';
+                    document.getElementById('username').value = 'vendedor1';
+                    document.getElementById('email').value = 'maria@adsstore.com';
+                    document.getElementById('phone').value = '+57 300 123 4567';
+                    document.getElementById('documentId').value = '12345678';
+                    document.getElementById('birthDate').value = '1990-05-15';
+                    document.getElementById('address').value = 'Calle 123 #45-67, Bogotá, Colombia';
+                }
+            });
+
+            // Envío del formulario
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                if (form.checkValidity()) {
+                    const formData = new FormData(form);
+                    const profileData = Object.fromEntries(formData);
+                    
+                    // Simular guardado
+                    alert('Perfil actualizado exitosamente');
+                    console.log('Datos del perfil:', profileData);
+                } else {
+                    alert('Por favor complete todos los campos requeridos');
+                }
+                
+                form.classList.add('was-validated');
+            });
+
+            // Actualizar estadísticas (simulación)
+            function updateStats() {
+                console.log('Actualizando estadísticas del perfil...');
+            }
+
+            // Inicializar
+            updateStats();
+
+        })();
+    </script>
+</body>
+</html>

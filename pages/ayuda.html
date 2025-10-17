@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda y Soporte - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Ayuda y soporte del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Ayuda y Soporte</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Búsqueda de Ayuda -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-lg-8">
+                                    <label class="form-label">¿En qué podemos ayudarte?</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="helpSearch" placeholder="Buscar en la documentación, preguntas frecuentes...">
+                                        <button class="btn btn-primary" type="button" id="searchHelpBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <label class="form-label">Categoría</label>
+                                    <select class="form-select" id="helpCategory">
+                                        <option value="">Todas las categorías</option>
+                                        <option value="general">General</option>
+                                        <option value="ventas">Ventas</option>
+                                        <option value="inventario">Inventario</option>
+                                        <option value="facturacion">Facturación</option>
+                                        <option value="caja">Caja</option>
+                                        <option value="usuarios">Usuarios</option>
+                                        <option value="configuracion">Configuración</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-question-circle"></i>
+                            <strong>Preguntas Frecuentes</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="faqAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faq1">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                            ¿Cómo crear una nueva factura?
+                                        </button>
+                                    </h2>
+                                    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Para crear una nueva factura:</p>
+                                            <ol>
+                                                <li>Ve al módulo de <strong>Facturación</strong></li>
+                                                <li>Completa los datos del cliente</li>
+                                                <li>Agrega los productos con sus cantidades</li>
+                                                <li>Verifica los totales e impuestos</li>
+                                                <li>Selecciona el método de pago</li>
+                                                <li>Haz clic en <strong>Generar Factura</strong></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faq2">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                            ¿Cómo gestionar el inventario?
+                                        </button>
+                                    </h2>
+                                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>El inventario se puede gestionar desde:</p>
+                                            <ul>
+                                                <li><strong>Productos:</strong> Crear, editar y eliminar productos</li>
+                                                <li><strong>Categorías:</strong> Organizar productos por categorías</li>
+                                                <li><strong>Inventario:</strong> Ver stock actual y realizar ajustes</li>
+                                                <li><strong>Movimientos:</strong> Registrar entradas y salidas de productos</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faq3">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                            ¿Cómo configurar los impuestos?
+                                        </button>
+                                    </h2>
+                                    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Para configurar los impuestos:</p>
+                                            <ol>
+                                                <li>Ve a <strong>Configuración del Sistema</strong></li>
+                                                <li>Selecciona la sección <strong>Configuración de Impuestos</strong></li>
+                                                <li>Configura el IVA por defecto (19% para Colombia)</li>
+                                                <li>Establece el IVA reducido (5%) y exento (0%)</li>
+                                                <li>Selecciona el tipo de cálculo (incluido o agregado)</li>
+                                                <li>Guarda los cambios</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faq4">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                            ¿Cómo abrir y cerrar la caja?
+                                        </button>
+                                    </h2>
+                                    <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="faq4" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Para gestionar la caja:</p>
+                                            <ul>
+                                                <li><strong>Apertura:</strong> Ve a <strong>Apertura de Caja</strong>, ingresa el fondo inicial y confirma</li>
+                                                <li><strong>Cierre:</strong> Ve a <strong>Cierre de Caja</strong>, cuenta el dinero y registra los totales</li>
+                                                <li><strong>Historial:</strong> Consulta todas las operaciones de caja en <strong>Historial de Caja</strong></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faq5">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                                            ¿Cómo crear usuarios y asignar permisos?
+                                        </button>
+                                    </h2>
+                                    <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="faq5" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Para gestionar usuarios:</p>
+                                            <ol>
+                                                <li>Ve a <strong>Gestión de Usuarios</strong></li>
+                                                <li>Completa los datos personales del usuario</li>
+                                                <li>Asigna un rol (Administrador, Cajero, Vendedor, etc.)</li>
+                                                <li>Configura los permisos por módulo</li>
+                                                <li>Establece el estado del usuario</li>
+                                                <li>Guarda el usuario</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guías de Usuario -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-book"></i>
+                            <strong>Guías de Usuario</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
+                                            <h5 class="card-title">Guía de Ventas</h5>
+                                            <p class="card-text">Aprende a realizar ventas, facturación y gestión de clientes.</p>
+                                            <button class="btn btn-outline-primary" onclick="openGuide('ventas')">
+                                                <i class="fas fa-download me-1"></i>Descargar PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-warehouse fa-3x text-success mb-3"></i>
+                                            <h5 class="card-title">Guía de Inventario</h5>
+                                            <p class="card-text">Gestiona productos, categorías y control de stock.</p>
+                                            <button class="btn btn-outline-success" onclick="openGuide('inventario')">
+                                                <i class="fas fa-download me-1"></i>Descargar PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-cash-register fa-3x text-warning mb-3"></i>
+                                            <h5 class="card-title">Guía de Caja</h5>
+                                            <p class="card-text">Apertura, cierre y gestión de operaciones de caja.</p>
+                                            <button class="btn btn-outline-warning" onclick="openGuide('caja')">
+                                                <i class="fas fa-download me-1"></i>Descargar PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacto y Soporte -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-headset"></i>
+                            <strong>Contacto de Soporte</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-phone text-primary me-3"></i>
+                                        <div>
+                                            <strong>Teléfono</strong><br>
+                                            <span>+57 1 234 5678</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-envelope text-primary me-3"></i>
+                                        <div>
+                                            <strong>Email</strong><br>
+                                            <span>soporte@adsstore.com</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-clock text-primary me-3"></i>
+                                        <div>
+                                            <strong>Horario</strong><br>
+                                            <span>Lunes a Viernes: 8:00 AM - 6:00 PM</span><br>
+                                            <span>Sábados: 9:00 AM - 2:00 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-ticket-alt"></i>
+                            <strong>Crear Ticket de Soporte</strong>
+                        </div>
+                        <div class="card-body">
+                            <form id="supportTicketForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Asunto *</label>
+                                    <input type="text" class="form-control" id="ticketSubject" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Categoría *</label>
+                                    <select class="form-select" id="ticketCategory" required>
+                                        <option value="">Seleccionar categoría</option>
+                                        <option value="error">Error del sistema</option>
+                                        <option value="funcionalidad">Nueva funcionalidad</option>
+                                        <option value="configuracion">Configuración</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Descripción *</label>
+                                    <textarea class="form-control" id="ticketDescription" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-1"></i>Enviar Ticket
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Sistema -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Información del Sistema</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-center">
+                                        <h6 class="text-primary">Versión del Sistema</h6>
+                                        <p class="mb-0">v2.1.0</p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-center">
+                                        <h6 class="text-success">Última Actualización</h6>
+                                        <p class="mb-0">15 Enero 2024</p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-center">
+                                        <h6 class="text-info">Base de Datos</h6>
+                                        <p class="mb-0">MySQL 8.0</p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="text-center">
+                                        <h6 class="text-warning">Estado del Servidor</h6>
+                                        <p class="mb-0 text-success">Operativo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enlaces Útiles -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-link"></i>
+                            <strong>Enlaces Útiles</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-lg-4">
+                                    <div class="d-flex align-items-center p-3 border rounded">
+                                        <i class="fas fa-video text-primary me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Tutoriales en Video</h6>
+                                            <p class="mb-0 text-muted">Aprende con videos paso a paso</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="d-flex align-items-center p-3 border rounded">
+                                        <i class="fas fa-file-pdf text-danger me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Manual Completo</h6>
+                                            <p class="mb-0 text-muted">Documentación detallada del sistema</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div class="d-flex align-items-center p-3 border rounded">
+                                        <i class="fas fa-comments text-success me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Comunidad</h6>
+                                            <p class="mb-0 text-muted">Foro de usuarios y soporte</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const searchHelpBtn = document.getElementById('searchHelpBtn');
+            const helpSearch = document.getElementById('helpSearch');
+            const helpCategory = document.getElementById('helpCategory');
+            const supportTicketForm = document.getElementById('supportTicketForm');
+
+            // Búsqueda de ayuda
+            function searchHelp() {
+                const searchTerm = helpSearch.value.trim();
+                const category = helpCategory.value;
+                
+                if (searchTerm) {
+                    alert(`Buscando: "${searchTerm}" en categoría: "${category || 'Todas'}"`);
+                    // Aquí se implementaría la búsqueda real
+                } else {
+                    alert('Por favor ingrese un término de búsqueda');
+                }
+            }
+
+            searchHelpBtn.addEventListener('click', searchHelp);
+            helpSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchHelp();
+                }
+            });
+
+            // Envío de ticket de soporte
+            supportTicketForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                if (supportTicketForm.checkValidity()) {
+                    const formData = new FormData(supportTicketForm);
+                    const ticketData = Object.fromEntries(formData);
+                    
+                    alert('Ticket de soporte enviado exitosamente. Nos pondremos en contacto contigo pronto.');
+                    supportTicketForm.reset();
+                    console.log('Datos del ticket:', ticketData);
+                } else {
+                    alert('Por favor complete todos los campos requeridos');
+                }
+                
+                supportTicketForm.classList.add('was-validated');
+            });
+
+            // Función para abrir guías
+            window.openGuide = function(guideType) {
+                const guides = {
+                    'ventas': 'Guía de Ventas - ADS Store POS.pdf',
+                    'inventario': 'Guía de Inventario - ADS Store POS.pdf',
+                    'caja': 'Guía de Caja - ADS Store POS.pdf'
+                };
+                
+                alert(`Descargando: ${guides[guideType]}`);
+                // Aquí se implementaría la descarga real del PDF
+            };
+
+            // Actualizar información del sistema (simulación)
+            function updateSystemInfo() {
+                console.log('Actualizando información del sistema...');
+            }
+
+            // Inicializar
+            updateSystemInfo();
+
+        })();
+    </script>
+</body>
+</html>

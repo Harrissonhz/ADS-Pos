@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Gestión de compras del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Compras</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <form id="purchaseForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-file-invoice"></i>
+                        <strong>Información de la Compra</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Número de orden</label>
+                                <input type="text" class="form-control" id="orderNumber" placeholder="OC-001" required>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Fecha de compra</label>
+                                <input type="date" class="form-control" id="purchaseDate" required>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Fecha esperada de entrega</label>
+                                <input type="date" class="form-control" id="expectedDelivery">
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="purchaseStatus" required>
+                                    <option value="pendiente" selected>Pendiente</option>
+                                    <option value="confirmada">Confirmada</option>
+                                    <option value="enviada">Enviada</option>
+                                    <option value="recibida">Recibida</option>
+                                    <option value="cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-truck"></i>
+                        <strong>Datos del Proveedor</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Proveedor</label>
+                                <select class="form-select" id="supplier" required>
+                                    <option value="">Seleccionar proveedor</option>
+                                    <option value="1">Proveedor A - Electrónicos</option>
+                                    <option value="2">Proveedor B - Ropa</option>
+                                    <option value="3">Proveedor C - Hogar</option>
+                                    <option value="4">Proveedor D - Deportes</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Contacto</label>
+                                <input type="text" class="form-control" id="contactPerson" placeholder="Nombre del contacto" readonly>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="supplierPhone" placeholder="300 000 0000" readonly>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="supplierEmail" placeholder="proveedor@email.com" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <strong>Productos a Comprar</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Buscar producto</label>
+                                <input type="text" class="form-control" id="searchProduct" placeholder="Código o nombre del producto">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" min="1" value="1">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Precio unitario</label>
+                                <input type="number" class="form-control" id="unitPrice" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Descuento %</label>
+                                <input type="number" class="form-control" id="discount" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <button type="button" class="btn btn-outline-primary w-100" id="addProduct">
+                                    <i class="fas fa-plus me-1"></i>Agregar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mt-3">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 34px;"></th>
+                                        <th>Producto</th>
+                                        <th class="text-end">Cantidad</th>
+                                        <th class="text-end">P. Unitario</th>
+                                        <th class="text-end">Descuento</th>
+                                        <th class="text-end">Subtotal</th>
+                                        <th style="width: 34px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsBody">
+                                    <tr>
+                                        <td><i class="fas fa-laptop text-primary"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Laptop HP Pavilion 15</strong><br>
+                                                <small class="text-muted">Código: LAP-HP-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">2</td>
+                                        <td class="text-end">$ 2,200,000</td>
+                                        <td class="text-end">5%</td>
+                                        <td class="text-end"><strong>$ 4,180,000</strong></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-mobile-alt text-info"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Samsung Galaxy S21</strong><br>
+                                                <small class="text-muted">Código: CEL-SAM-001</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">5</td>
+                                        <td class="text-end">$ 1,600,000</td>
+                                        <td class="text-end">0%</td>
+                                        <td class="text-end"><strong>$ 8,000,000</strong></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-scale-balanced"></i>
+                        <strong>Totales y Pagos</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Observaciones</label>
+                                <textarea class="form-control" id="notes" rows="3" placeholder="Notas sobre la compra"></textarea>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="card p-3">
+                                    <div class="d-flex justify-content-between"><span>Subtotal</span><strong id="uiSubtotal">$ 12,180,000</strong></div>
+                                    <div class="d-flex justify-content-between"><span>Descuento global</span>
+                                        <div class="d-flex gap-2">
+                                            <input type="number" class="form-control form-control-sm" id="globalDiscount" min="0" max="100" value="0" style="width: 90px;">
+                                            <span class="align-self-center">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between"><span>IVA (19%)</span><strong id="uiVat">$ 2,314,200</strong></div>
+                                    <div class="d-flex justify-content-between fs-5 border-top pt-2"><span>Total a pagar</span><strong id="uiTotal">$ 14,494,200</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mt-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Método de pago</label>
+                                <select class="form-select" id="paymentMethod">
+                                    <option value="transferencia" selected>Transferencia bancaria</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="credito">Crédito</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Términos de pago</label>
+                                <select class="form-select" id="paymentTerms">
+                                    <option value="contado" selected>Contado</option>
+                                    <option value="30dias">30 días</option>
+                                    <option value="60dias">60 días</option>
+                                    <option value="90dias">90 días</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Descuento por pronto pago</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="earlyPaymentDiscount" min="0" max="100" value="0">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Historial de Compras</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Buscar compra</label>
+                                <input type="text" class="form-control" id="searchPurchase" placeholder="Número de orden o proveedor">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Filtrar por estado</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Todos los estados</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="confirmada">Confirmada</option>
+                                    <option value="enviada">Enviada</option>
+                                    <option value="recibida">Recibida</option>
+                                    <option value="cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Rango de fechas</label>
+                                <input type="date" class="form-control" id="dateRange">
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Orden</th>
+                                        <th>Proveedor</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th class="text-end">Total</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchasesBody">
+                                    <tr>
+                                        <td><strong>OC-001</strong></td>
+                                        <td>Proveedor A - Electrónicos</td>
+                                        <td>2024-01-15</td>
+                                        <td><span class="badge bg-success">Recibida</span></td>
+                                        <td class="text-end">$ 14,494,200</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>OC-002</strong></td>
+                                        <td>Proveedor B - Ropa</td>
+                                        <td>2024-01-10</td>
+                                        <td><span class="badge bg-warning">Enviada</span></td>
+                                        <td class="text-end">$ 2,500,000</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>OC-003</strong></td>
+                                        <td>Proveedor C - Hogar</td>
+                                        <td>2024-01-05</td>
+                                        <td><span class="badge bg-info">Confirmada</span></td>
+                                        <td class="text-end">$ 1,800,000</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="draftBtn">
+                                <i class="fas fa-save me-1"></i>Guardar borrador
+                            </button>
+                            <button type="button" class="btn btn-success" id="saveBtn">
+                                <i class="fas fa-check me-1"></i>Crear orden
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('purchaseForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const draftBtn = document.getElementById('draftBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const addProductBtn = document.getElementById('addProduct');
+            const searchInput = document.getElementById('searchPurchase');
+            const filterStatus = document.getElementById('filterStatus');
+            const supplier = document.getElementById('supplier');
+            
+            const productsBody = document.getElementById('productsBody');
+            const uiSubtotal = document.getElementById('uiSubtotal');
+            const uiVat = document.getElementById('uiVat');
+            const uiTotal = document.getElementById('uiTotal');
+            const globalDiscount = document.getElementById('globalDiscount');
+
+            // Datos de proveedores
+            const suppliers = {
+                '1': { name: 'Proveedor A - Electrónicos', contact: 'Juan Pérez', phone: '300 123 4567', email: 'juan@proveedora.com' },
+                '2': { name: 'Proveedor B - Ropa', contact: 'María García', phone: '300 234 5678', email: 'maria@proveedorb.com' },
+                '3': { name: 'Proveedor C - Hogar', contact: 'Carlos López', phone: '300 345 6789', email: 'carlos@proveedorc.com' },
+                '4': { name: 'Proveedor D - Deportes', contact: 'Ana Martínez', phone: '300 456 7890', email: 'ana@proveedord.com' }
+            };
+
+            // Actualizar datos del proveedor
+            supplier.addEventListener('change', () => {
+                const selectedSupplier = suppliers[supplier.value];
+                if (selectedSupplier) {
+                    document.getElementById('contactPerson').value = selectedSupplier.contact;
+                    document.getElementById('supplierPhone').value = selectedSupplier.phone;
+                    document.getElementById('supplierEmail').value = selectedSupplier.email;
+                } else {
+                    document.getElementById('contactPerson').value = '';
+                    document.getElementById('supplierPhone').value = '';
+                    document.getElementById('supplierEmail').value = '';
+                }
+            });
+
+            // Calcular totales
+            function calculateTotals() {
+                let subtotal = 0;
+                
+                for (const row of productsBody.querySelectorAll('tr')) {
+                    const quantity = Number(row.querySelector('.prod-qty').textContent || 0);
+                    const unitPrice = Number(row.querySelector('.prod-price').textContent.replace(/[$,]/g, '') || 0);
+                    const discount = Number(row.querySelector('.prod-disc').textContent.replace('%', '') || 0);
+                    
+                    const lineSubtotal = quantity * unitPrice * (1 - discount / 100);
+                    subtotal += lineSubtotal;
+                }
+
+                // Descuento global
+                const globalDiscPct = Number(globalDiscount.value || 0);
+                const discountAmt = Math.max(0, subtotal * globalDiscPct / 100);
+                subtotal -= discountAmt;
+
+                const vat = Math.round(subtotal * 0.19);
+                const total = subtotal + vat;
+
+                uiSubtotal.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(subtotal);
+                uiVat.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(vat);
+                uiTotal.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(total);
+            }
+
+            // Agregar producto
+            addProductBtn.addEventListener('click', () => {
+                const searchTerm = document.getElementById('searchProduct').value.trim();
+                const quantity = Number(document.getElementById('quantity').value || 1);
+                const unitPrice = Number(document.getElementById('unitPrice').value || 0);
+                const discount = Number(document.getElementById('discount').value || 0);
+
+                if (!searchTerm || unitPrice <= 0) {
+                    alert('Por favor complete la información del producto');
+                    return;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><i class="fas fa-box text-primary"></i></td>
+                    <td>
+                        <div>
+                            <strong>${searchTerm}</strong><br>
+                            <small class="text-muted">Código: ${searchTerm.toUpperCase().substring(0, 8)}</small>
+                        </div>
+                    </td>
+                    <td class="text-end prod-qty">${quantity}</td>
+                    <td class="text-end prod-price">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(unitPrice)}</td>
+                    <td class="text-end prod-disc">${discount}%</td>
+                    <td class="text-end"><strong>${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(quantity * unitPrice * (1 - discount / 100))}</strong></td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+
+                productsBody.appendChild(tr);
+                
+                // Limpiar campos
+                document.getElementById('searchProduct').value = '';
+                document.getElementById('quantity').value = '1';
+                document.getElementById('unitPrice').value = '';
+                document.getElementById('discount').value = '0';
+                
+                calculateTotals();
+            });
+
+            // Eliminar producto
+            productsBody.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-outline-danger')) {
+                    e.target.closest('tr').remove();
+                    calculateTotals();
+                }
+            });
+
+            // Recalcular al cambiar descuento global
+            globalDiscount.addEventListener('input', calculateTotals);
+
+            // Limpiar formulario
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                productsBody.innerHTML = '';
+                calculateTotals();
+            });
+
+            // Buscar compras
+            searchBtn.addEventListener('click', () => {
+                const searchTerm = searchInput.value.trim();
+                const status = filterStatus.value;
+                
+                if (searchTerm || status) {
+                    alert(`Buscando compras: "${searchTerm}" con estado: "${status || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese un término de búsqueda o seleccione un estado');
+                }
+            });
+
+            // Guardar borrador
+            draftBtn.addEventListener('click', () => {
+                alert('Orden de compra guardada como borrador');
+            });
+
+            // Crear orden
+            saveBtn.addEventListener('click', () => {
+                if (form.checkValidity()) {
+                    const purchaseData = {
+                        orderNumber: document.getElementById('orderNumber').value,
+                        purchaseDate: document.getElementById('purchaseDate').value,
+                        expectedDelivery: document.getElementById('expectedDelivery').value,
+                        status: document.getElementById('purchaseStatus').value,
+                        supplier: document.getElementById('supplier').value,
+                        contactPerson: document.getElementById('contactPerson').value,
+                        supplierPhone: document.getElementById('supplierPhone').value,
+                        supplierEmail: document.getElementById('supplierEmail').value,
+                        notes: document.getElementById('notes').value,
+                        paymentMethod: document.getElementById('paymentMethod').value,
+                        paymentTerms: document.getElementById('paymentTerms').value,
+                        earlyPaymentDiscount: document.getElementById('earlyPaymentDiscount').value,
+                        products: Array.from(productsBody.querySelectorAll('tr')).map(row => ({
+                            name: row.cells[1].querySelector('strong').textContent,
+                            quantity: Number(row.cells[2].textContent),
+                            unitPrice: Number(row.cells[3].textContent.replace(/[$,]/g, '')),
+                            discount: Number(row.cells[4].textContent.replace('%', ''))
+                        }))
+                    };
+                    
+                    console.log('Datos de la compra:', purchaseData);
+                    alert('Orden de compra creada exitosamente');
+                    form.reset();
+                    productsBody.innerHTML = '';
+                    calculateTotals();
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Búsqueda en tiempo real
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#purchasesBody tr');
+                
+                rows.forEach(row => {
+                    const orderNumber = row.cells[0].textContent.toLowerCase();
+                    const supplier = row.cells[1].textContent.toLowerCase();
+                    
+                    if (orderNumber.includes(searchTerm) || supplier.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Filtro por estado
+            filterStatus.addEventListener('change', () => {
+                const selectedStatus = filterStatus.value;
+                const rows = document.querySelectorAll('#purchasesBody tr');
+                
+                rows.forEach(row => {
+                    const status = row.cells[3].textContent.trim();
+                    
+                    if (!selectedStatus || status.includes(selectedStatus)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Establecer fecha actual
+            document.getElementById('purchaseDate').valueAsDate = new Date();
+            
+            // Calcular totales iniciales
+            calculateTotals();
+
+        })();
+    </script>
+</body>
+</html>

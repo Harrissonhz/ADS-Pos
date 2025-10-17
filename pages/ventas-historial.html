@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ventas - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Historial de ventas del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Historial de Ventas</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Resumen de Ventas -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Total Ventas</h5>
+                            <h3 class="text-primary">156</h3>
+                            <small class="text-muted">Este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Ingresos</h5>
+                            <h3 class="text-success">$ 45.2M</h3>
+                            <small class="text-muted">Este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Promedio</h5>
+                            <h3 class="text-info">$ 290K</h3>
+                            <small class="text-muted">Por venta</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Mejor Día</h5>
+                            <h3 class="text-warning">$ 3.2M</h3>
+                            <small class="text-muted">15 Ene 2024</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="salesHistoryForm" class="p-3" novalidate>
+                <!-- Filtros de Búsqueda -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-filter"></i>
+                        <strong>Filtros de Búsqueda</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Buscar</label>
+                                <input type="text" class="form-control" id="searchTerm" placeholder="Número de venta, cliente, vendedor...">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Todos</option>
+                                    <option value="completada">Completada</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="cancelada">Cancelada</option>
+                                    <option value="reembolsada">Reembolsada</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Método de Pago</label>
+                                <select class="form-select" id="filterPayment">
+                                    <option value="">Todos</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="tarjeta">Tarjeta</option>
+                                    <option value="transferencia">Transferencia</option>
+                                    <option value="mixto">Mixto</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Vendedor</label>
+                                <select class="form-select" id="filterSeller">
+                                    <option value="">Todos</option>
+                                    <option value="admin">admin</option>
+                                    <option value="vendedor1">vendedor1</option>
+                                    <option value="vendedor2">vendedor2</option>
+                                    <option value="cajero1">cajero1</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha desde</label>
+                                <input type="date" class="form-control" id="dateFrom">
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary w-100" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Fecha hasta</label>
+                                <input type="date" class="form-control" id="dateTo">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Monto mínimo</label>
+                                <input type="number" class="form-control" id="minAmount" placeholder="0" min="0">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Monto máximo</label>
+                                <input type="number" class="form-control" id="maxAmount" placeholder="999999999" min="0">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Cliente</label>
+                                <input type="text" class="form-control" id="customerFilter" placeholder="Nombre del cliente">
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">Ordenar por</label>
+                                <select class="form-select" id="sortBy">
+                                    <option value="fecha_desc" selected>Fecha (más reciente)</option>
+                                    <option value="fecha_asc">Fecha (más antigua)</option>
+                                    <option value="monto_desc">Monto (mayor)</option>
+                                    <option value="monto_asc">Monto (menor)</option>
+                                    <option value="cliente">Cliente (A-Z)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-secondary w-100" id="clearFiltersBtn">
+                                    <i class="fas fa-eraser me-1"></i>Limpiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historial de Ventas -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Historial de Ventas</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th># Venta</th>
+                                        <th>Fecha/Hora</th>
+                                        <th>Cliente</th>
+                                        <th>Vendedor</th>
+                                        <th>Productos</th>
+                                        <th class="text-end">Subtotal</th>
+                                        <th class="text-end">Descuento</th>
+                                        <th class="text-end">IVA</th>
+                                        <th class="text-end">Total</th>
+                                        <th>Método</th>
+                                        <th>Estado</th>
+                                        <th style="width: 120px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesBody">
+                                    <tr>
+                                        <td>
+                                            <strong>#001-0001234</strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:30 PM</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>María González</strong><br>
+                                                <small class="text-muted">CC 12345678</small>
+                                            </div>
+                                        </td>
+                                        <td>admin</td>
+                                        <td>
+                                            <span class="badge bg-info">3 productos</span>
+                                        </td>
+                                        <td class="text-end">$ 1,585,500</td>
+                                        <td class="text-end text-success">$ 0</td>
+                                        <td class="text-end">$ 300,245</td>
+                                        <td class="text-end fw-bold text-primary">$ 1,885,745</td>
+                                        <td><span class="badge bg-success">Efectivo</span></td>
+                                        <td><span class="badge bg-success">Completada</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Reembolsar">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>#001-0001233</strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:20 PM</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>Carlos López</strong><br>
+                                                <small class="text-muted">CC 87654321</small>
+                                            </div>
+                                        </td>
+                                        <td>vendedor1</td>
+                                        <td>
+                                            <span class="badge bg-info">2 productos</span>
+                                        </td>
+                                        <td class="text-end">$ 850,000</td>
+                                        <td class="text-end text-success">$ 50,000</td>
+                                        <td class="text-end">$ 152,000</td>
+                                        <td class="text-end fw-bold text-primary">$ 952,000</td>
+                                        <td><span class="badge bg-primary">Tarjeta</span></td>
+                                        <td><span class="badge bg-success">Completada</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Reembolsar">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>#001-0001232</strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:15 PM</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>Cliente General</strong><br>
+                                                <small class="text-muted">-</small>
+                                            </div>
+                                        </td>
+                                        <td>cajero1</td>
+                                        <td>
+                                            <span class="badge bg-info">1 producto</span>
+                                        </td>
+                                        <td class="text-end">$ 450,000</td>
+                                        <td class="text-end text-success">$ 0</td>
+                                        <td class="text-end">$ 85,500</td>
+                                        <td class="text-end fw-bold text-primary">$ 535,500</td>
+                                        <td><span class="badge bg-success">Efectivo</span></td>
+                                        <td><span class="badge bg-success">Completada</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Reembolsar">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>#001-0001231</strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:10 PM</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>Ana Rodríguez</strong><br>
+                                                <small class="text-muted">CC 11223344</small>
+                                            </div>
+                                        </td>
+                                        <td>vendedor2</td>
+                                        <td>
+                                            <span class="badge bg-info">4 productos</span>
+                                        </td>
+                                        <td class="text-end">$ 1,200,000</td>
+                                        <td class="text-end text-success">$ 100,000</td>
+                                        <td class="text-end">$ 209,000</td>
+                                        <td class="text-end fw-bold text-primary">$ 1,309,000</td>
+                                        <td><span class="badge bg-info">Transferencia</span></td>
+                                        <td><span class="badge bg-warning">Pendiente</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success" title="Completar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>#001-0001230</strong>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>2024-01-15</strong><br>
+                                                <small class="text-muted">18:05 PM</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong>Luis Martínez</strong><br>
+                                                <small class="text-muted">CC 55667788</small>
+                                            </div>
+                                        </td>
+                                        <td>admin</td>
+                                        <td>
+                                            <span class="badge bg-info">2 productos</span>
+                                        </td>
+                                        <td class="text-end">$ 750,000</td>
+                                        <td class="text-end text-success">$ 0</td>
+                                        <td class="text-end">$ 142,500</td>
+                                        <td class="text-end fw-bold text-primary">$ 892,500</td>
+                                        <td><span class="badge bg-warning">Mixto</span></td>
+                                        <td><span class="badge bg-danger">Cancelada</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Imprimir">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success" title="Reactivar">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas por Período -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <strong>Estadísticas por Período</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-3">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Hoy</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">24</h5>
+                                            <small class="text-muted">Ventas</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 2.4M</h5>
+                                            <small class="text-muted">Total</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Esta Semana</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">156</h5>
+                                            <small class="text-muted">Ventas</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 15.8M</h5>
+                                            <small class="text-muted">Total</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Este Mes</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">624</h5>
+                                            <small class="text-muted">Ventas</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 45.2M</h5>
+                                            <small class="text-muted">Total</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="card p-3 text-center">
+                                    <h6 class="card-title">Promedio Diario</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h5 class="text-primary">20.8</h5>
+                                            <small class="text-muted">Ventas</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="text-success">$ 1.5M</h5>
+                                            <small class="text-muted">Por Día</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Vendedores -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-trophy"></i>
+                        <strong>Top Vendedores</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>admin</strong><br>
+                                            <small class="text-muted">Administrador</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 18.5M</strong><br>
+                                        <small class="text-muted">45 ventas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>vendedor1</strong><br>
+                                            <small class="text-muted">Vendedor</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 15.2M</strong><br>
+                                        <small class="text-muted">38 ventas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>vendedor2</strong><br>
+                                            <small class="text-muted">Vendedor</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 8.7M</strong><br>
+                                        <small class="text-muted">22 ventas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <strong>cajero1</strong><br>
+                                            <small class="text-muted">Cajero</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>$ 2.8M</strong><br>
+                                        <small class="text-muted">8 ventas</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-info" id="exportBtn">
+                                <i class="fas fa-download me-1"></i>Exportar Excel
+                            </button>
+                            <button type="button" class="btn btn-warning" id="printReportBtn">
+                                <i class="fas fa-print me-1"></i>Imprimir Reporte
+                            </button>
+                            <button type="button" class="btn btn-success" id="generateReportBtn">
+                                <i class="fas fa-chart-line me-1"></i>Generar Reporte
+                            </button>
+                            <button type="button" class="btn btn-primary" id="refreshBtn">
+                                <i class="fas fa-sync me-1"></i>Actualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('salesHistoryForm');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const printReportBtn = document.getElementById('printReportBtn');
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const searchTerm = document.getElementById('searchTerm');
+            const filterStatus = document.getElementById('filterStatus');
+            const filterPayment = document.getElementById('filterPayment');
+            const filterSeller = document.getElementById('filterSeller');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            const minAmount = document.getElementById('minAmount');
+            const maxAmount = document.getElementById('maxAmount');
+            const customerFilter = document.getElementById('customerFilter');
+            const sortBy = document.getElementById('sortBy');
+
+            // Búsqueda en tiempo real
+            searchTerm.addEventListener('input', () => {
+                const searchValue = searchTerm.value.toLowerCase();
+                const rows = document.querySelectorAll('#salesBody tr');
+                
+                rows.forEach(row => {
+                    const saleNumber = row.cells[0].textContent.toLowerCase();
+                    const customer = row.cells[2].textContent.toLowerCase();
+                    const seller = row.cells[3].textContent.toLowerCase();
+                    
+                    if (saleNumber.includes(searchValue) || customer.includes(searchValue) || seller.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Aplicar filtros
+            function applyFilters() {
+                const status = filterStatus.value;
+                const payment = filterPayment.value;
+                const seller = filterSeller.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                const min = parseFloat(minAmount.value) || 0;
+                const max = parseFloat(maxAmount.value) || Infinity;
+                const customer = customerFilter.value.toLowerCase();
+                const rows = document.querySelectorAll('#salesBody tr');
+                
+                rows.forEach(row => {
+                    const statusCell = row.cells[10].textContent.trim();
+                    const paymentCell = row.cells[9].textContent.trim();
+                    const sellerCell = row.cells[3].textContent.trim();
+                    const customerCell = row.cells[2].textContent.toLowerCase();
+                    const totalCell = row.cells[8].textContent.replace(/[^0-9]/g, '');
+                    const total = parseFloat(totalCell) || 0;
+                    
+                    let showRow = true;
+                    
+                    if (status && !statusCell.toLowerCase().includes(status)) {
+                        showRow = false;
+                    }
+                    
+                    if (payment && !paymentCell.toLowerCase().includes(payment)) {
+                        showRow = false;
+                    }
+                    
+                    if (seller && !sellerCell.includes(seller)) {
+                        showRow = false;
+                    }
+                    
+                    if (customer && !customerCell.includes(customer)) {
+                        showRow = false;
+                    }
+                    
+                    if (total < min || total > max) {
+                        showRow = false;
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            // Event listeners para filtros
+            filterStatus.addEventListener('change', applyFilters);
+            filterPayment.addEventListener('change', applyFilters);
+            filterSeller.addEventListener('change', applyFilters);
+            dateFrom.addEventListener('change', applyFilters);
+            dateTo.addEventListener('change', applyFilters);
+            minAmount.addEventListener('input', applyFilters);
+            maxAmount.addEventListener('input', applyFilters);
+            customerFilter.addEventListener('input', applyFilters);
+            sortBy.addEventListener('change', applyFilters);
+
+            // Buscar
+            function performSearch() {
+                const search = searchTerm.value.trim();
+                const status = filterStatus.value;
+                const payment = filterPayment.value;
+                const seller = filterSeller.value;
+                const fromDate = dateFrom.value;
+                const toDate = dateTo.value;
+                const min = minAmount.value;
+                const max = maxAmount.value;
+                const customer = customerFilter.value;
+                const sort = sortBy.value;
+                
+                if (search || status || payment || seller || fromDate || toDate || min || max || customer) {
+                    alert(`Buscando ventas: "${search}" estado: "${status || 'Todos'}" pago: "${payment || 'Todos'}" vendedor: "${seller || 'Todos'}" desde: "${fromDate || 'Todos'}" hasta: "${toDate || 'Todos'}" cliente: "${customer || 'Todos'}" orden: "${sort}"`);
+                } else {
+                    alert('Por favor ingrese criterios de búsqueda');
+                }
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+
+            // Exportar
+            exportBtn.addEventListener('click', () => {
+                alert('Exportando historial de ventas a Excel...');
+            });
+
+            // Imprimir reporte
+            printReportBtn.addEventListener('click', () => {
+                alert('Generando reporte para impresión...');
+            });
+
+            // Generar reporte
+            generateReportBtn.addEventListener('click', () => {
+                alert('Generando reporte detallado de ventas...');
+            });
+
+            // Actualizar
+            refreshBtn.addEventListener('click', () => {
+                alert('Actualizando historial de ventas...');
+                // Aquí se implementaría la actualización real
+            });
+
+            // Limpiar filtros
+            clearFiltersBtn.addEventListener('click', () => {
+                form.reset();
+                // Mostrar todas las filas
+                const rows = document.querySelectorAll('#salesBody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+            });
+
+            // Establecer fechas por defecto
+            const today = new Date();
+            const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            dateFrom.valueAsDate = lastWeek;
+            dateTo.valueAsDate = today;
+
+            // Actualizar resumen (simulación)
+            function updateSummary() {
+                console.log('Actualizando resumen de ventas...');
+            }
+
+            // Inicializar
+            updateSummary();
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Control de inventario del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Inventario</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Resumen del Inventario -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-boxes fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Total Productos</h5>
+                            <h3 class="text-primary">1,247</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Stock Bajo</h5>
+                            <h3 class="text-warning">23</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                            <h5 class="card-title">Sin Stock</h5>
+                            <h3 class="text-danger">8</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Valor Total</h5>
+                            <h3 class="text-success">$ 45.2M</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="inventoryForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-search"></i>
+                        <strong>Filtros y Búsqueda</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Buscar producto</label>
+                                <input type="text" class="form-control" id="searchProduct" placeholder="Nombre, código o marca">
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Categoría</label>
+                                <select class="form-select" id="filterCategory">
+                                    <option value="">Todas las categorías</option>
+                                    <option value="electronica">Electrónicos</option>
+                                    <option value="ropa">Ropa y Accesorios</option>
+                                    <option value="hogar">Hogar y Jardín</option>
+                                    <option value="deportes">Deportes</option>
+                                    <option value="libros">Libros y Oficina</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label">Estado de stock</label>
+                                <select class="form-select" id="filterStock">
+                                    <option value="">Todos</option>
+                                    <option value="normal">Stock Normal</option>
+                                    <option value="bajo">Stock Bajo</option>
+                                    <option value="agotado">Sin Stock</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary w-100" id="searchBtn">
+                                    <i class="fas fa-search me-1"></i>Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-warehouse"></i>
+                        <strong>Control de Inventario</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Tipo de movimiento</label>
+                                <select class="form-select" id="movementType">
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="entrada">Entrada (Compra/Devolución)</option>
+                                    <option value="salida">Salida (Venta/Descuento)</option>
+                                    <option value="ajuste">Ajuste de inventario</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Producto</label>
+                                <input type="text" class="form-control" id="productCode" placeholder="Código o nombre del producto">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" placeholder="Cantidad a ajustar">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Motivo</label>
+                                <input type="text" class="form-control" id="reason" placeholder="Motivo del movimiento">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Referencia</label>
+                                <input type="text" class="form-control" id="reference" placeholder="Número de factura, orden, etc.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Lista de Inventario</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>Producto</th>
+                                        <th>Código</th>
+                                        <th>Categoría</th>
+                                        <th class="text-end">Stock Actual</th>
+                                        <th class="text-end">Stock Mín.</th>
+                                        <th class="text-end">Precio</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-end">Valor Total</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryBody">
+                                    <tr>
+                                        <td><i class="fas fa-laptop text-primary"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Laptop HP Pavilion 15</strong><br>
+                                                <small class="text-muted">HP - Pavilion 15</small>
+                                            </div>
+                                        </td>
+                                        <td>LAP-HP-001</td>
+                                        <td>Electrónicos</td>
+                                        <td class="text-end"><strong>15</strong></td>
+                                        <td class="text-end">5</td>
+                                        <td class="text-end">$ 2,500,000</td>
+                                        <td class="text-center"><span class="badge bg-success">Normal</span></td>
+                                        <td class="text-end">$ 37,500,000</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ajustar stock">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-info" title="Ver historial">
+                                                <i class="fas fa-history"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-mobile-alt text-info"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Samsung Galaxy S21</strong><br>
+                                                <small class="text-muted">Samsung - Galaxy S21</small>
+                                            </div>
+                                        </td>
+                                        <td>CEL-SAM-001</td>
+                                        <td>Electrónicos</td>
+                                        <td class="text-end"><strong>3</strong></td>
+                                        <td class="text-end">5</td>
+                                        <td class="text-end">$ 1,800,000</td>
+                                        <td class="text-center"><span class="badge bg-warning">Bajo</span></td>
+                                        <td class="text-end">$ 5,400,000</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ajustar stock">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-info" title="Ver historial">
+                                                <i class="fas fa-history"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-tshirt text-warning"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Camiseta Nike Dri-FIT</strong><br>
+                                                <small class="text-muted">Nike - Dri-FIT</small>
+                                            </div>
+                                        </td>
+                                        <td>CAM-NIK-001</td>
+                                        <td>Ropa y Accesorios</td>
+                                        <td class="text-end"><strong>0</strong></td>
+                                        <td class="text-end">10</td>
+                                        <td class="text-end">$ 89,900</td>
+                                        <td class="text-center"><span class="badge bg-danger">Agotado</span></td>
+                                        <td class="text-end">$ 0</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ajustar stock">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-info" title="Ver historial">
+                                                <i class="fas fa-history"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-home text-success"></i></td>
+                                        <td>
+                                            <div>
+                                                <strong>Lámpara LED Moderna</strong><br>
+                                                <small class="text-muted">Philips - LED</small>
+                                            </div>
+                                        </td>
+                                        <td>LAM-PHI-001</td>
+                                        <td>Hogar y Jardín</td>
+                                        <td class="text-end"><strong>25</strong></td>
+                                        <td class="text-end">8</td>
+                                        <td class="text-end">$ 150,000</td>
+                                        <td class="text-center"><span class="badge bg-success">Normal</span></td>
+                                        <td class="text-end">$ 3,750,000</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Ajustar stock">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-info" title="Ver historial">
+                                                <i class="fas fa-history"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-line"></i>
+                        <strong>Reportes de Inventario</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-4">
+                                <button type="button" class="btn btn-outline-primary w-100" id="stockReportBtn">
+                                    <i class="fas fa-chart-bar me-2"></i>Reporte de Stock
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <button type="button" class="btn btn-outline-warning w-100" id="lowStockReportBtn">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Productos con Stock Bajo
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <button type="button" class="btn btn-outline-info w-100" id="movementReportBtn">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos de Inventario
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn2">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="adjustBtn">
+                                <i class="fas fa-edit me-1"></i>Ajustar Stock
+                            </button>
+                            <button type="button" class="btn btn-success" id="exportBtn">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('inventoryForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchBtn2 = document.getElementById('searchBtn2');
+            const adjustBtn = document.getElementById('adjustBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const searchInput = document.getElementById('searchProduct');
+            const filterCategory = document.getElementById('filterCategory');
+            const filterStock = document.getElementById('filterStock');
+            const movementType = document.getElementById('movementType');
+            const productCode = document.getElementById('productCode');
+            const quantity = document.getElementById('quantity');
+            const reason = document.getElementById('reason');
+            const reference = document.getElementById('reference');
+
+            // Búsqueda en tiempo real
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#inventoryBody tr');
+                
+                rows.forEach(row => {
+                    const productName = row.cells[1].textContent.toLowerCase();
+                    const code = row.cells[2].textContent.toLowerCase();
+                    
+                    if (productName.includes(searchTerm) || code.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Filtro por categoría
+            filterCategory.addEventListener('change', () => {
+                applyFilters();
+            });
+
+            // Filtro por estado de stock
+            filterStock.addEventListener('change', () => {
+                applyFilters();
+            });
+
+            function applyFilters() {
+                const category = filterCategory.value;
+                const stockStatus = filterStock.value;
+                const rows = document.querySelectorAll('#inventoryBody tr');
+                
+                rows.forEach(row => {
+                    const categoryCell = row.cells[3].textContent.trim();
+                    const statusCell = row.cells[7].textContent.trim();
+                    
+                    let showRow = true;
+                    
+                    if (category && !categoryCell.includes(category)) {
+                        showRow = false;
+                    }
+                    
+                    if (stockStatus) {
+                        if (stockStatus === 'normal' && !statusCell.includes('Normal')) {
+                            showRow = false;
+                        } else if (stockStatus === 'bajo' && !statusCell.includes('Bajo')) {
+                            showRow = false;
+                        } else if (stockStatus === 'agotado' && !statusCell.includes('Agotado')) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            // Buscar
+            function performSearch() {
+                const searchTerm = searchInput.value.trim();
+                const category = filterCategory.value;
+                const stockStatus = filterStock.value;
+                
+                if (searchTerm || category || stockStatus) {
+                    alert(`Buscando en inventario: "${searchTerm}" en categoría: "${category || 'Todas'}" con estado: "${stockStatus || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese un término de búsqueda o seleccione filtros');
+                }
+            }
+
+            searchBtn.addEventListener('click', performSearch);
+            searchBtn2.addEventListener('click', performSearch);
+
+            // Ajustar stock
+            adjustBtn.addEventListener('click', () => {
+                const type = movementType.value;
+                const product = productCode.value.trim();
+                const qty = quantity.value;
+                const reasonText = reason.value.trim();
+                
+                if (!type || !product || !qty || !reasonText) {
+                    alert('Por favor complete todos los campos para ajustar el stock');
+                    return;
+                }
+                
+                const action = type === 'entrada' ? 'agregar' : type === 'salida' ? 'quitar' : 'ajustar';
+                alert(`Stock ${action}do: ${qty} unidades del producto "${product}". Motivo: ${reasonText}`);
+                
+                // Limpiar campos
+                movementType.value = '';
+                productCode.value = '';
+                quantity.value = '';
+                reason.value = '';
+                reference.value = '';
+            });
+
+            // Exportar
+            exportBtn.addEventListener('click', () => {
+                alert('Exportando inventario a Excel...');
+            });
+
+            // Reportes
+            document.getElementById('stockReportBtn').addEventListener('click', () => {
+                alert('Generando reporte de stock...');
+            });
+
+            document.getElementById('lowStockReportBtn').addEventListener('click', () => {
+                alert('Generando reporte de productos con stock bajo...');
+            });
+
+            document.getElementById('movementReportBtn').addEventListener('click', () => {
+                alert('Generando reporte de movimientos de inventario...');
+            });
+
+            // Limpiar formulario
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                // Mostrar todas las filas
+                const rows = document.querySelectorAll('#inventoryBody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+            });
+
+            // Actualizar resumen (simulación)
+            function updateSummary() {
+                // En una implementación real, esto se conectaría con la base de datos
+                console.log('Actualizando resumen del inventario...');
+            }
+
+            // Inicializar
+            updateSummary();
+
+        })();
+    </script>
+</body>
+</html>

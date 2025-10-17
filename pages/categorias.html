@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - ADS Store POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Gestión de categorías del sistema POS de ADS Store.">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+            <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+</nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Categorías</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <form id="categoryForm" class="p-3" novalidate>
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-tags"></i>
+                        <strong>Datos de la Categoría</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Nombre de la categoría</label>
+                                <input type="text" class="form-control" id="categoryName" placeholder="Ej: Electrónicos, Ropa, Hogar" required>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Código de categoría</label>
+                                <input type="text" class="form-control" id="categoryCode" placeholder="Ej: ELEC, ROPA, HOGAR">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Categoría padre</label>
+                                <select class="form-select" id="parentCategory">
+                                    <option value="">Sin categoría padre</option>
+                                    <option value="1">Electrónicos</option>
+                                    <option value="2">Ropa y Accesorios</option>
+                                    <option value="3">Hogar y Jardín</option>
+                                    <option value="4">Deportes</option>
+                                    <option value="5">Libros y Oficina</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="categoryStatus" required>
+                                    <option value="activa" selected>Activa</option>
+                                    <option value="inactiva">Inactiva</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="categoryDescription" rows="3" placeholder="Descripción detallada de la categoría"></textarea>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Color de identificación</label>
+                                <input type="color" class="form-control form-control-color" id="categoryColor" value="#007bff" title="Seleccionar color">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Ícono</label>
+                                <select class="form-select" id="categoryIcon">
+                                    <option value="fas fa-tag">🏷️ Etiqueta</option>
+                                    <option value="fas fa-box">📦 Caja</option>
+                                    <option value="fas fa-laptop">💻 Laptop</option>
+                                    <option value="fas fa-mobile-alt">📱 Móvil</option>
+                                    <option value="fas fa-tshirt">👕 Ropa</option>
+                                    <option value="fas fa-home">🏠 Hogar</option>
+                                    <option value="fas fa-dumbbell">🏋️ Deportes</option>
+                                    <option value="fas fa-book">📚 Libros</option>
+                                    <option value="fas fa-utensils">🍽️ Cocina</option>
+                                    <option value="fas fa-car">🚗 Automóviles</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-cogs"></i>
+                        <strong>Configuración Adicional</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Impuesto por defecto</label>
+                                <select class="form-select" id="defaultTax">
+                                    <option value="0" selected>0% (Exento)</option>
+                                    <option value="5">5% (Tasa reducida)</option>
+                                    <option value="19">19% (General)</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Margen de ganancia sugerido (%)</label>
+                                <input type="number" class="form-control" id="suggestedMargin" min="0" max="100" step="0.01" placeholder="30.00">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Descuento máximo permitido (%)</label>
+                                <input type="number" class="form-control" id="maxDiscount" min="0" max="100" step="0.01" placeholder="20.00">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Stock mínimo recomendado</label>
+                                <input type="number" class="form-control" id="minStock" min="0" placeholder="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-list"></i>
+                        <strong>Lista de Categorías</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Buscar categoría</label>
+                                <input type="text" class="form-control" id="searchCategory" placeholder="Buscar por nombre o código">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Filtrar por estado</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Todas</option>
+                                    <option value="activa">Activas</option>
+                                    <option value="inactiva">Inactivas</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>Nombre</th>
+                                        <th>Código</th>
+                                        <th>Categoría Padre</th>
+                                        <th>Estado</th>
+                                        <th>Productos</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesBody">
+                                    <tr>
+                                        <td><i class="fas fa-laptop text-primary"></i></td>
+                                        <td>Electrónicos</td>
+                                        <td>ELEC</td>
+                                        <td>-</td>
+                                        <td><span class="badge bg-success">Activa</span></td>
+                                        <td>25</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-tshirt text-info"></i></td>
+                                        <td>Ropa y Accesorios</td>
+                                        <td>ROPA</td>
+                                        <td>-</td>
+                                        <td><span class="badge bg-success">Activa</span></td>
+                                        <td>18</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-home text-warning"></i></td>
+                                        <td>Hogar y Jardín</td>
+                                        <td>HOGAR</td>
+                                        <td>-</td>
+                                        <td><span class="badge bg-success">Activa</span></td>
+                                        <td>12</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-success" id="saveBtn">
+                                <i class="fas fa-save me-1"></i>Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="text-center mt-4 pos-login-footer">
+                <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+                <div class="text-center mt-3"></div>
+                    <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+                    <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+                <div class="text-center mt-3">
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 ADS-POS. Sistema de Punto de Venta Profesional.
+                    </p>
+                </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        (function() {
+            const form = document.getElementById('categoryForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const searchBtn = document.getElementById('searchBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const searchInput = document.getElementById('searchCategory');
+            const filterStatus = document.getElementById('filterStatus');
+
+            // Limpiar formulario
+            clearBtn.addEventListener('click', () => {
+                form.reset();
+                document.getElementById('categoryColor').value = '#007bff';
+            });
+
+            // Buscar categorías
+            searchBtn.addEventListener('click', () => {
+                const searchTerm = searchInput.value.trim();
+                const status = filterStatus.value;
+                
+                if (searchTerm || status) {
+                    alert(`Buscando categorías: "${searchTerm}" con estado: "${status || 'Todos'}"`);
+                } else {
+                    alert('Por favor ingrese un término de búsqueda o seleccione un estado');
+                }
+            });
+
+            // Guardar categoría
+            saveBtn.addEventListener('click', () => {
+                if (form.checkValidity()) {
+                    const categoryData = {
+                        name: document.getElementById('categoryName').value,
+                        code: document.getElementById('categoryCode').value,
+                        parent: document.getElementById('parentCategory').value,
+                        status: document.getElementById('categoryStatus').value,
+                        description: document.getElementById('categoryDescription').value,
+                        color: document.getElementById('categoryColor').value,
+                        icon: document.getElementById('categoryIcon').value,
+                        defaultTax: document.getElementById('defaultTax').value,
+                        suggestedMargin: document.getElementById('suggestedMargin').value,
+                        maxDiscount: document.getElementById('maxDiscount').value,
+                        minStock: document.getElementById('minStock').value
+                    };
+                    
+                    console.log('Datos de la categoría:', categoryData);
+                    alert('Categoría guardada exitosamente');
+                    form.reset();
+                    document.getElementById('categoryColor').value = '#007bff';
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Búsqueda en tiempo real
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#categoriesBody tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[1].textContent.toLowerCase();
+                    const code = row.cells[2].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Filtro por estado
+            filterStatus.addEventListener('change', () => {
+                const selectedStatus = filterStatus.value;
+                const rows = document.querySelectorAll('#categoriesBody tr');
+                
+                rows.forEach(row => {
+                    const status = row.cells[4].textContent.trim();
+                    
+                    if (!selectedStatus || status.includes(selectedStatus)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+        })();
+    </script>
+</body>
+</html>

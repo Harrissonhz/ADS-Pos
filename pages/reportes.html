@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - ADS-POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Reportes y análisis del sistema POS ADS-POS">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="pos-navbar-actions">
+            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0">Reportes y Análisis</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <!-- Filtros de Fecha -->
+            <div class="card pos-card mb-4">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-filter me-2"></i>
+                    <h5 class="mb-0">Filtros de Fecha</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" value="">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" value="">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tipo de Reporte</label>
+                            <select class="form-select" id="tipoReporte">
+                                <option value="ventas">Ventas</option>
+                                <option value="inventario">Inventario</option>
+                                <option value="financiero">Financiero</option>
+                                <option value="clientes">Clientes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="generarReporte()">
+                                <i class="fas fa-chart-line me-2"></i>Generar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Principales -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                            <h4 class="text-white">$2,450,000</h4>
+                            <p class="text-white-50 mb-0">Ventas Totales</p>
+                            <small class="text-success">+12.5% vs mes anterior</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
+                            <h4 class="text-white">156</h4>
+                            <p class="text-white-50 mb-0">Transacciones</p>
+                            <small class="text-success">+8.3% vs mes anterior</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-box fa-2x text-warning mb-2"></i>
+                            <h4 class="text-white">1,234</h4>
+                            <p class="text-white-50 mb-0">Productos Vendidos</p>
+                            <small class="text-success">+15.2% vs mes anterior</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card pos-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-info mb-2"></i>
+                            <h4 class="text-white">89</h4>
+                            <p class="text-white-50 mb-0">Clientes Únicos</p>
+                            <small class="text-success">+5.7% vs mes anterior</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-chart-line me-2"></i>
+                            <h5 class="mb-0">Ventas por Día</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="ventasChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            <h5 class="mb-0">Ventas por Categoría</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoriasChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Productos Más Vendidos -->
+            <div class="card pos-card mb-4">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-trophy me-2"></i>
+                    <h5 class="mb-0">Productos Más Vendidos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Cantidad Vendida</th>
+                                    <th>Ingresos</th>
+                                    <th>% del Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Laptop HP Pavilion</td>
+                                    <td>Electrónicos</td>
+                                    <td>25</td>
+                                    <td>$12,500,000</td>
+                                    <td>15.2%</td>
+                                </tr>
+                                <tr>
+                                    <td>Mouse Inalámbrico</td>
+                                    <td>Accesorios</td>
+                                    <td>89</td>
+                                    <td>$445,000</td>
+                                    <td>8.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>Teclado Mecánico</td>
+                                    <td>Accesorios</td>
+                                    <td>67</td>
+                                    <td>$1,340,000</td>
+                                    <td>6.5%</td>
+                                </tr>
+                                <tr>
+                                    <td>Monitor 24"</td>
+                                    <td>Electrónicos</td>
+                                    <td>18</td>
+                                    <td>$3,600,000</td>
+                                    <td>12.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>Audífonos Bluetooth</td>
+                                    <td>Audio</td>
+                                    <td>45</td>
+                                    <td>$1,125,000</td>
+                                    <td>4.8%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes de Inventario -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <h5 class="mb-0">Productos con Stock Bajo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Stock Actual</th>
+                                            <th>Stock Mínimo</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Mouse Inalámbrico</td>
+                                            <td>5</td>
+                                            <td>10</td>
+                                            <td><span class="badge bg-warning">Bajo</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Teclado Mecánico</td>
+                                            <td>3</td>
+                                            <td>8</td>
+                                            <td><span class="badge bg-danger">Crítico</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Audífonos Bluetooth</td>
+                                            <td>7</td>
+                                            <td>12</td>
+                                            <td><span class="badge bg-warning">Bajo</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            <h5 class="mb-0">Movimientos de Inventario</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="movimientosChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="card pos-card">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-download me-2"></i>
+                    <h5 class="mb-0">Exportar Reportes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" onclick="exportarExcel()">
+                                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-danger w-100" onclick="exportarPDF()">
+                                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-info w-100" onclick="imprimirReporte()">
+                                <i class="fas fa-print me-2"></i>Imprimir
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-secondary w-100" onclick="enviarEmail()">
+                                <i class="fas fa-envelope me-2"></i>Enviar por Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="text-center mt-4 pos-login-footer">
+        <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+        <div class="text-center mt-3"></div>
+            <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+            <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-white-50 mb-0">
+                <i class="fas fa-copyright me-1"></i>
+                2024 ADS-POS. Sistema de Punto de Venta Profesional.
+            </p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Prevenir el parpadeo del offcanvas
+        document.addEventListener('DOMContentLoaded', function() {
+            const offcanvasElement = document.getElementById('posSidebar');
+            if (offcanvasElement) {
+                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                
+                // Manejar eventos del offcanvas
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
+                    this.classList.add('show');
+                });
+                
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
+                    this.classList.remove('show');
+                });
+            }
+        });
+    </script>
+    <script>
+        // Configurar fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date();
+            const hace30Dias = new Date(hoy.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('fechaInicio').value = hace30Dias.toISOString().split('T')[0];
+            document.getElementById('fechaFin').value = hoy.toISOString().split('T')[0];
+            
+            // Inicializar gráficos
+            inicializarGraficos();
+        });
+
+        // Gráfico de Ventas por Día
+        function inicializarGraficos() {
+            // Gráfico de Ventas
+            const ventasCtx = document.getElementById('ventasChart').getContext('2d');
+            new Chart(ventasCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Ene', '2 Ene', '3 Ene', '4 Ene', '5 Ene', '6 Ene', '7 Ene'],
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: [120000, 190000, 300000, 500000, 200000, 300000, 450000],
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Categorías
+            const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
+            new Chart(categoriasCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electrónicos', 'Accesorios', 'Audio', 'Otros'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            '#007bff',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Movimientos
+            const movimientosCtx = document.getElementById('movimientosChart').getContext('2d');
+            new Chart(movimientosCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Entradas', 'Salidas', 'Ajustes', 'Transferencias'],
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: [120, 89, 15, 8],
+                        backgroundColor: [
+                            '#28a745',
+                            '#dc3545',
+                            '#ffc107',
+                            '#17a2b8'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funciones de exportación
+        function generarReporte() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const tipoReporte = document.getElementById('tipoReporte').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor selecciona las fechas de inicio y fin');
+                return;
+            }
+            
+            // Simular generación de reporte
+            alert(`Generando reporte de ${tipoReporte} desde ${fechaInicio} hasta ${fechaFin}...`);
+        }
+
+        function exportarExcel() {
+            alert('Exportando reporte a Excel...');
+        }
+
+        function exportarPDF() {
+            alert('Exportando reporte a PDF...');
+        }
+
+        function imprimirReporte() {
+            window.print();
+        }
+
+        function enviarEmail() {
+            alert('Enviando reporte por email...');
+        }
+    </script>
+</body>
+</html>
