@@ -510,6 +510,7 @@
                 console.log('📡 URL de Supabase:', window.supabaseClient.supabaseUrl);
                 console.log('📡 Clave de Supabase:', window.supabaseClient.supabaseKey ? 'Presente' : 'Ausente');
                 
+                // Probar consulta de conteo
                 const { data, error } = await window.supabaseClient
                     .from('categorias')
                     .select('count')
@@ -524,6 +525,29 @@
                 }
 
                 console.log('✅ Consulta exitosa:', data);
+                
+                // Probar insert de prueba para verificar RLS
+                console.log('🧪 ===== PROBANDO INSERT DE PRUEBA =====');
+                const testData = {
+                    nombre: 'Test RLS',
+                    descripcion: 'Prueba de RLS',
+                    activa: true
+                };
+                
+                const testResult = await window.supabaseClient
+                    .from('categorias')
+                    .insert([testData])
+                    .select();
+                
+                console.log('🧪 Resultado de insert de prueba:', testResult);
+                
+                if (testResult.error) {
+                    console.error('❌ Error en insert de prueba:', testResult.error);
+                    console.error('❌ Código:', testResult.error.code);
+                    console.error('❌ Mensaje:', testResult.error.message);
+                } else {
+                    console.log('✅ Insert de prueba exitoso:', testResult.data);
+                }
                 isConnected = true;
                 showMessage('✅ Conexión exitosa con Supabase', 'success');
                 await loadCategories();
@@ -657,25 +681,23 @@
 
                 console.log('💾 ===== ENVIANDO DATOS A SUPABASE =====');
                 
-                // Asegurar autenticación antes de insertar
-                console.log('🔐 Verificando autenticación...');
-                const isAuth = await window.ensureAuthenticated();
-                if (!isAuth) {
-                    throw new Error('No se pudo autenticar con Supabase');
-                }
-                console.log('✅ Autenticación verificada');
-                
-                // Hacer la llamada directamente a Supabase para debug
+                // Hacer la llamada directamente a Supabase (sin autenticación)
                 console.log('🔍 Llamada directa a Supabase...');
+                console.log('🔍 Datos a insertar:', categoryData);
+                
                 const directResult = await window.supabaseClient
                     .from('categorias')
                     .insert([categoryData])
                     .select();
                 
                 console.log('🔍 Resultado directo:', directResult);
+                console.log('🔍 Error:', directResult.error);
+                console.log('🔍 Data:', directResult.data);
                 
                 if (directResult.error) {
                     console.error('❌ Error directo de Supabase:', directResult.error);
+                    console.error('❌ Código de error:', directResult.error.code);
+                    console.error('❌ Mensaje de error:', directResult.error.message);
                     throw directResult.error;
                 }
 
