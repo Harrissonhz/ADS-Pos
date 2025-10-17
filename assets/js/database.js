@@ -80,6 +80,23 @@ class DatabaseService {
         return { data, error };
     }
 
+    async updateCategory(id, updates) {
+        const { data, error } = await this.supabase
+            .from('categorias')
+            .update(updates)
+            .eq('id', id)
+            .select();
+        return { data, error };
+    }
+
+    async deleteCategory(id) {
+        const { error } = await this.supabase
+            .from('categorias')
+            .delete()
+            .eq('id', id);
+        return { error };
+    }
+
     // ===== CLIENTES =====
     async getClients() {
         const { data, error } = await this.supabase

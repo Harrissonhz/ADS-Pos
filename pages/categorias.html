@@ -200,6 +200,16 @@
                 </div>
             </div>
 
+            <!-- Estado de Conexión -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="alert alert-info" id="connection-status">
+                        <i class="fas fa-spinner fa-spin me-2"></i>
+                        Verificando conexión con Supabase...
+                    </div>
+                </div>
+            </div>
+
             <form id="categoryForm" class="p-3" novalidate>
                 <div class="card pos-card mb-4">
                     <div class="card-header d-flex align-items-center gap-2">
@@ -422,6 +432,14 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="../assets/js/supabase-config.js"></script>
+    <script src="../assets/js/database.js"></script>
+    <script src="../assets/js/auth.js"></script>
     <script>
         // Prevenir el parpadeo del offcanvas
         document.addEventListener('DOMContentLoaded', function() {
@@ -441,92 +459,269 @@
         });
     </script>
     <script>
-        (function() {
-            const form = document.getElementById('categoryForm');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchBtn = document.getElementById('searchBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const searchInput = document.getElementById('searchCategory');
-            const filterStatus = document.getElementById('filterStatus');
+        // Variables globales
+        let categories = [];
+        let isConnected = false;
 
-            // Limpiar formulario
-            clearBtn.addEventListener('click', () => {
+        // Función para mostrar mensajes
+        function showMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('connection-status');
+            const alertClass = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'warning': 'alert-warning',
+                'info': 'alert-info'
+            }[type] || 'alert-info';
+            
+            statusDiv.className = `alert ${alertClass}`;
+            statusDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} me-2"></i>${message}`;
+        }
+
+        // Función para probar conexión
+        async function testConnection() {
+            try {
+                showMessage('Probando conexión con Supabase...', 'info');
+                
+                if (!window.supabaseClient) {
+                    throw new Error('Cliente de Supabase no inicializado');
+                }
+
+                // Probar consulta simple
+                const { data, error } = await window.supabaseClient
+                    .from('categorias')
+                    .select('count')
+                    .limit(1);
+
+                if (error) {
+                    throw error;
+                }
+
+                isConnected = true;
+                showMessage('✅ Conexión exitosa con Supabase', 'success');
+                await loadCategories();
+                return true;
+            } catch (error) {
+                isConnected = false;
+                showMessage(`❌ Error de conexión: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Función para cargar categorías desde Supabase
+        async function loadCategories() {
+            try {
+                if (!isConnected) {
+                    showMessage('No hay conexión con Supabase', 'error');
+                    return;
+                }
+
+                const { data, error } = await window.db.getCategories();
+                
+                if (error) {
+                    throw error;
+                }
+
+                categories = data || [];
+                renderCategories();
+                showMessage(`✅ Categorías cargadas: ${categories.length} encontradas`, 'success');
+            } catch (error) {
+                showMessage(`❌ Error al cargar categorías: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para renderizar categorías en la tabla
+        function renderCategories() {
+            const tbody = document.getElementById('categoriesBody');
+            tbody.innerHTML = '';
+
+            if (categories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            <i class="fas fa-inbox me-2"></i>
+                            No hay categorías registradas
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            categories.forEach(category => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><i class="fas fa-tag text-primary"></i></td>
+                    <td>${category.nombre}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="badge ${category.activa ? 'bg-success' : 'bg-secondary'}">${category.activa ? 'Activa' : 'Inactiva'}</span></td>
+                    <td>0</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar" onclick="editCategory('${category.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="deleteCategory('${category.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Función para guardar categoría
+        async function saveCategory() {
+            try {
+                const form = document.getElementById('categoryForm');
+                
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                if (!isConnected) {
+                    showMessage('No hay conexión con Supabase', 'error');
+                    return;
+                }
+
+                const categoryData = {
+                    nombre: document.getElementById('categoryName').value.trim(),
+                    descripcion: document.getElementById('categoryDescription').value.trim(),
+                    activa: document.getElementById('categoryStatus').value === 'activa'
+                };
+
+                if (!categoryData.nombre) {
+                    showMessage('El nombre de la categoría es obligatorio', 'error');
+                    return;
+                }
+
+                showMessage('Guardando categoría...', 'info');
+
+                const { data, error } = await window.db.createCategory(categoryData);
+                
+                if (error) {
+                    throw error;
+                }
+
+                showMessage('✅ Categoría guardada exitosamente', 'success');
                 form.reset();
+                document.getElementById('categoryColor').value = '#007bff';
+                await loadCategories();
+            } catch (error) {
+                showMessage(`❌ Error al guardar: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para editar categoría
+        function editCategory(id) {
+            const category = categories.find(cat => cat.id === id);
+            if (category) {
+                document.getElementById('categoryName').value = category.nombre;
+                document.getElementById('categoryDescription').value = category.descripcion || '';
+                document.getElementById('categoryStatus').value = category.activa ? 'activa' : 'inactiva';
+                showMessage(`Editando categoría: ${category.nombre}`, 'info');
+            }
+        }
+
+        // Función para eliminar categoría
+        async function deleteCategory(id) {
+            try {
+                if (!isConnected) {
+                    showMessage('No hay conexión con Supabase', 'error');
+                    return;
+                }
+
+                if (!confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
+                    return;
+                }
+
+                showMessage('Eliminando categoría...', 'info');
+
+                const { error } = await window.db.deleteCategory(id);
+                
+                if (error) {
+                    throw error;
+                }
+
+                showMessage('✅ Categoría eliminada exitosamente', 'success');
+                await loadCategories();
+            } catch (error) {
+                showMessage(`❌ Error al eliminar: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para buscar categorías
+        function searchCategories() {
+            const searchTerm = document.getElementById('searchCategory').value.toLowerCase();
+            const status = document.getElementById('filterStatus').value;
+            
+            const filteredCategories = categories.filter(category => {
+                const matchesSearch = !searchTerm || 
+                    category.nombre.toLowerCase().includes(searchTerm) ||
+                    (category.descripcion && category.descripcion.toLowerCase().includes(searchTerm));
+                
+                const matchesStatus = !status || 
+                    (status === 'activa' && category.activa) ||
+                    (status === 'inactiva' && !category.activa);
+                
+                return matchesSearch && matchesStatus;
+            });
+
+            // Renderizar categorías filtradas
+            const tbody = document.getElementById('categoriesBody');
+            tbody.innerHTML = '';
+
+            if (filteredCategories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            <i class="fas fa-search me-2"></i>
+                            No se encontraron categorías
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredCategories.forEach(category => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><i class="fas fa-tag text-primary"></i></td>
+                    <td>${category.nombre}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="badge ${category.activa ? 'bg-success' : 'bg-secondary'}">${category.activa ? 'Activa' : 'Inactiva'}</span></td>
+                    <td>0</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar" onclick="editCategory('${category.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="deleteCategory('${category.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Configurar event listeners
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                document.getElementById('categoryForm').reset();
                 document.getElementById('categoryColor').value = '#007bff';
             });
 
-            // Buscar categorías
-            searchBtn.addEventListener('click', () => {
-                const searchTerm = searchInput.value.trim();
-                const status = filterStatus.value;
-                
-                if (searchTerm || status) {
-                    alert(`Buscando categorías: "${searchTerm}" con estado: "${status || 'Todos'}"`);
-                } else {
-                    alert('Por favor ingrese un término de búsqueda o seleccione un estado');
-                }
-            });
-
-            // Guardar categoría
-            saveBtn.addEventListener('click', () => {
-                if (form.checkValidity()) {
-                    const categoryData = {
-                        name: document.getElementById('categoryName').value,
-                        code: document.getElementById('categoryCode').value,
-                        parent: document.getElementById('parentCategory').value,
-                        status: document.getElementById('categoryStatus').value,
-                        description: document.getElementById('categoryDescription').value,
-                        color: document.getElementById('categoryColor').value,
-                        icon: document.getElementById('categoryIcon').value,
-                        defaultTax: document.getElementById('defaultTax').value,
-                        suggestedMargin: document.getElementById('suggestedMargin').value,
-                        maxDiscount: document.getElementById('maxDiscount').value,
-                        minStock: document.getElementById('minStock').value
-                    };
-                    
-                    console.log('Datos de la categoría:', categoryData);
-                    alert('Categoría guardada exitosamente');
-                    form.reset();
-                    document.getElementById('categoryColor').value = '#007bff';
-                } else {
-                    form.reportValidity();
-                }
-            });
+            document.getElementById('searchBtn').addEventListener('click', searchCategories);
+            document.getElementById('saveBtn').addEventListener('click', saveCategory);
 
             // Búsqueda en tiempo real
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('#categoriesBody tr');
-                
-                rows.forEach(row => {
-                    const name = row.cells[1].textContent.toLowerCase();
-                    const code = row.cells[2].textContent.toLowerCase();
-                    
-                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
+            document.getElementById('searchCategory').addEventListener('input', searchCategories);
+            document.getElementById('filterStatus').addEventListener('change', searchCategories);
 
-            // Filtro por estado
-            filterStatus.addEventListener('change', () => {
-                const selectedStatus = filterStatus.value;
-                const rows = document.querySelectorAll('#categoriesBody tr');
-                
-                rows.forEach(row => {
-                    const status = row.cells[4].textContent.trim();
-                    
-                    if (!selectedStatus || status.includes(selectedStatus)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-        })();
+            // Probar conexión y cargar datos
+            await testConnection();
+        });
     </script>
 </body>
 </html>
