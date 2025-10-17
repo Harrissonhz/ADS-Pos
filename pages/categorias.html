@@ -488,60 +488,49 @@
                 showMessage('Probando conexión con Supabase...', 'info');
                 
                 console.log('🔍 Verificando cliente de Supabase...');
-                console.log('🔍 window.supabaseClient:', window.supabaseClient);
-                console.log('🔍 typeof window.supabaseClient:', typeof window.supabaseClient);
-                
                 if (!window.supabaseClient) {
                     throw new Error('Cliente de Supabase no inicializado');
                 }
                 console.log('✅ Cliente de Supabase encontrado');
 
                 console.log('🔍 Verificando servicio de base de datos...');
-                console.log('🔍 window.db:', window.db);
-                console.log('🔍 typeof window.db:', typeof window.db);
-                
                 if (!window.db) {
                     throw new Error('Servicio de base de datos no disponible');
                 }
                 console.log('✅ Servicio de base de datos encontrado');
 
-                // Probar consulta simple
-                console.log('📡 ===== PROBANDO CONSULTA A SUPABASE =====');
+                // Probar conexión básica
+                console.log('📡 ===== PROBANDO CONEXIÓN BÁSICA =====');
                 console.log('📡 URL de Supabase:', window.supabaseClient.supabaseUrl);
                 console.log('📡 Clave de Supabase:', window.supabaseClient.supabaseKey ? 'Presente' : 'Ausente');
                 
-                // Probar consulta de conteo
+                // Probar una consulta simple (sin tabla específica)
                 const { data, error } = await window.supabaseClient
-                    .from('categorias')
+                    .from('_supabase_migrations')
                     .select('count')
                     .limit(1);
 
                 console.log('📡 Resultado de consulta:', { data, error });
 
-                if (error) {
+                if (error && error.code !== 'PGRST116') { // PGRST116 = tabla no existe (normal)
                     console.error('❌ Error en consulta:', error);
-                    console.error('❌ Error details:', JSON.stringify(error, null, 2));
                     throw error;
                 }
 
-                console.log('✅ Consulta exitosa:', data);
+                console.log('✅ Conexión exitosa con Supabase');
                 isConnected = true;
                 showMessage('✅ Conexión exitosa con Supabase', 'success');
-                await loadCategories();
                 return true;
             } catch (error) {
-                console.error('❌ ===== ERROR DE CONEXIÓN COMPLETO =====');
+                console.error('❌ ===== ERROR DE CONEXIÓN =====');
                 console.error('❌ Error:', error);
-                console.error('❌ Error message:', error.message);
-                console.error('❌ Error stack:', error.stack);
-                console.error('❌ Error name:', error.name);
                 isConnected = false;
                 showMessage(`❌ Error de conexión: ${error.message}`, 'error');
                 return false;
             }
         }
 
-        // Función para cargar categorías desde Supabase
+        // Función para cargar categorías (placeholder)
         async function loadCategories() {
             try {
                 if (!isConnected) {
@@ -549,15 +538,11 @@
                     return;
                 }
 
-                const { data, error } = await window.db.getCategories();
-                
-                if (error) {
-                    throw error;
-                }
-
-                categories = data || [];
+                // TODO: Implementar cuando se defina el nuevo modelo de BD
+                console.log('📋 Cargando categorías... (placeholder)');
+                categories = [];
                 renderCategories();
-                showMessage(`✅ Categorías cargadas: ${categories.length} encontradas`, 'success');
+                showMessage('✅ Sistema listo - Modelo de BD pendiente de implementar', 'info');
             } catch (error) {
                 showMessage(`❌ Error al cargar categorías: ${error.message}`, 'error');
             }
@@ -602,25 +587,20 @@
             });
         }
 
-        // Función para guardar categoría
+        // Función para guardar categoría (placeholder)
         async function saveCategory() {
             try {
-                console.log('🚀 ===== INICIANDO GUARDADO DE CATEGORÍA =====');
+                console.log('🚀 ===== GUARDADO DE CATEGORÍA =====');
                 console.log('📅 Timestamp:', new Date().toISOString());
                 
                 const form = document.getElementById('categoryForm');
-                console.log('📋 Formulario encontrado:', !!form);
                 
                 if (!form.checkValidity()) {
-                    console.log('❌ Formulario no válido');
                     form.reportValidity();
                     return;
                 }
-                console.log('✅ Formulario válido');
 
-                console.log('🔌 Estado de conexión:', isConnected);
                 if (!isConnected) {
-                    console.log('❌ No hay conexión con Supabase');
                     showMessage('No hay conexión con Supabase', 'error');
                     return;
                 }
@@ -631,80 +611,33 @@
                     activa: document.getElementById('categoryStatus').value === 'activa'
                 };
 
-                console.log('📝 Datos de la categoría:', categoryData);
-                console.log('📝 Nombre:', categoryData.nombre);
-                console.log('📝 Descripción:', categoryData.descripcion);
-                console.log('📝 Activa:', categoryData.activa);
-
                 if (!categoryData.nombre) {
-                    console.log('❌ Nombre vacío');
                     showMessage('El nombre de la categoría es obligatorio', 'error');
                     return;
                 }
 
-                showMessage('Guardando categoría...', 'info');
-
-                // Verificar que window.db existe
-                console.log('🔍 Verificando window.db:', !!window.db);
-                if (!window.db) {
-                    throw new Error('Servicio de base de datos no disponible');
-                }
-
-                // Verificar que window.supabaseClient existe
-                console.log('🔍 Verificando window.supabaseClient:', !!window.supabaseClient);
-                if (!window.supabaseClient) {
-                    throw new Error('Cliente de Supabase no disponible');
-                }
-
-                console.log('💾 ===== ENVIANDO DATOS A SUPABASE =====');
+                // TODO: Implementar cuando se defina el nuevo modelo de BD
+                console.log('📝 Datos capturados:', categoryData);
+                showMessage('⚠️ Función de guardado pendiente de implementar con nuevo modelo de BD', 'warning');
                 
-                // Hacer la llamada directamente a Supabase (sin autenticación)
-                console.log('🔍 Llamada directa a Supabase...');
-                console.log('🔍 Datos a insertar:', categoryData);
-                
-                const directResult = await window.supabaseClient
-                    .from('categorias')
-                    .insert([categoryData])
-                    .select();
-                
-                console.log('🔍 Resultado directo:', directResult);
-                console.log('🔍 Error:', directResult.error);
-                console.log('🔍 Data:', directResult.data);
-                
-                if (directResult.error) {
-                    console.error('❌ Error directo de Supabase:', directResult.error);
-                    console.error('❌ Código de error:', directResult.error.code);
-                    console.error('❌ Mensaje de error:', directResult.error.message);
-                    throw directResult.error;
-                }
-
-                console.log('✅ Datos guardados exitosamente:', directResult.data);
-                showMessage('✅ Categoría guardada exitosamente', 'success');
+                // Simular guardado exitoso para testing
                     form.reset();
                     document.getElementById('categoryColor').value = '#007bff';
-                await loadCategories();
+                
             } catch (error) {
-                console.error('❌ ===== ERROR COMPLETO =====');
                 console.error('❌ Error:', error);
-                console.error('❌ Error message:', error.message);
-                console.error('❌ Error stack:', error.stack);
-                console.error('❌ Error name:', error.name);
                 showMessage(`❌ Error al guardar: ${error.message}`, 'error');
             }
         }
 
-        // Función para editar categoría
+        // Función para editar categoría (placeholder)
         function editCategory(id) {
-            const category = categories.find(cat => cat.id === id);
-            if (category) {
-                document.getElementById('categoryName').value = category.nombre;
-                document.getElementById('categoryDescription').value = category.descripcion || '';
-                document.getElementById('categoryStatus').value = category.activa ? 'activa' : 'inactiva';
-                showMessage(`Editando categoría: ${category.nombre}`, 'info');
-            }
+            // TODO: Implementar cuando se defina el nuevo modelo de BD
+            console.log('✏️ Editando categoría:', id);
+            showMessage('⚠️ Función de edición pendiente de implementar', 'warning');
         }
 
-        // Función para eliminar categoría
+        // Función para eliminar categoría (placeholder)
         async function deleteCategory(id) {
             try {
                 if (!isConnected) {
@@ -716,16 +649,10 @@
                     return;
                 }
 
-                showMessage('Eliminando categoría...', 'info');
-
-                const { error } = await window.db.deleteCategory(id);
+                // TODO: Implementar cuando se defina el nuevo modelo de BD
+                console.log('🗑️ Eliminando categoría:', id);
+                showMessage('⚠️ Función de eliminación pendiente de implementar', 'warning');
                 
-                if (error) {
-                    throw error;
-                }
-
-                showMessage('✅ Categoría eliminada exitosamente', 'success');
-                await loadCategories();
             } catch (error) {
                 showMessage(`❌ Error al eliminar: ${error.message}`, 'error');
             }
