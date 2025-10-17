@@ -1,0 +1,20 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración local
+config.local.js
+.env
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
+
+# Carpetas de dependencias (si las agregas)
+node_modules/
+vendor/
+
+# Archivos de backup
+*.bak
+*.backup
