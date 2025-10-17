@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Estilos principales del proyecto y POS -->
-    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/pos.css">
     <link rel="icon" href="../assets/img/logo.png">
     <meta name="description" content="Gestión de categorías del sistema POS de ADS Store.">
@@ -480,27 +480,40 @@
         // Función para probar conexión
         async function testConnection() {
             try {
+                console.log('🔌 Iniciando prueba de conexión...');
                 showMessage('Probando conexión con Supabase...', 'info');
                 
+                console.log('🔍 Verificando cliente de Supabase...');
                 if (!window.supabaseClient) {
                     throw new Error('Cliente de Supabase no inicializado');
                 }
+                console.log('✅ Cliente de Supabase encontrado');
+
+                console.log('🔍 Verificando servicio de base de datos...');
+                if (!window.db) {
+                    throw new Error('Servicio de base de datos no disponible');
+                }
+                console.log('✅ Servicio de base de datos encontrado');
 
                 // Probar consulta simple
+                console.log('📡 Probando consulta a Supabase...');
                 const { data, error } = await window.supabaseClient
                     .from('categorias')
                     .select('count')
                     .limit(1);
 
                 if (error) {
+                    console.error('❌ Error en consulta:', error);
                     throw error;
                 }
 
+                console.log('✅ Consulta exitosa:', data);
                 isConnected = true;
                 showMessage('✅ Conexión exitosa con Supabase', 'success');
                 await loadCategories();
                 return true;
             } catch (error) {
+                console.error('❌ Error de conexión completo:', error);
                 isConnected = false;
                 showMessage(`❌ Error de conexión: ${error.message}`, 'error');
                 return false;
@@ -571,6 +584,8 @@
         // Función para guardar categoría
         async function saveCategory() {
             try {
+                console.log('🚀 Iniciando guardado de categoría...');
+                
                 const form = document.getElementById('categoryForm');
                 
                 if (!form.checkValidity()) {
@@ -589,6 +604,8 @@
                     activa: document.getElementById('categoryStatus').value === 'activa'
                 };
 
+                console.log('📝 Datos de la categoría:', categoryData);
+
                 if (!categoryData.nombre) {
                     showMessage('El nombre de la categoría es obligatorio', 'error');
                     return;
@@ -596,17 +613,26 @@
 
                 showMessage('Guardando categoría...', 'info');
 
+                // Verificar que window.db existe
+                if (!window.db) {
+                    throw new Error('Servicio de base de datos no disponible');
+                }
+
+                console.log('💾 Enviando datos a Supabase...');
                 const { data, error } = await window.db.createCategory(categoryData);
                 
                 if (error) {
+                    console.error('❌ Error de Supabase:', error);
                     throw error;
                 }
 
+                console.log('✅ Datos guardados exitosamente:', data);
                 showMessage('✅ Categoría guardada exitosamente', 'success');
                 form.reset();
                 document.getElementById('categoryColor').value = '#007bff';
                 await loadCategories();
             } catch (error) {
+                console.error('❌ Error completo:', error);
                 showMessage(`❌ Error al guardar: ${error.message}`, 'error');
             }
         }
