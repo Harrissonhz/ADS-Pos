@@ -656,7 +656,14 @@
                 }
 
                 console.log('💾 ===== ENVIANDO DATOS A SUPABASE =====');
-                console.log('💾 Llamando a window.db.createCategory...');
+                
+                // Asegurar autenticación antes de insertar
+                console.log('🔐 Verificando autenticación...');
+                const isAuth = await window.ensureAuthenticated();
+                if (!isAuth) {
+                    throw new Error('No se pudo autenticar con Supabase');
+                }
+                console.log('✅ Autenticación verificada');
                 
                 // Hacer la llamada directamente a Supabase para debug
                 console.log('🔍 Llamada directa a Supabase...');
