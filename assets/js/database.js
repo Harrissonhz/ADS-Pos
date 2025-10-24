@@ -935,6 +935,141 @@ class DatabaseService {
         return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
     }
 
+    /** Obtiene una compra por id con info de proveedor */
+    async getCompraById(id) {
+        try {
+            const { data, error } = await this.supabase
+                .from('compras')
+                .select('*, proveedores:proveedor_id(razon_social)')
+                .eq('id', id)
+                .maybeSingle();
+            if (error) return { data: null, error };
+            return { data, error: null };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /** Obtiene detalle de compra por compra_id, con info de productos */
+    async getCompraDetalles(compraId) {
+        try {
+            const { data, error } = await this.supabase
+                .from('compras_detalle')
+                .select('*, productos:producto_id(nombre, codigo_interno, codigo_barras, precio_compra, precio_venta)')
+                .eq('compra_id', compraId);
+            if (error) return { data: null, error };
+            return { data: data || [], error: null };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /** Actualiza una compra y reemplaza sus detalles */
+    async updateCompra(id, compraData, detalles = []) {
+        try {
+            if (!id || !this._isValidUUID(id)) return { data: null, error: { message: 'ID de compra inválido' } };
+
+            const updates = {
+                proveedor_id: compraData.proveedor_id || null,
+                fecha_compra: compraData.fecha_compra,
+                fecha_entrega: compraData.fecha_entrega || null,
+                estado: compraData.estado || 'pendiente',
+                subtotal: Number(compraData.subtotal) || 0,
+                impuesto: Number(compraData.impuesto) || 0,
+                descuento: Number(compraData.descuento) || 0,
+                total: Number(compraData.total) || 0,
+                notas: compraData.notas?.trim() || null
+            };
+            if (compraData.numero_orden !== undefined && compraData.numero_orden !== null && compraData.numero_orden !== '' && !isNaN(Number(compraData.numero_orden))) {
+                updates.numero_orden = Number(compraData.numero_orden);
+            }
+
+            const { data: compraRows, error: upErr } = await this.supabase
+                .from('compras')
+                .update(updates)
+                .eq('id', id)
+                .select();
+            if (upErr) return { data: null, error: upErr };
+            const compra = compraRows?.[0];
+
+            // Reemplazar detalles
+            const { error: delErr } = await this.supabase
+                .from('compras_detalle')
+                .delete()
+                .eq('compra_id', id);
+            if (delErr) return { data: compra, error: delErr };
+
+            if (Array.isArray(detalles) && detalles.length) {
+                const detallesRows = detalles.map(d => ({
+                    compra_id: id,
+                    producto_id: this._isValidUUID(d.producto_id) ? d.producto_id : null,
+                    cantidad: Number(d.cantidad) || 0,
+                    precio_unitario: Number(d.precio_unitario) || 0,
+                    descuento: Number(d.descuento) || 0,
+                    tasa_impuesto: Number(d.tasa_impuesto ?? 19.0) || 19.0,
+                    subtotal: Number(d.subtotal) || 0,
+                    impuesto: Number(d.impuesto) || 0,
+                    total: Number(d.total) || 0
+                }));
+                const { error: detErr } = await this.supabase
+                    .from('compras_detalle')
+                    .insert(detallesRows);
+                if (detErr) return { data: compra, error: detErr };
+            }
+
+            return { data: compra, error: null };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene compras con filtros y paginación para historial
+     * options: { search, status, date, limit, offset, orderBy, ascending }
+     */
+    async getCompras(options = {}) {
+        try {
+            const {
+                search = '',
+                status = '',
+                providerId = '',
+                limit = 10,
+                offset = 0,
+                orderBy = 'numero_orden',
+                ascending = false
+            } = options;
+
+            let query = this.supabase
+                .from('compras')
+                .select('id, numero_orden, proveedor_id, fecha_compra, estado, total, created_at, proveedores:proveedor_id(razon_social)', { count: 'exact' })
+                .is('deleted_at', null);
+
+            if (status) {
+                query = query.eq('estado', status);
+            }
+
+            if (search) {
+                const numeric = Number(search);
+                if (Number.isFinite(numeric)) {
+                    query = query.eq('numero_orden', numeric);
+                }
+            }
+
+            if (providerId) {
+                query = query.eq('proveedor_id', providerId);
+            }
+
+            query = query.order(orderBy, { ascending });
+            if (limit) query = query.range(offset, offset + limit - 1);
+
+            const { data, error, count } = await query;
+            if (error) return { data: null, error, count: 0 };
+            return { data: data || [], error: null, count: count || 0 };
+        } catch (error) {
+            return { data: null, error, count: 0 };
+        }
+    }
+
     // ===== FUNCIONES DE AUTENTICACIÓN =====
     async login(email, password) {
         const { data, error } = await this.supabase.auth.signInWithPassword({
