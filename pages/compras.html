@@ -13,6 +13,7 @@
     <!-- Estilos principales del proyecto y POS -->
     <link rel="stylesheet" href="../assets/css/tienda.css">
     <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="stylesheet" href="../assets/css/components.css?v=1">
     <link rel="icon" href="../assets/img/logo.png">
     <meta name="description" content="Gestión de compras del sistema POS de ADS Store.">
 </head>
@@ -202,11 +203,16 @@
 
             <form id="purchaseForm" class="p-3" novalidate>
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-file-invoice"></i>
                         <strong>Información de la Compra</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#infoCompra" aria-expanded="true" aria-controls="infoCompra">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="infoCompra">
                         <div class="row g-3">
                             <div class="col-12 col-lg-3">
                                 <label class="form-label">Número de orden</label>
@@ -235,11 +241,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-truck"></i>
                         <strong>Datos del Proveedor</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#datosProveedor" aria-expanded="true" aria-controls="datosProveedor">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="datosProveedor">
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Proveedor</label>
@@ -268,27 +279,34 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-boxes-stacked"></i>
                         <strong>Productos a Comprar</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#productosComprar" aria-expanded="true" aria-controls="productosComprar">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="productosComprar">
                         <div class="row g-2 align-items-end">
-                            <div class="col-12 col-lg-4">
-                                <label class="form-label">Buscar producto</label>
-                                <input type="text" class="form-control" id="searchProduct" placeholder="Código o nombre del producto">
+                            <div class="col-12 col-lg-2 position-relative">
+                                <label class="form-label">Buscar por código</label>
+                                <input type="text" class="form-control" id="searchProductCode" placeholder="Código interno" autocomplete="off" style="max-width: 180px;">
+                                <div id="productCodeSuggestions" class="list-group position-absolute w-100" style="z-index:1052; max-height: 280px; overflow:auto; display:none;"></div>
                             </div>
-                            <div class="col-12 col-lg-2">
+                            <div class="col-12 col-lg-5 position-relative">
+                                <label class="form-label">Buscar por descripción</label>
+                                <input type="text" class="form-control" id="searchProductDesc" placeholder="Nombre o descripción" autocomplete="off">
+                                <div id="productDescSuggestions" class="list-group position-absolute w-100" style="z-index:1052; max-height: 280px; overflow:auto; display:none;"></div>
+                            </div>
+                            <div class="col-6 col-lg-1">
                                 <label class="form-label">Cantidad</label>
                                 <input type="number" class="form-control" id="quantity" min="1" value="1">
                             </div>
-                            <div class="col-12 col-lg-2">
+                            <div class="col-6 col-lg-2">
                                 <label class="form-label">Precio unitario</label>
                                 <input type="number" class="form-control" id="unitPrice" min="0" step="0.01" placeholder="0.00">
-                            </div>
-                            <div class="col-12 col-lg-2">
-                                <label class="form-label">Descuento %</label>
-                                <input type="number" class="form-control" id="discount" min="0" max="100" value="0">
                             </div>
                             <div class="col-12 col-lg-2">
                                 <button type="button" class="btn btn-outline-primary w-100" id="addProduct">
@@ -297,68 +315,63 @@
                             </div>
                         </div>
 
-                        <div class="table-responsive mt-3">
-                            <table class="table table-sm align-middle mb-0">
+                        <!-- Catálogo de productos con paginación -->
+                        <div class="mt-3">
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-0">Catálogo de productos</h6>
+                            </div>
+                            <div class="table-responsive mt-2">
+                                <table class="table table-sm align-middle mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 34px;"></th>
-                                        <th>Producto</th>
-                                        <th class="text-end">Cantidad</th>
-                                        <th class="text-end">P. Unitario</th>
-                                        <th class="text-end">Descuento</th>
-                                        <th class="text-end">Subtotal</th>
-                                        <th style="width: 34px;"></th>
+                                            <th>Producto</th>
+                                            <th>Código</th>
+                                            <th class="text-center">Stock</th>
+                                            <th class="text-end">P. Compra</th>
+                                            <th class="text-end">P. Venta</th>
+                                            <th class="text-end" style="width: 80px;">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="productsBody">
-                                    <tr>
-                                        <td><i class="fas fa-laptop text-primary"></i></td>
-                                        <td>
-                                            <div>
-                                                <strong>Laptop HP Pavilion 15</strong><br>
-                                                <small class="text-muted">Código: LAP-HP-001</small>
+                                    <tbody id="catalogBody"></tbody>
+                                </table>
                                             </div>
-                                        </td>
-                                        <td class="text-end">2</td>
-                                        <td class="text-end">$ 2,200,000</td>
-                                        <td class="text-end">5%</td>
-                                        <td class="text-end"><strong>$ 4,180,000</strong></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><i class="fas fa-mobile-alt text-info"></i></td>
-                                        <td>
-                                            <div>
-                                                <strong>Samsung Galaxy S21</strong><br>
-                                                <small class="text-muted">Código: CEL-SAM-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end">5</td>
-                                        <td class="text-end">$ 1,600,000</td>
-                                        <td class="text-end">0%</td>
-                                        <td class="text-end"><strong>$ 8,000,000</strong></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div id="catalogPagination" class="d-flex justify-content-center mt-3"></div>
                         </div>
+
+                        
                     </div>
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-scale-balanced"></i>
                         <strong>Totales y Pagos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#totalesPagos" aria-expanded="true" aria-controls="totalesPagos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="totalesPagos">
+                        <div class="mt-1">
+                            <h6 class="mb-2">Detalle de la compra</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 34px;"></th>
+                                            <th>Producto</th>
+                                            <th>Código</th>
+                                            <th class="text-end">Cantidad</th>
+                                            <th class="text-end">P. Unitario</th>
+                                            <th class="text-end">Subtotal</th>
+                                            <th style="width: 34px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Observaciones</label>
@@ -410,11 +423,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-list"></i>
                         <strong>Historial de Compras</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#historialCompras" aria-expanded="true" aria-controls="historialCompras">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="historialCompras">
                         <div class="row g-3 mb-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Buscar compra</label>
@@ -502,11 +520,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-bolt"></i>
                         <strong>Acciones</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#acciones" aria-expanded="true" aria-controls="acciones">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="acciones">
                         <div class="d-flex justify-content-center flex-wrap gap-2">
                             <button type="button" class="btn btn-secondary" id="clearBtn">
                                 <i class="fas fa-eraser me-1"></i>Limpiar
@@ -545,242 +568,10 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Prevenir el parpadeo del offcanvas
-        document.addEventListener('DOMContentLoaded', function() {
-            const offcanvasElement = document.getElementById('posSidebar');
-            if (offcanvasElement) {
-                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                
-                // Manejar eventos del offcanvas
-                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
-                    this.classList.add('show');
-                });
-                
-                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
-                    this.classList.remove('show');
-                });
-            }
-        });
-    </script>
-    <script>
-        (function() {
-            const form = document.getElementById('purchaseForm');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchBtn = document.getElementById('searchBtn');
-            const draftBtn = document.getElementById('draftBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const addProductBtn = document.getElementById('addProduct');
-            const searchInput = document.getElementById('searchPurchase');
-            const filterStatus = document.getElementById('filterStatus');
-            const supplier = document.getElementById('supplier');
-            
-            const productsBody = document.getElementById('productsBody');
-            const uiSubtotal = document.getElementById('uiSubtotal');
-            const uiVat = document.getElementById('uiVat');
-            const uiTotal = document.getElementById('uiTotal');
-            const globalDiscount = document.getElementById('globalDiscount');
-
-            // Datos de proveedores
-            const suppliers = {
-                '1': { name: 'Proveedor A - Electrónicos', contact: 'Juan Pérez', phone: '300 123 4567', email: 'juan@proveedora.com' },
-                '2': { name: 'Proveedor B - Ropa', contact: 'María García', phone: '300 234 5678', email: 'maria@proveedorb.com' },
-                '3': { name: 'Proveedor C - Hogar', contact: 'Carlos López', phone: '300 345 6789', email: 'carlos@proveedorc.com' },
-                '4': { name: 'Proveedor D - Deportes', contact: 'Ana Martínez', phone: '300 456 7890', email: 'ana@proveedord.com' }
-            };
-
-            // Actualizar datos del proveedor
-            supplier.addEventListener('change', () => {
-                const selectedSupplier = suppliers[supplier.value];
-                if (selectedSupplier) {
-                    document.getElementById('contactPerson').value = selectedSupplier.contact;
-                    document.getElementById('supplierPhone').value = selectedSupplier.phone;
-                    document.getElementById('supplierEmail').value = selectedSupplier.email;
-                } else {
-                    document.getElementById('contactPerson').value = '';
-                    document.getElementById('supplierPhone').value = '';
-                    document.getElementById('supplierEmail').value = '';
-                }
-            });
-
-            // Calcular totales
-            function calculateTotals() {
-                let subtotal = 0;
-                
-                for (const row of productsBody.querySelectorAll('tr')) {
-                    const quantity = Number(row.querySelector('.prod-qty').textContent || 0);
-                    const unitPrice = Number(row.querySelector('.prod-price').textContent.replace(/[$,]/g, '') || 0);
-                    const discount = Number(row.querySelector('.prod-disc').textContent.replace('%', '') || 0);
-                    
-                    const lineSubtotal = quantity * unitPrice * (1 - discount / 100);
-                    subtotal += lineSubtotal;
-                }
-
-                // Descuento global
-                const globalDiscPct = Number(globalDiscount.value || 0);
-                const discountAmt = Math.max(0, subtotal * globalDiscPct / 100);
-                subtotal -= discountAmt;
-
-                const vat = Math.round(subtotal * 0.19);
-                const total = subtotal + vat;
-
-                uiSubtotal.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(subtotal);
-                uiVat.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(vat);
-                uiTotal.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(total);
-            }
-
-            // Agregar producto
-            addProductBtn.addEventListener('click', () => {
-                const searchTerm = document.getElementById('searchProduct').value.trim();
-                const quantity = Number(document.getElementById('quantity').value || 1);
-                const unitPrice = Number(document.getElementById('unitPrice').value || 0);
-                const discount = Number(document.getElementById('discount').value || 0);
-
-                if (!searchTerm || unitPrice <= 0) {
-                    alert('Por favor complete la información del producto');
-                    return;
-                }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><i class="fas fa-box text-primary"></i></td>
-                    <td>
-                        <div>
-                            <strong>${searchTerm}</strong><br>
-                            <small class="text-muted">Código: ${searchTerm.toUpperCase().substring(0, 8)}</small>
-                        </div>
-                    </td>
-                    <td class="text-end prod-qty">${quantity}</td>
-                    <td class="text-end prod-price">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(unitPrice)}</td>
-                    <td class="text-end prod-disc">${discount}%</td>
-                    <td class="text-end"><strong>${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(quantity * unitPrice * (1 - discount / 100))}</strong></td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </td>
-                `;
-
-                productsBody.appendChild(tr);
-                
-                // Limpiar campos
-                document.getElementById('searchProduct').value = '';
-                document.getElementById('quantity').value = '1';
-                document.getElementById('unitPrice').value = '';
-                document.getElementById('discount').value = '0';
-                
-                calculateTotals();
-            });
-
-            // Eliminar producto
-            productsBody.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-outline-danger')) {
-                    e.target.closest('tr').remove();
-                    calculateTotals();
-                }
-            });
-
-            // Recalcular al cambiar descuento global
-            globalDiscount.addEventListener('input', calculateTotals);
-
-            // Limpiar formulario
-            clearBtn.addEventListener('click', () => {
-                form.reset();
-                productsBody.innerHTML = '';
-                calculateTotals();
-            });
-
-            // Buscar compras
-            searchBtn.addEventListener('click', () => {
-                const searchTerm = searchInput.value.trim();
-                const status = filterStatus.value;
-                
-                if (searchTerm || status) {
-                    alert(`Buscando compras: "${searchTerm}" con estado: "${status || 'Todos'}"`);
-                } else {
-                    alert('Por favor ingrese un término de búsqueda o seleccione un estado');
-                }
-            });
-
-            // Guardar borrador
-            draftBtn.addEventListener('click', () => {
-                alert('Orden de compra guardada como borrador');
-            });
-
-            // Crear orden
-            saveBtn.addEventListener('click', () => {
-                if (form.checkValidity()) {
-                    const purchaseData = {
-                        orderNumber: document.getElementById('orderNumber').value,
-                        purchaseDate: document.getElementById('purchaseDate').value,
-                        expectedDelivery: document.getElementById('expectedDelivery').value,
-                        status: document.getElementById('purchaseStatus').value,
-                        supplier: document.getElementById('supplier').value,
-                        contactPerson: document.getElementById('contactPerson').value,
-                        supplierPhone: document.getElementById('supplierPhone').value,
-                        supplierEmail: document.getElementById('supplierEmail').value,
-                        notes: document.getElementById('notes').value,
-                        paymentMethod: document.getElementById('paymentMethod').value,
-                        paymentTerms: document.getElementById('paymentTerms').value,
-                        earlyPaymentDiscount: document.getElementById('earlyPaymentDiscount').value,
-                        products: Array.from(productsBody.querySelectorAll('tr')).map(row => ({
-                            name: row.cells[1].querySelector('strong').textContent,
-                            quantity: Number(row.cells[2].textContent),
-                            unitPrice: Number(row.cells[3].textContent.replace(/[$,]/g, '')),
-                            discount: Number(row.cells[4].textContent.replace('%', ''))
-                        }))
-                    };
-                    
-                    console.log('Datos de la compra:', purchaseData);
-                    alert('Orden de compra creada exitosamente');
-                    form.reset();
-                    productsBody.innerHTML = '';
-                    calculateTotals();
-                } else {
-                    form.reportValidity();
-                }
-            });
-
-            // Búsqueda en tiempo real
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('#purchasesBody tr');
-                
-                rows.forEach(row => {
-                    const orderNumber = row.cells[0].textContent.toLowerCase();
-                    const supplier = row.cells[1].textContent.toLowerCase();
-                    
-                    if (orderNumber.includes(searchTerm) || supplier.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-            // Filtro por estado
-            filterStatus.addEventListener('change', () => {
-                const selectedStatus = filterStatus.value;
-                const rows = document.querySelectorAll('#purchasesBody tr');
-                
-                rows.forEach(row => {
-                    const status = row.cells[3].textContent.trim();
-                    
-                    if (!selectedStatus || status.includes(selectedStatus)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-            // Establecer fecha actual
-            document.getElementById('purchaseDate').valueAsDate = new Date();
-            
-            // Calcular totales iniciales
-            calculateTotals();
-
-        })();
-    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=12"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    <script src="../assets/js/compras.js?v=1"></script>
 </body>
 </html>

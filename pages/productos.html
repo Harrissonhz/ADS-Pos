@@ -11,8 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Estilos principales del proyecto y POS -->
-    <link rel="stylesheet" href="../assets/css/tienda.css">
-    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="stylesheet" href="../assets/css/main.css?v=3">
+    <link rel="stylesheet" href="../assets/css/pos.css?v=3">
+    <link rel="stylesheet" href="../assets/css/components.css?v=1">
     <link rel="icon" href="../assets/img/logo.png">
     <meta name="description" content="Gestión de productos del sistema POS de ADS Store.">
 </head>
@@ -202,11 +203,16 @@
 
             <form id="productForm" class="p-3" novalidate>
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-box"></i>
                         <strong>Información Básica del Producto</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#infoBasica" aria-expanded="true" aria-controls="infoBasica">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="infoBasica">
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Nombre del producto</label>
@@ -248,11 +254,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-dollar-sign"></i>
                         <strong>Precios y Costos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#preciosCostos" aria-expanded="true" aria-controls="preciosCostos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="preciosCostos">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Precio de venta</label>
@@ -302,11 +313,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-warehouse"></i>
                         <strong>Inventario y Stock</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#inventarioStock" aria-expanded="true" aria-controls="inventarioStock">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="inventarioStock">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Stock actual</label>
@@ -343,11 +359,16 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-cogs"></i>
                         <strong>Configuración Adicional</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#configuracionAdicional" aria-expanded="true" aria-controls="configuracionAdicional">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="configuracionAdicional">
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Estado del producto</label>
@@ -395,26 +416,24 @@
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-list"></i>
                         <strong>Lista de Productos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#listaProductos" aria-expanded="true" aria-controls="listaProductos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="listaProductos">
                         <div class="row g-3 mb-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Buscar producto</label>
                                 <input type="text" class="form-control" id="searchProduct" placeholder="Nombre, código o marca">
                             </div>
                             <div class="col-12 col-lg-4">
-                                <label class="form-label">Filtrar por categoría</label>
-                                <select class="form-select" id="filterCategory">
-                                    <option value="">Todas las categorías</option>
-                                    <option value="1">Electrónicos</option>
-                                    <option value="2">Ropa y Accesorios</option>
-                                    <option value="3">Hogar y Jardín</option>
-                                    <option value="4">Deportes</option>
-                                    <option value="5">Libros y Oficina</option>
-                                </select>
+                                <label class="form-label">Filtrar por Código interno</label>
+                                <input type="text" class="form-control" id="filterInternalCode" placeholder="Ej: LAP-HP-001">
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Filtrar por estado</label>
@@ -517,15 +536,21 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div id="productsPagination" class="d-flex justify-content-center mt-3"></div>
                     </div>
                 </div>
 
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-bolt"></i>
                         <strong>Acciones</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#acciones" aria-expanded="true" aria-controls="acciones">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="acciones">
                         <div class="d-flex justify-content-center flex-wrap gap-2">
                             <button type="button" class="btn btn-secondary" id="clearBtn">
                                 <i class="fas fa-eraser me-1"></i>Limpiar
@@ -565,165 +590,36 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Prevenir el parpadeo del offcanvas
+        // Prevenir el parpadeo del offcanvas y sincronizar chevrons de secciones
         document.addEventListener('DOMContentLoaded', function() {
             const offcanvasElement = document.getElementById('posSidebar');
             if (offcanvasElement) {
                 const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                
-                // Manejar eventos del offcanvas
-                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
-                    this.classList.add('show');
-                });
-                
-                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
-                    this.classList.remove('show');
-                });
+                offcanvasElement.addEventListener('show.bs.offcanvas', function() { this.classList.add('show'); });
+                offcanvasElement.addEventListener('hide.bs.offcanvas', function() { this.classList.remove('show'); });
             }
+
+            const sections = ['infoBasica','preciosCostos','inventarioStock','configuracionAdicional','listaProductos','acciones'];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const btn = document.querySelector(`[data-bs-target="#${id}"]`);
+                const icon = btn ? btn.querySelector('i') : null;
+                if (!icon) return;
+                el.addEventListener('show.bs.collapse', () => { icon.classList.remove('fa-chevron-down'); icon.classList.add('fa-chevron-up'); });
+                el.addEventListener('hide.bs.collapse', () => { icon.classList.remove('fa-chevron-up'); icon.classList.add('fa-chevron-down'); });
+            });
         });
     </script>
-    <script>
-        (function() {
-            const form = document.getElementById('productForm');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchBtn = document.getElementById('searchBtn');
-            const importBtn = document.getElementById('importBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const searchInput = document.getElementById('searchProduct');
-            const filterCategory = document.getElementById('filterCategory');
-            const filterStatus = document.getElementById('filterStatus');
-            
-            const salePrice = document.getElementById('salePrice');
-            const purchasePrice = document.getElementById('purchasePrice');
-            const profitMargin = document.getElementById('profitMargin');
-
-            // Calcular margen de ganancia automáticamente
-            function calculateProfitMargin() {
-                const sale = parseFloat(salePrice.value) || 0;
-                const purchase = parseFloat(purchasePrice.value) || 0;
-                
-                if (purchase > 0) {
-                    const margin = ((sale - purchase) / purchase) * 100;
-                    profitMargin.value = margin.toFixed(2);
-                } else {
-                    profitMargin.value = '';
-                }
-            }
-
-            salePrice.addEventListener('input', calculateProfitMargin);
-            purchasePrice.addEventListener('input', calculateProfitMargin);
-
-            // Limpiar formulario
-            clearBtn.addEventListener('click', () => {
-                form.reset();
-            });
-
-            // Buscar productos
-            searchBtn.addEventListener('click', () => {
-                const searchTerm = searchInput.value.trim();
-                const category = filterCategory.value;
-                const status = filterStatus.value;
-                
-                if (searchTerm || category || status) {
-                    alert(`Buscando productos: "${searchTerm}" en categoría: "${category || 'Todas'}" con estado: "${status || 'Todos'}"`);
-                } else {
-                    alert('Por favor ingrese un término de búsqueda o seleccione filtros');
-                }
-            });
-
-            // Importar productos
-            importBtn.addEventListener('click', () => {
-                alert('Función de importación de productos (Excel/CSV) - Próximamente');
-            });
-
-            // Guardar producto
-            saveBtn.addEventListener('click', () => {
-                if (form.checkValidity()) {
-                    const productData = {
-                        name: document.getElementById('productName').value,
-                        barcode: document.getElementById('barcode').value,
-                        internalCode: document.getElementById('internalCode').value,
-                        category: document.getElementById('category').value,
-                        brand: document.getElementById('brand').value,
-                        model: document.getElementById('model').value,
-                        description: document.getElementById('description').value,
-                        salePrice: document.getElementById('salePrice').value,
-                        purchasePrice: document.getElementById('purchasePrice').value,
-                        wholesalePrice: document.getElementById('wholesalePrice').value,
-                        maxDiscount: document.getElementById('maxDiscount').value,
-                        taxRate: document.getElementById('taxRate').value,
-                        currentStock: document.getElementById('currentStock').value,
-                        minStock: document.getElementById('minStock').value,
-                        maxStock: document.getElementById('maxStock').value,
-                        unit: document.getElementById('unit').value,
-                        location: document.getElementById('location').value,
-                        status: document.getElementById('status').value,
-                        supplier: document.getElementById('supplier').value,
-                        weight: document.getElementById('weight').value,
-                        dimensions: document.getElementById('dimensions').value,
-                        trackStock: document.getElementById('trackStock').checked,
-                        allowNegativeStock: document.getElementById('allowNegativeStock').checked
-                    };
-                    
-                    console.log('Datos del producto:', productData);
-                    alert('Producto guardado exitosamente');
-                    form.reset();
-                } else {
-                    form.reportValidity();
-                }
-            });
-
-            // Búsqueda en tiempo real
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('#productsBody tr');
-                
-                rows.forEach(row => {
-                    const productName = row.cells[1].textContent.toLowerCase();
-                    const code = row.cells[2].textContent.toLowerCase();
-                    
-                    if (productName.includes(searchTerm) || code.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-            // Filtro por categoría
-            filterCategory.addEventListener('change', () => {
-                applyFilters();
-            });
-
-            // Filtro por estado
-            filterStatus.addEventListener('change', () => {
-                applyFilters();
-            });
-
-            function applyFilters() {
-                const category = filterCategory.value;
-                const status = filterStatus.value;
-                const rows = document.querySelectorAll('#productsBody tr');
-                
-                rows.forEach(row => {
-                    const categoryCell = row.cells[3].textContent.trim();
-                    const statusCell = row.cells[6].textContent.trim();
-                    
-                    let showRow = true;
-                    
-                    if (category && !categoryCell.includes(category)) {
-                        showRow = false;
-                    }
-                    
-                    if (status && !statusCell.includes(status)) {
-                        showRow = false;
-                    }
-                    
-                    row.style.display = showRow ? '' : 'none';
-                });
-            }
-
-        })();
-    </script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=12"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    
+    <script src="../assets/js/productos.js?v=1"></script>
 </body>
 </html>

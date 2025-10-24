@@ -11,6 +11,8 @@ class AuthService {
         const { data: { session } } = await this.supabase.auth.getSession();
         if (session) {
             this.currentUser = session.user;
+            // Sincronizar usuario en tabla usuarios
+            try { await window.db?.ensureAppUser?.(this.currentUser); } catch (_) {}
             this.updateUI();
         }
 
@@ -18,6 +20,8 @@ class AuthService {
         this.supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN') {
                 this.currentUser = session.user;
+                // Sincronizar usuario en tabla usuarios
+                (async () => { try { await window.db?.ensureAppUser?.(this.currentUser); } catch (_) {} })();
                 this.updateUI();
                 this.redirectToDashboard();
             } else if (event === 'SIGNED_OUT') {
@@ -118,14 +122,27 @@ class AuthService {
     }
 
     redirectToDashboard() {
-        if (window.location.pathname.includes('login.html')) {
-            window.location.href = 'index.html';
-        }
+        const toIndex = () => {
+            // Si estamos en /pages/login.html ir a ../index.html
+            if (window.location.pathname.endsWith('/pages/login.html')) {
+                window.location.href = '../index.html';
+            } else {
+                // Si estamos en raíz/login.html ir a index.html
+                window.location.href = 'index.html';
+            }
+        };
+        if (window.location.pathname.includes('login.html')) toIndex();
     }
 
     redirectToLogin() {
         if (!window.location.pathname.includes('login.html')) {
-            window.location.href = 'pages/login.html';
+            // Si estamos en /pages/*, mantener en /pages/login.html
+            if (window.location.pathname.includes('/pages/')) {
+                window.location.href = 'login.html';
+            } else {
+                // Si estamos en raíz, ir a pages/login.html
+                window.location.href = 'pages/login.html';
+            }
         }
     }
 

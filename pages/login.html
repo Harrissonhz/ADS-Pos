@@ -11,9 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Estilos principales de la tienda para mantener look & feel -->
-    <link rel="stylesheet" href="../assets/css/tienda.css">
+    <link rel="stylesheet" href="../assets/css/main.css?v=3">
     <!-- Estilos del módulo POS -->
-    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="stylesheet" href="../assets/css/pos.css?v=3">
     <link rel="icon" href="../assets/img/logo.png">
     <meta name="description" content="Login del sistema POS de ADS Store para acceso seguro.">
 </head>
@@ -55,31 +55,48 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Config y servicios -->
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
     <script>
-        // Validación básica del formulario y ejemplo de manejo de login (placeholder)
+        // Login real contra Supabase con fallback a signUp si el usuario no existe
         (function() {
             const form = document.getElementById('posLoginForm');
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 if (!form.checkValidity()) {
                     form.classList.add('was-validated');
                     return;
                 }
-                // Simulación de autenticación simple (reemplazar por lógica real)
+
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value.trim();
-                if (email && password) {
-                    // Mostrar mensaje de éxito
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
-                    submitBtn.disabled = true;
-                    
-                    // Simular tiempo de autenticación y redirigir
-                    setTimeout(() => {
-                        // Redirige al sistema principal ADS-POS
-                        window.location.href = '../index.html';
-                    }, 1500);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...';
+                submitBtn.disabled = true;
+
+                try {
+                    // Intentar login directo con las credenciales ingresadas
+                    let { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        // Si no existe o credenciales inválidas, intentamos crear el usuario y luego logueamos
+                        console.warn('Login falló, intentando crear usuario:', error.message);
+                        const { data: suData, error: suError } = await window.supabaseClient.auth.signUp({ email, password });
+                        if (suError) throw suError;
+                        // Intentar login nuevamente
+                        const retry = await window.supabaseClient.auth.signInWithPassword({ email, password });
+                        if (retry.error) throw retry.error;
+                    }
+                    // Redirigir al dashboard principal
+                    window.location.href = '../index.html';
+                } catch (err) {
+                    window.auth?.showError?.(err.message || 'Error al iniciar sesión');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 }
             });
         })();

@@ -6,43 +6,29 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Función para autenticación automática (para testing)
+// Función para autenticación automática (uso de usuario sembrado)
 async function ensureAuthenticated() {
     try {
         const { data: { session } } = await supabaseClient.auth.getSession();
-        
-        if (!session) {
-            console.log('🔐 No hay sesión activa, creando usuario de prueba...');
-            
-            // Crear un usuario de prueba temporal
-            const { data, error } = await supabaseClient.auth.signUp({
-                email: `test-${Date.now()}@example.com`,
-                password: 'test123456'
-            });
-            
-            if (error) {
-                console.log('⚠️ Error al crear usuario de prueba:', error.message);
-                // Si falla, intentar con un usuario existente
-                const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
-                    email: 'admin@ads-pos.com',
-                    password: 'admin123456'
-                });
-                
-                if (signInError) {
-                    console.log('⚠️ No se pudo autenticar:', signInError.message);
-                    return false;
-                }
-                
-                console.log('✅ Autenticado con usuario existente');
-                return true;
-            }
-            
-            console.log('✅ Usuario de prueba creado y autenticado');
-            return true;
-        } else {
+        if (session) {
             console.log('✅ Ya hay una sesión activa');
             return true;
         }
+
+        console.log('🔐 No hay sesión activa, iniciando sesión con admin sembrado...');
+        // Coincidir con correo sembrado en crear_base_datos_supabase.sql
+        const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
+            email: 'admin@adsstore.com',
+            password: 'admin123456'
+        });
+
+        if (signInError) {
+            console.log('⚠️ No se pudo autenticar:', signInError.message);
+            return false;
+        }
+
+        console.log('✅ Autenticado con usuario administrador sembrado');
+        return true;
     } catch (error) {
         console.error('❌ Error en autenticación:', error);
         return false;

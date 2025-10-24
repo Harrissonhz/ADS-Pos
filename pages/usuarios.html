@@ -207,8 +207,8 @@
                         <div class="card-body">
                             <i class="fas fa-users fa-2x text-primary mb-2"></i>
                             <h5 class="card-title">Total Usuarios</h5>
-                            <h3 class="text-primary">12</h3>
-                            <small class="text-muted">Activos en el sistema</small>
+                            <h3 class="text-primary" id="totalUsersCount">0</h3>
+                            <small class="text-white">Activos en el sistema</small>
                         </div>
                     </div>
                 </div>
@@ -218,7 +218,7 @@
                             <i class="fas fa-user-check fa-2x text-success mb-2"></i>
                             <h5 class="card-title">En Línea</h5>
                             <h3 class="text-success">4</h3>
-                            <small class="text-muted">Usuarios conectados</small>
+                            <small class="text-white">Usuarios conectados</small>
                         </div>
                     </div>
                 </div>
@@ -227,8 +227,8 @@
                         <div class="card-body">
                             <i class="fas fa-user-shield fa-2x text-warning mb-2"></i>
                             <h5 class="card-title">Administradores</h5>
-                            <h3 class="text-warning">3</h3>
-                            <small class="text-muted">Con privilegios altos</small>
+                            <h3 class="text-warning" id="adminsCount">0</h3>
+                            <small class="text-white">Con privilegios altos</small>
                         </div>
                     </div>
                 </div>
@@ -237,8 +237,8 @@
                         <div class="card-body">
                             <i class="fas fa-user-lock fa-2x text-danger mb-2"></i>
                             <h5 class="card-title">Bloqueados</h5>
-                            <h3 class="text-danger">1</h3>
-                            <small class="text-muted">Cuentas suspendidas</small>
+                            <h3 class="text-danger" id="blockedCount">0</h3>
+                            <small class="text-white">Cuentas suspendidas</small>
                         </div>
                     </div>
                 </div>
@@ -247,11 +247,14 @@
             <form id="userForm" class="p-3" novalidate>
                 <!-- Formulario de Usuario -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
                         <i class="fas fa-user-plus"></i>
                         <strong>Datos del Usuario</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#datosUsuario" aria-expanded="true" aria-controls="datosUsuario">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="datosUsuario">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Nombre completo *</label>
@@ -291,11 +294,14 @@
 
                 <!-- Configuración de Acceso -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
                         <i class="fas fa-key"></i>
                         <strong>Configuración de Acceso</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#configAcceso" aria-expanded="true" aria-controls="configAcceso">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="configAcceso">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Contraseña *</label>
@@ -341,11 +347,14 @@
 
                 <!-- Permisos del Usuario -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
                         <i class="fas fa-shield-alt"></i>
                         <strong>Permisos del Usuario</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#permisosUsuario" aria-expanded="true" aria-controls="permisosUsuario">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="permisosUsuario">
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <h6>Módulos del Sistema</h6>
@@ -429,37 +438,16 @@
                     </div>
                 </div>
 
-                <!-- Acciones -->
-                <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-bolt"></i>
-                        <strong>Acciones</strong>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center flex-wrap gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Guardar Usuario
-                            </button>
-                            <button type="button" class="btn btn-secondary" id="clearBtn">
-                                <i class="fas fa-eraser me-1"></i>Limpiar
-                            </button>
-                            <button type="button" class="btn btn-info" id="searchBtn">
-                                <i class="fas fa-search me-1"></i>Buscar
-                            </button>
-                            <button type="button" class="btn btn-warning" id="exportBtn">
-                                <i class="fas fa-download me-1"></i>Exportar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Filtros de Búsqueda -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
                         <i class="fas fa-filter"></i>
                         <strong>Filtros de Búsqueda</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosBusqueda" aria-expanded="true" aria-controls="filtrosBusqueda">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="filtrosBusqueda">
                         <div class="row g-3">
                             <div class="col-12 col-lg-3">
                                 <label class="form-label">Buscar</label>
@@ -507,11 +495,14 @@
 
                 <!-- Lista de Usuarios -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
                         <i class="fas fa-list"></i>
                         <strong>Lista de Usuarios</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#listaUsuarios" aria-expanded="true" aria-controls="listaUsuarios">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="listaUsuarios">
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
@@ -525,124 +516,36 @@
                                         <th style="width: 120px;">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="usersBody">
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                    <i class="fas fa-user text-white"></i>
-                                                </div>
-                                                <strong>admin</strong>
-                                            </div>
-                                        </td>
-                                        <td>Administrador Principal</td>
-                                        <td>admin@adsstore.com</td>
-                                        <td><span class="badge bg-danger">Administrador</span></td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>Hace 5 min</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                    <i class="fas fa-user text-white"></i>
-                                                </div>
-                                                <strong>vendedor1</strong>
-                                            </div>
-                                        </td>
-                                        <td>María González</td>
-                                        <td>maria@adsstore.com</td>
-                                        <td><span class="badge bg-info">Vendedor</span></td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>Hace 15 min</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                    <i class="fas fa-user text-white"></i>
-                                                </div>
-                                                <strong>cajero1</strong>
-                                            </div>
-                                        </td>
-                                        <td>Carlos López</td>
-                                        <td>carlos@adsstore.com</td>
-                                        <td><span class="badge bg-warning">Cajero</span></td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>Hace 1 hora</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-info rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                    <i class="fas fa-user text-white"></i>
-                                                </div>
-                                                <strong>inventario1</strong>
-                                            </div>
-                                        </td>
-                                        <td>Ana Rodríguez</td>
-                                        <td>ana@adsstore.com</td>
-                                        <td><span class="badge bg-secondary">Inventario</span></td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>Hace 2 horas</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                    <i class="fas fa-user text-white"></i>
-                                                </div>
-                                                <strong>bloqueado1</strong>
-                                            </div>
-                                        </td>
-                                        <td>Usuario Bloqueado</td>
-                                        <td>bloqueado@adsstore.com</td>
-                                        <td><span class="badge bg-info">Vendedor</span></td>
-                                        <td><span class="badge bg-danger">Bloqueado</span></td>
-                                        <td>Hace 3 días</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="usersBody"></tbody>
                             </table>
+                        </div>
+                        <div id="usersPagination" class="d-flex justify-content-center mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <i class="fas fa-bolt"></i>
+                        <strong>Acciones</strong>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#acciones" aria-expanded="true" aria-controls="acciones">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="acciones">
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Guardar Usuario
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-info" id="searchBtn">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="exportBtn">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -686,157 +589,15 @@
             }
         });
     </script>
-    <script>
-        (function() {
-            const form = document.getElementById('userForm');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchBtn = document.getElementById('searchBtn');
-            const exportBtn = document.getElementById('exportBtn');
-            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-            const togglePassword = document.getElementById('togglePassword');
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirmPassword');
-            const searchTerm = document.getElementById('searchTerm');
-            const filterRole = document.getElementById('filterRole');
-            const filterStatus = document.getElementById('filterStatus');
-            const dateFrom = document.getElementById('dateFrom');
-            const dateTo = document.getElementById('dateTo');
-
-            // Toggle password visibility
-            togglePassword.addEventListener('click', () => {
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
-                const icon = togglePassword.querySelector('i');
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            });
-
-            // Validación de contraseñas
-            confirmPassword.addEventListener('input', () => {
-                if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity('Las contraseñas no coinciden');
-                } else {
-                    confirmPassword.setCustomValidity('');
-                }
-            });
-
-            // Búsqueda en tiempo real
-            searchTerm.addEventListener('input', () => {
-                const searchValue = searchTerm.value.toLowerCase();
-                const rows = document.querySelectorAll('#usersBody tr');
-                
-                rows.forEach(row => {
-                    const username = row.cells[0].textContent.toLowerCase();
-                    const name = row.cells[1].textContent.toLowerCase();
-                    const email = row.cells[2].textContent.toLowerCase();
-                    
-                    if (username.includes(searchValue) || name.includes(searchValue) || email.includes(searchValue)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-            // Aplicar filtros
-            function applyFilters() {
-                const role = filterRole.value;
-                const status = filterStatus.value;
-                const fromDate = dateFrom.value;
-                const toDate = dateTo.value;
-                const rows = document.querySelectorAll('#usersBody tr');
-                
-                rows.forEach(row => {
-                    const roleCell = row.cells[3].textContent.trim();
-                    const statusCell = row.cells[4].textContent.trim();
-                    
-                    let showRow = true;
-                    
-                    if (role && !roleCell.toLowerCase().includes(role)) {
-                        showRow = false;
-                    }
-                    
-                    if (status && !statusCell.toLowerCase().includes(status)) {
-                        showRow = false;
-                    }
-                    
-                    row.style.display = showRow ? '' : 'none';
-                });
-            }
-
-            // Event listeners para filtros
-            filterRole.addEventListener('change', applyFilters);
-            filterStatus.addEventListener('change', applyFilters);
-            dateFrom.addEventListener('change', applyFilters);
-            dateTo.addEventListener('change', applyFilters);
-
-            // Buscar
-            function performSearch() {
-                const search = searchTerm.value.trim();
-                const role = filterRole.value;
-                const status = filterStatus.value;
-                const fromDate = dateFrom.value;
-                const toDate = dateTo.value;
-                
-                if (search || role || status || fromDate || toDate) {
-                    alert(`Buscando usuarios: "${search}" rol: "${role || 'Todos'}" estado: "${status || 'Todos'}" desde: "${fromDate || 'Todos'}" hasta: "${toDate || 'Todos'}"`);
-                } else {
-                    alert('Por favor ingrese criterios de búsqueda');
-                }
-            }
-
-            searchBtn.addEventListener('click', performSearch);
-            applyFiltersBtn.addEventListener('click', performSearch);
-
-            // Exportar
-            exportBtn.addEventListener('click', () => {
-                alert('Exportando lista de usuarios a Excel...');
-            });
-
-            // Limpiar formulario
-            clearBtn.addEventListener('click', () => {
-                form.reset();
-                // Mostrar todas las filas
-                const rows = document.querySelectorAll('#usersBody tr');
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-            });
-
-            // Envío del formulario
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                if (form.checkValidity()) {
-                    const formData = new FormData(form);
-                    const userData = Object.fromEntries(formData);
-                    
-                    // Simular guardado
-                    alert('Usuario guardado exitosamente');
-                    console.log('Datos del usuario:', userData);
-                } else {
-                    alert('Por favor complete todos los campos requeridos');
-                }
-                
-                form.classList.add('was-validated');
-            });
-
-            // Establecer fechas por defecto
-            const today = new Date();
-            const lastMonth = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            
-            dateFrom.valueAsDate = lastMonth;
-            dateTo.valueAsDate = today;
-
-            // Actualizar resumen (simulación)
-            function updateSummary() {
-                console.log('Actualizando resumen de usuarios...');
-            }
-
-            // Inicializar
-            updateSummary();
-
-        })();
-    </script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=12"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    <script src="../assets/js/usuarios.js?v=1"></script>
+    <!-- Scripts reemplazados por lógica real en usuarios.js -->
 </body>
 </html>

@@ -217,9 +217,12 @@ CREATE TABLE facturacion (
 -- ================================================
 -- 9. Tabla: compras
 -- ================================================
+-- Secuencia para numero_orden de compras (debe existir antes de la tabla)
+CREATE SEQUENCE IF NOT EXISTS compras_numero_orden_seq START 1;
+
 CREATE TABLE compras (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    numero_orden VARCHAR(50) UNIQUE NOT NULL,
+    numero_orden BIGINT UNIQUE NOT NULL DEFAULT nextval('compras_numero_orden_seq'),
     proveedor_id UUID REFERENCES proveedores(id) NOT NULL,
     usuario_id UUID REFERENCES usuarios(id) NOT NULL,
     fecha_compra DATE NOT NULL,
