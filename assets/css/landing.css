@@ -1,0 +1,84 @@
+/*
+    Archivo: landing.css
+    Descripción: Estilos específicos para la landing page de ADS-POS
+    Versión: 1.0.0
+    Autor: ADS Solutions
+    Fecha: 2024
+*/
+
+/* ===== FONDO ÚNICO PARA TODA LA PÁGINA ===== */
+body.pos-app {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    margin-top: -30px;
+}
+
+/* ===== TARJETAS DE CARACTERÍSTICAS ===== */
+.feature-card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== BOTONES ===== */
+.btn-login {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-login:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+    transform: translateY(-2px);
+}
+
+/* ===== TIPOGRAFÍA Y CONTRASTE ===== */
+.hero-section h1,
+.hero-section h2,
+.hero-section p {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero-section {
+        background-attachment: scroll; /* Mejor rendimiento en móviles */
+    }
+    
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-login {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
