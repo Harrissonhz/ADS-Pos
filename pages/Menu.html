@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADS-POS - Sistema de Punto de Venta</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Sistema de Punto de Venta ADS-POS - Gestión completa de ventas e inventario">
+</head>
+<body class="pos-app">
+    <!-- Header Principal -->
+    <header class="pos-login-header d-flex flex-column align-items-center text-center">
+        <h1 class="w-100 text-center mb-0 pos-main-title">ADS-POS</h1>
+        <div class="logo-icon mt-2">
+            <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img d-block mx-auto">
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container-fluid py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <!-- Título de Bienvenida -->
+                <div class="text-center mb-5">
+                    <h2 class="text-white mb-3">Sistema de Punto de Venta</h2>
+                    <p class="text-white-50 fs-5">Selecciona el módulo que deseas utilizar</p>
+                </div>
+
+                <!-- Menú Principal en Pastillas -->
+                <div class="row g-4">
+                    <!-- Módulo de Ventas -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-cash-register fa-3x text-primary"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Ventas</h4>
+                            <p class="text-white-50 mb-4">Gestión de ventas y facturación</p>
+                            <div class="d-grid gap-2">
+                                <a href="./facturacion.html" class="btn btn-primary">
+                                    <i class="fas fa-file-invoice me-2"></i>Facturación
+                                </a>
+                                <a href="./ventas.html" class="btn btn-outline-primary">
+                                    <i class="fas fa-shopping-cart me-2"></i>Nueva Venta
+                                </a>
+                                <a href="./ventas-historial.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-history me-2"></i>Historial
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Inventario -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-boxes fa-3x text-success"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Inventario</h4>
+                            <p class="text-white-50 mb-4">Control de productos y stock</p>
+                            <div class="d-grid gap-2">
+                                <a href="./productos.html" class="btn btn-success">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                                <a href="./categorias.html" class="btn btn-outline-success">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                                <a href="./inventario.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-warehouse me-2"></i>Stock
+                                </a>
+                                <a href="./movimientos.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Compras -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-shopping-bag fa-3x text-warning"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Compras</h4>
+                            <p class="text-white-50 mb-4">Gestión de proveedores y compras</p>
+                            <div class="d-grid gap-2">
+                                <a href="./compras.html" class="btn btn-warning">
+                                    <i class="fas fa-shopping-cart me-2"></i>Compras
+                                </a>
+                                <a href="./proveedores.html" class="btn btn-outline-warning">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Clientes -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-users fa-3x text-info"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Clientes</h4>
+                            <p class="text-white-50 mb-4">Gestión de base de datos de clientes</p>
+                            <div class="d-grid gap-2">
+                                <a href="./clientes.html" class="btn btn-info">
+                                    <i class="fas fa-user-friends me-2"></i>Gestionar Clientes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Caja -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-cash-register fa-3x text-danger"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Caja</h4>
+                            <p class="text-white-50 mb-4">Control de caja registradora</p>
+                            <div class="d-grid gap-2">
+                                <a href="./caja-apertura.html" class="btn btn-danger">
+                                    <i class="fas fa-door-open me-2"></i>Apertura
+                                </a>
+                                <a href="./caja-cierre.html" class="btn btn-outline-danger">
+                                    <i class="fas fa-door-closed me-2"></i>Cierre
+                                </a>
+                                <a href="./caja-historial.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-chart-line me-2"></i>Historial
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Administración -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="pos-card h-100 text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-cogs fa-3x text-secondary"></i>
+                            </div>
+                            <h4 class="text-white mb-3">Administración</h4>
+                            <p class="text-white-50 mb-4">Configuración y usuarios</p>
+                            <div class="d-grid gap-2">
+                                <a href="./usuarios.html" class="btn btn-secondary">
+                                    <i class="fas fa-users-cog me-2"></i>Usuarios
+                                </a>
+                                <a href="./perfil.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-user me-2"></i>Mi Perfil
+                                </a>
+                                <a href="./configuracion.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                                <a href="./ayuda.html" class="btn btn-outline-secondary">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acceso Rápido -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="pos-card text-center p-4">
+                            <h4 class="text-white mb-3">Acceso Rápido</h4>
+                            <div class="row g-3">
+                                <div class="col-6 col-md-3">
+                                    <a href="./login.html" class="btn btn-outline-light w-100">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <a href="./facturacion.html" class="btn btn-outline-light w-100">
+                                        <i class="fas fa-plus me-2"></i>Nueva Factura
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <a href="./caja-apertura.html" class="btn btn-outline-light w-100">
+                                        <i class="fas fa-unlock me-2"></i>Abrir Caja
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <a href="./ayuda.html" class="btn btn-outline-light w-100">
+                                        <i class="fas fa-life-ring me-2"></i>Soporte
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pos-login-footer text-center py-4">
+        <div class="container">
+            <p class="text-white-50 mb-0">
+                <i class="fas fa-copyright me-1"></i>
+                2024 ADS-POS. Sistema de Punto de Venta Profesional.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="../assets/js/supabase-config.js"></script>
+    <script src="../assets/js/database.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

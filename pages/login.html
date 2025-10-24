@@ -90,8 +90,8 @@
                         const retry = await window.supabaseClient.auth.signInWithPassword({ email, password });
                         if (retry.error) throw retry.error;
                     }
-                    // Redirigir al dashboard principal
-                    window.location.href = '../index.html';
+                    // Redirigir al panel principal
+                    window.location.href = './panel.html';
                 } catch (err) {
                     window.auth?.showError?.(err.message || 'Error al iniciar sesión');
                 } finally {
