@@ -1,4 +1,6 @@
 // Configuración de Supabase
+// Para aplicaciones frontend estáticas, usar valores directos
+// En Vercel, estos valores se pueden reemplazar durante el build
 const SUPABASE_URL = 'https://ndrjhdwjcyomzpxiwnhr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcmpoZHdqY3lvbXpweGl3bmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3MTE5OTQsImV4cCI6MjA3NjI4Nzk5NH0.apdlLX5jTdpkk3YO9DWwREsED42PW8XkQ_zC7V-kiZY';
 
