@@ -589,28 +589,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Prevenir el parpadeo del offcanvas y sincronizar chevrons de secciones
-        document.addEventListener('DOMContentLoaded', function() {
-            const offcanvasElement = document.getElementById('posSidebar');
-            if (offcanvasElement) {
-                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                offcanvasElement.addEventListener('show.bs.offcanvas', function() { this.classList.add('show'); });
-                offcanvasElement.addEventListener('hide.bs.offcanvas', function() { this.classList.remove('show'); });
-            }
-
-            const sections = ['infoBasica','preciosCostos','inventarioStock','configuracionAdicional','listaProductos','acciones'];
-            sections.forEach(id => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                const btn = document.querySelector(`[data-bs-target="#${id}"]`);
-                const icon = btn ? btn.querySelector('i') : null;
-                if (!icon) return;
-                el.addEventListener('show.bs.collapse', () => { icon.classList.remove('fa-chevron-down'); icon.classList.add('fa-chevron-up'); });
-                el.addEventListener('hide.bs.collapse', () => { icon.classList.remove('fa-chevron-up'); icon.classList.add('fa-chevron-down'); });
-            });
-        });
-    </script>
+    
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>

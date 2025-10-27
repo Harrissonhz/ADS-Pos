@@ -2,6 +2,26 @@
 // Versión inicial: INSERT + UI básica
 
 (function () {
+    // Prevenir parpadeo del offcanvas y sincronizar chevrons de secciones
+    document.addEventListener('DOMContentLoaded', function() {
+        const offcanvasElement = document.getElementById('posSidebar');
+        if (offcanvasElement) {
+            const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            offcanvasElement.addEventListener('show.bs.offcanvas', function() { this.classList.add('show'); });
+            offcanvasElement.addEventListener('hide.bs.offcanvas', function() { this.classList.remove('show'); });
+        }
+
+        const sections = ['infoBasica','preciosCostos','inventarioStock','configuracionAdicional','listaProductos','acciones'];
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const btn = document.querySelector(`[data-bs-target="#${id}"]`);
+            const icon = btn ? btn.querySelector('i') : null;
+            if (!icon) return;
+            el.addEventListener('show.bs.collapse', () => { icon.classList.remove('fa-chevron-down'); icon.classList.add('fa-chevron-up'); });
+            el.addEventListener('hide.bs.collapse', () => { icon.classList.remove('fa-chevron-up'); icon.classList.add('fa-chevron-down'); });
+        });
+    });
     // Estado de conexión (igual que en categorías)
     let isConnected = false;
 
