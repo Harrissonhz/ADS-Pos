@@ -1320,6 +1320,58 @@ class DatabaseService {
             return { data: null, error };
         }
     }
+
+    // ===== MOVIMIENTOS DE INVENTARIO =====
+    /** Crea un movimiento de inventario. Para 'entrada'/'salida', un trigger actualiza el stock. */
+    async createMovimientoInventario(mov) {
+        try {
+            const insertData = {
+                producto_id: mov.producto_id,
+                tipo_movimiento: mov.tipo_movimiento, // 'entrada' | 'salida' | 'ajuste' | 'transferencia'
+                cantidad: Number(mov.cantidad) || 0,
+                motivo: mov.motivo?.trim() || null,
+                referencia: mov.referencia?.trim() || null,
+                created_by: mov.usuario_id
+            };
+            const { data, error } = await this.supabase
+                .from('movimientos_inventario')
+                .insert([insertData])
+                .select('*')
+                .single();
+            return { data, error };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /** Ajusta el stock del producto en delta (puede ser negativo). */
+    async updateProductoStockDelta(productoId, delta) {
+        try {
+            const { data, error } = await this.supabase
+                .from('productos')
+                .update({ stock_actual: this.supabase.rpc ? undefined : undefined })
+                .select('*')
+                .eq('id', productoId);
+            // No hay operador directo de incremento en Supabase JS; usar RPC o hacer fetch previo
+            // Implementación segura: leer el stock y actualizar con el nuevo valor
+            const { data: prod, error: fetchErr } = await this.supabase
+                .from('productos')
+                .select('id, stock_actual')
+                .eq('id', productoId)
+                .maybeSingle();
+            if (fetchErr) return { data: null, error: fetchErr };
+            const nuevo = (Number(prod?.stock_actual) || 0) + (Number(delta) || 0);
+            const { data: upData, error: upErr } = await this.supabase
+                .from('productos')
+                .update({ stock_actual: nuevo })
+                .eq('id', productoId)
+                .select('id, stock_actual')
+                .single();
+            return { data: upData, error: upErr };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
 }
 
 // Crear instancia global

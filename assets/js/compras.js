@@ -401,6 +401,7 @@
         }
 
         let editingPurchaseId = null;
+        let originalPurchaseStatus = null;
 
         function enterEditMode(purchaseId) {
             editingPurchaseId = purchaseId;
@@ -422,12 +423,65 @@
             const action = btn.getAttribute('data-action');
             if (!id || !action) return;
             if (action === 'view') {
-                // Mostrar detalle en un modal simple (placeholder)
+                // Cargar datos
                 const { data, error } = await window.db.getCompraById(id);
                 const { data: detalles } = await window.db.getCompraDetalles(id);
                 if (error) { alert('No se pudo cargar la compra'); return; }
-                const lines = (detalles || []).map(d => `- ${d.productos?.nombre || 'Producto'} x${d.cantidad} @ ${formatCOP(d.precio_unitario)}`).join('\n');
-                alert(`Orden #${data?.numero_orden ?? '—'}\nProveedor: ${data?.proveedores?.razon_social ?? '—'}\nFecha: ${(data?.fecha_compra || '').slice(0,10)}\nEstado: ${data?.estado}\nTotal: ${formatCOP(data?.total)}\n\nDetalles:\n${lines || 'Sin detalles'}`);
+
+                // Poblar encabezado
+                const orderNoEl = document.getElementById('detailOrderNumber');
+                const statusBadgeEl = document.getElementById('detailStatusBadge');
+                const supplierEl = document.getElementById('detailSupplier');
+                const supplierExtraEl = document.getElementById('detailSupplierExtra');
+                const purchaseDateEl = document.getElementById('detailPurchaseDate');
+                const deliveryDateEl = document.getElementById('detailDeliveryDate');
+                const subtotalEl = document.getElementById('detailSubtotal');
+                const taxEl = document.getElementById('detailTax');
+                const totalEl = document.getElementById('detailTotal');
+                const itemsBody = document.getElementById('detailItemsBody');
+
+                if (orderNoEl) orderNoEl.textContent = `#${data?.numero_orden ?? '—'}`;
+                if (statusBadgeEl) {
+                    const estado = String(data?.estado || '—').toLowerCase();
+                    let cls = 'bg-secondary';
+                    if (estado === 'recibida') cls = 'bg-success';
+                    else if (estado === 'enviada') cls = 'bg-warning';
+                    else if (estado === 'confirmada') cls = 'bg-info';
+                    else if (estado === 'cancelada') cls = 'bg-danger';
+                    statusBadgeEl.className = `badge ${cls}`;
+                    statusBadgeEl.textContent = data?.estado || '—';
+                }
+                if (supplierEl) supplierEl.textContent = data?.proveedores?.razon_social || '—';
+                if (supplierExtraEl) supplierExtraEl.innerHTML = `<span class="text-white" style="opacity:1;">OC: ${data?.numero_orden ?? '—'}</span>`;
+                if (purchaseDateEl) purchaseDateEl.textContent = (data?.fecha_compra || '').slice(0,10) || '—';
+                if (deliveryDateEl) deliveryDateEl.textContent = (data?.fecha_entrega || '').slice(0,10) || '—';
+                if (subtotalEl) subtotalEl.textContent = formatCOP(Number(data?.subtotal) || 0);
+                if (taxEl) taxEl.textContent = formatCOP(Number(data?.impuesto) || 0);
+                if (totalEl) totalEl.textContent = formatCOP(Number(data?.total) || 0);
+
+                // Poblar items
+                if (itemsBody) {
+                    itemsBody.innerHTML = '';
+                    (detalles || []).forEach(d => {
+                        const tr = document.createElement('tr');
+                        const codigo = d.productos?.codigo_interno || d.productos?.codigo_barras || '-';
+                        tr.innerHTML = `
+                            <td><strong>${d.productos?.nombre || 'Producto'}</strong></td>
+                            <td>${codigo}</td>
+                            <td class="text-end">${Number(d.cantidad) || 0}</td>
+                            <td class="text-end">${formatCOP(Number(d.precio_unitario) || 0)}</td>
+                            <td class="text-end">${formatCOP(Number(d.impuesto) || 0)}</td>
+                            <td class="text-end">${formatCOP(Number(d.total) || 0)}</td>`;
+                        itemsBody.appendChild(tr);
+                    });
+                }
+
+                // Mostrar modal
+                const modalEl = document.getElementById('purchaseDetailModal');
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
             } else if (action === 'edit') {
                 // Precargar formulario con la compra seleccionada (modo edición básico)
                 const { data, error } = await window.db.getCompraById(id);
@@ -445,6 +499,7 @@
                     // Foco en Estado
                     try { statusEl.focus({ preventScroll: false }); } catch (_) { statusEl.focus(); }
                 }
+                originalPurchaseStatus = String(data.estado || '').toLowerCase();
                 if (supplierSelect) supplierSelect.value = data.proveedor_id || '';
                 fillSupplierInfo(data.proveedor_id);
                 const notesEl = document.getElementById('notes');
@@ -708,12 +763,19 @@
                     }
                 } catch (_) {}
 
+                const newStatus = document.getElementById('purchaseStatus').value;
+                // Bloqueo: si ya estaba recibida, no permitir cambiar a otro estado
+                if (editingPurchaseId && originalPurchaseStatus === 'recibida' && String(newStatus).toLowerCase() !== 'recibida') {
+                    alert('Una orden RECIBIDA no puede cambiar de estado. Para modificar inventario, use Inventario.');
+                    return;
+                }
+
                 const compraData = {
                     numero_orden: Number(document.getElementById('orderNumber').value) || undefined,
                     fecha_compra: document.getElementById('purchaseDate').value,
                     fecha_entrega: document.getElementById('expectedDelivery').value || null,
                     proveedor_id: supplierSelect && supplierSelect.value ? supplierSelect.value : null,
-                    estado: document.getElementById('purchaseStatus').value,
+                    estado: newStatus,
                     usuario_id: currentUserId,
                     subtotal: totals.subtotal,
                     impuesto: totals.vat,
@@ -739,6 +801,36 @@
                 } else {
                     const actionLabel = editingPurchaseId ? 'actualizada' : 'creada';
                     showToast(`Orden "${result.data.numero_orden}" ${actionLabel} correctamente`);
+
+                    // Si transición a RECIBIDA y antes no lo estaba: registrar entradas a inventario por cada detalle (idempotente)
+                    if (String(newStatus).toLowerCase() === 'recibida' && originalPurchaseStatus !== 'recibida') {
+                        try {
+                            const ref = `OC-${result.data.numero_orden}`;
+                            const { data: existingMov } = await window.supabaseClient
+                                .from('movimientos_inventario')
+                                .select('id')
+                                .eq('referencia', ref)
+                                .limit(1);
+                            const alreadyProcessed = Array.isArray(existingMov) && existingMov.length > 0;
+                            if (!alreadyProcessed) {
+                                for (const d of detalles) {
+                                    if (!d.producto_id || !Number(d.cantidad)) continue;
+                                    const { error: movErr } = await window.db.createMovimientoInventario({
+                                        producto_id: d.producto_id,
+                                        tipo_movimiento: 'entrada',
+                                        cantidad: Number(d.cantidad),
+                                        motivo: 'Recepción de compra',
+                                        referencia: ref,
+                                        usuario_id: currentUserId
+                                    });
+                                    if (movErr) console.error('Error mov inv recepción:', movErr);
+                                }
+                                showToast('Compra recibida: inventario actualizado', 'success');
+                            }
+                        } catch (e) {
+                            console.error('Error registrando recepción:', e);
+                        }
+                    }
                     await resetPurchaseInitialState();
                     exitEditMode();
                     await loadPurchasesHistory();

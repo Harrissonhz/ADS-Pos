@@ -272,9 +272,10 @@
                                     <option value="transferencia">Transferencia</option>
                                 </select>
                             </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-4 position-relative">
                                 <label class="form-label">Producto</label>
                                 <input type="text" class="form-control" id="productCode" placeholder="Código o nombre del producto">
+                                <div id="productSuggestions" class="list-group position-absolute w-100" style="z-index: 1000; display: none;"></div>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Cantidad</label>
@@ -516,9 +517,6 @@
                             </button>
                             <button type="button" class="btn btn-warning" id="adjustBtn">
                                 <i class="fas fa-edit me-1"></i>Ajustar Stock
-                            </button>
-                            <button type="button" class="btn btn-success" id="exportBtn">
-                                <i class="fas fa-download me-1"></i>Exportar
                             </button>
                         </div>
                     </div>
