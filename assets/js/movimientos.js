@@ -43,7 +43,6 @@ async function initMovimientos() {
     try {
         await loadMovimientos();
         await loadResumenMovimientos();
-        await loadProductosDropdown();
         setupEventListeners();
     } catch (error) {
         console.error('Error inicializando movimientos:', error);
@@ -62,6 +61,48 @@ async function loadMovimientos() {
         const productoFilter = filterProduct?.value || '';
         const fechaDesde = dateFrom?.value || '';
         const fechaHasta = dateTo?.value || '';
+        
+        // Si hay búsqueda por texto, buscar productos con LIKE primero
+        let productoIdsParaBusqueda = null;
+        let buscarEnMovimientos = false; // Flag para buscar también en referencia/motivo/notas
+        
+        if (search) {
+            try {
+                // Buscar productos por código y por descripción usando las funciones de database.js
+                const searchTerm = search.trim();
+                
+                // Buscar por código
+                const { data: productosPorCodigo, error: errorCodigo } = await window.db?.searchProductosPorCodigo(searchTerm, { limit: 1000, onlyActive: false }) || { data: null, error: null };
+                
+                // Buscar por nombre/descripción
+                const { data: productosPorDesc, error: errorDesc } = await window.db?.searchProductosPorDescripcion(searchTerm, { limit: 1000, onlyActive: false }) || { data: null, error: null };
+                
+                // Combinar resultados únicos por ID
+                const productosMap = new Map();
+                if (productosPorCodigo && !errorCodigo) {
+                    productosPorCodigo.forEach(p => productosMap.set(p.id, p));
+                }
+                if (productosPorDesc && !errorDesc) {
+                    productosPorDesc.forEach(p => productosMap.set(p.id, p));
+                }
+                
+                const productosEncontrados = Array.from(productosMap.values());
+                
+                if (productosEncontrados.length > 0) {
+                    productoIdsParaBusqueda = productosEncontrados.map(p => p.id);
+                    // También buscar en referencia/motivo/notas para incluir ambos resultados
+                    buscarEnMovimientos = true;
+                } else {
+                    // Si no se encuentran productos, buscar solo en referencia, motivo y notas del movimiento en DB
+                    buscarEnMovimientos = true;
+                    productoIdsParaBusqueda = null; // No filtrar por producto
+                }
+            } catch (e) {
+                console.error('Error buscando productos:', e);
+                buscarEnMovimientos = true;
+                productoIdsParaBusqueda = null;
+            }
+        }
         
         // Construir query base
         let query = window.supabaseClient
@@ -97,6 +138,32 @@ async function loadMovimientos() {
             query = query.lte('fecha', `${fechaHasta}T23:59:59`);
         }
         
+        // Si hay búsqueda por texto y encontramos productos, filtrar por producto_id
+        if (search && productoIdsParaBusqueda && productoIdsParaBusqueda.length > 0) {
+            // Filtrar por los productos encontrados (no necesitamos buscar en referencia/motivo si ya encontramos productos)
+            query = query.in('producto_id', productoIdsParaBusqueda);
+        } else if (search && buscarEnMovimientos) {
+            // Si no se encontraron productos, buscar en referencia, motivo y notas con LIKE
+            query = query.or(`referencia.ilike.%${search}%,motivo.ilike.%${search}%,notas.ilike.%${search}%`);
+        }
+        
+        if (productoFilter) {
+            // Buscar el producto por código para obtener su ID
+            const { data: prod, error: prodErr } = await window.supabaseClient
+                .from('productos')
+                .select('id')
+                .is('deleted_at', null)
+                .or(`codigo_interno.eq.${productoFilter},codigo_barras.eq.${productoFilter}`)
+                .limit(1);
+            
+            if (!prodErr && prod && prod.length > 0) {
+                query = query.eq('producto_id', prod[0].id);
+            } else {
+                // Si no se encuentra el producto, retornar sin resultados
+                query = query.eq('producto_id', '00000000-0000-0000-0000-000000000000');
+            }
+        }
+        
         // Ordenar y paginar
         query = query.order('fecha', { ascending: false })
                      .range(offset, offset + pageSize - 1);
@@ -108,35 +175,9 @@ async function loadMovimientos() {
             return;
         }
 
-        // Filtros adicionales en el cliente (búsqueda de texto y producto específico)
-        let filteredMovimientos = movimientos || [];
-        
-        if (search) {
-            const searchLower = search.toLowerCase();
-            filteredMovimientos = filteredMovimientos.filter(movimiento => {
-                const productoNombre = movimiento.productos?.nombre?.toLowerCase() || '';
-                const productoCodigo = movimiento.productos?.codigo_interno?.toLowerCase() || '';
-                const codigoBarras = movimiento.productos?.codigo_barras?.toLowerCase() || '';
-                const referencia = movimiento.referencia?.toLowerCase() || '';
-                const motivo = movimiento.motivo?.toLowerCase() || '';
-                
-                return productoNombre.includes(searchLower) || 
-                       productoCodigo.includes(searchLower) || 
-                       codigoBarras.includes(searchLower) ||
-                       referencia.includes(searchLower) ||
-                       motivo.includes(searchLower);
-            });
-        }
-        
-        if (productoFilter) {
-            filteredMovimientos = filteredMovimientos.filter(movimiento => {
-                return movimiento.productos?.codigo_interno === productoFilter || 
-                       movimiento.productos?.codigo_barras === productoFilter;
-            });
-        }
-
+        // Los movimientos ya vienen filtrados desde la base de datos
         totalMovimientosCount = count || 0;
-        movimientosData = filteredMovimientos;
+        movimientosData = movimientos || [];
         console.log('Movimientos cargados:', movimientosData.length);
         renderMovimientos();
         renderPagination();
@@ -357,36 +398,6 @@ async function loadResumenMovimientos() {
     }
 }
 
-async function loadProductosDropdown() {
-    try {
-        if (!window.db) return;
-        
-        const { data: productos, error } = await window.supabaseClient
-            .from('productos')
-            .select('id, nombre, codigo_interno, codigo_barras')
-            .eq('activo', true)
-            .order('nombre');
-
-        if (error) {
-            console.error('Error cargando productos:', error);
-            return;
-        }
-
-        const filterProductSelect = document.getElementById('filterProduct');
-        if (filterProductSelect) {
-            filterProductSelect.innerHTML = '<option value="">Todos</option>';
-            productos?.forEach(producto => {
-                const codigo = producto.codigo_interno || producto.codigo_barras || producto.id;
-                const option = document.createElement('option');
-                option.value = codigo;
-                option.textContent = `${producto.nombre} (${codigo})`;
-                filterProductSelect.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error en loadProductosDropdown:', error);
-    }
-}
 
 
 // ================================================
@@ -469,6 +480,85 @@ function showProductSuggestions(products) {
         productSuggestions.appendChild(btn);
     });
     productSuggestions.style.display = 'block';
+}
+
+// Ocultar sugerencias del filtro de producto
+function hideFilterProductSuggestions() {
+    const suggestions = document.getElementById('filterProductSuggestions');
+    if (suggestions) {
+        suggestions.style.display = 'none';
+        suggestions.innerHTML = '';
+    }
+}
+
+// Mostrar sugerencias del filtro de producto
+function showFilterProductSuggestions(products) {
+    const suggestions = document.getElementById('filterProductSuggestions');
+    const input = document.getElementById('filterProduct');
+    
+    if (!suggestions || !input) {
+        console.error('No se encontró el elemento filterProductSuggestions o filterProduct');
+        return;
+    }
+    
+    hideFilterProductSuggestions();
+    if (!products || products.length === 0) return;
+    
+    // Obtener la posición del input (getBoundingClientRect ya da posición relativa al viewport)
+    const inputRect = input.getBoundingClientRect();
+    
+    // Posicionar el dropdown debajo del input usando position fixed (relativo al viewport)
+    suggestions.style.position = 'fixed';
+    suggestions.style.top = `${inputRect.bottom}px`;
+    suggestions.style.left = `${inputRect.left}px`;
+    suggestions.style.width = `${inputRect.width}px`;
+    suggestions.style.zIndex = '1050';
+    suggestions.style.backgroundColor = 'white';
+    suggestions.style.border = '1px solid #dee2e6';
+    suggestions.style.borderRadius = '0.375rem';
+    suggestions.style.boxShadow = '0 0.5rem 1rem rgba(0, 0, 0, 0.15)';
+    suggestions.style.maxHeight = '300px';
+    suggestions.style.overflowY = 'auto';
+    
+    // Configurar listener de scroll dentro del contenedor si no existe
+    if (!suggestions.dataset.scrollListenerAdded) {
+        suggestions.addEventListener('scroll', () => {
+            window.isInteractingWithSuggestions = true;
+        }, { passive: true });
+        suggestions.dataset.scrollListenerAdded = 'true';
+    }
+    
+    // Resetear la flag cuando se muestran nuevas sugerencias
+    window.isInteractingWithSuggestions = false;
+    
+    products.forEach(p => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-group-item list-group-item-action';
+        btn.style.border = 'none';
+        btn.style.borderBottom = '1px solid #dee2e6';
+        btn.style.textAlign = 'left';
+        btn.style.padding = '0.5rem 1rem';
+        btn.style.cursor = 'pointer';
+        btn.innerHTML = `<strong>${p.nombre || 'Sin nombre'}</strong><br><small class="text-muted">${p.codigo_interno || p.codigo_barras || 'Sin código'} - Stock: ${p.stock_actual || 0}</small>`;
+        btn.addEventListener('mouseenter', () => {
+            btn.style.backgroundColor = '#f8f9fa';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.backgroundColor = 'white';
+        });
+        btn.addEventListener('click', () => {
+            // Guardar el código (interno o de barras) en el campo para usar en el filtro
+            const codigo = p.codigo_interno || p.codigo_barras || '';
+            input.value = codigo;
+            input.dataset.productId = p.id || '';
+            hideFilterProductSuggestions();
+            // Recargar movimientos con el filtro aplicado
+            loadMovimientos();
+        });
+        suggestions.appendChild(btn);
+    });
+    suggestions.style.display = 'block';
 }
 
 // ================================================
@@ -842,9 +932,137 @@ function setupEventListeners() {
         searchTerm.addEventListener('input', debounce(applyFiltersAndReload, 300));
     }
 
+    // Búsqueda de productos en el filtro con sugerencias
+    if (filterProduct) {
+        const doFilterProductSearch = debounce(async () => {
+            const term = filterProduct.value.trim();
+            if (!term) {
+                hideFilterProductSuggestions();
+                // Si el campo está vacío, limpiar el filtro y recargar
+                delete filterProduct.dataset.productId;
+                applyFiltersAndReload();
+                return;
+            }
+            console.log('Buscando productos con término:', term);
+            const { items } = await searchProductsForControl(term);
+            console.log('Productos encontrados:', items);
+            showFilterProductSuggestions(items);
+        }, 250);
+        
+        filterProduct.addEventListener('input', () => {
+            delete filterProduct.dataset.productId;
+            doFilterProductSearch();
+        });
+        
+        filterProduct.addEventListener('focus', () => {
+            const v = filterProduct.value.trim();
+            if (v) doFilterProductSearch();
+        });
+        
+        // Variable global para rastrear si estamos interactuando con las sugerencias
+        window.isInteractingWithSuggestions = false;
+        
+        filterProduct.addEventListener('blur', (e) => {
+            // Delay para permitir clicks en las sugerencias
+            setTimeout(() => {
+                // Solo ocultar si no estamos interactuando con las sugerencias
+                if (!window.isInteractingWithSuggestions) {
+                    const suggestions = document.getElementById('filterProductSuggestions');
+                    if (suggestions && suggestions.style.display !== 'none') {
+                        // Verificar si el nuevo elemento activo está dentro de las sugerencias
+                        const activeElement = document.activeElement;
+                        if (!suggestions.contains(activeElement)) {
+                            hideFilterProductSuggestions();
+                        }
+                    }
+                }
+            }, 250);
+        });
+        
+        filterProduct.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideFilterProductSuggestions();
+                window.isInteractingWithSuggestions = false;
+            } else if (e.key === 'Enter') {
+                // Si presiona Enter y hay sugerencias, aplicar filtro si el campo tiene valor
+                const v = filterProduct.value.trim();
+                if (v) {
+                    hideFilterProductSuggestions();
+                    window.isInteractingWithSuggestions = false;
+                    applyFiltersAndReload();
+                }
+            }
+        });
+        
+        // Manejar scroll de la página (reposicionar sugerencias)
+        window.addEventListener('scroll', () => {
+            const suggestions = document.getElementById('filterProductSuggestions');
+            if (suggestions && suggestions.style.display !== 'none') {
+                // Si estamos interactuando con las sugerencias, no hacer nada
+                if (window.isInteractingWithSuggestions) {
+                    return;
+                }
+                
+                // Reposicionar las sugerencias según la nueva posición del input
+                const inputRect = filterProduct.getBoundingClientRect();
+                suggestions.style.top = `${inputRect.bottom}px`;
+                suggestions.style.left = `${inputRect.left}px`;
+            }
+        }, true);
+        
+        // Detectar cuando el usuario interactúa con las sugerencias
+        document.addEventListener('mousedown', (e) => {
+            const suggestions = document.getElementById('filterProductSuggestions');
+            if (suggestions && suggestions.contains(e.target)) {
+                window.isInteractingWithSuggestions = true;
+                e.preventDefault(); // Evita que el input pierda el focus
+            } else {
+                window.isInteractingWithSuggestions = false;
+            }
+        });
+        
+        // Detectar cuando el usuario hace scroll dentro de la lista
+        document.addEventListener('wheel', (e) => {
+            const suggestions = document.getElementById('filterProductSuggestions');
+            if (suggestions && suggestions.style.display !== 'none') {
+                // Verificar si el scroll es dentro de la lista de sugerencias
+                if (suggestions.contains(e.target)) {
+                    window.isInteractingWithSuggestions = true;
+                    // Permitir que el scroll funcione dentro de la lista
+                    // No hacer nada más, solo marcar que estamos interactuando
+                }
+            }
+        }, { passive: true });
+        
+        // El listener de scroll del contenedor se configura dinámicamente en showFilterProductSuggestions
+        
+        // Ocultar sugerencias al hacer clic fuera del input y de las sugerencias
+        document.addEventListener('click', (e) => {
+            const suggestions = document.getElementById('filterProductSuggestions');
+            if (suggestions && suggestions.style.display !== 'none') {
+                // Si el click no es ni en el input ni en las sugerencias, ocultarlas
+                if (e.target !== filterProduct && !suggestions.contains(e.target)) {
+                    hideFilterProductSuggestions();
+                    window.isInteractingWithSuggestions = false;
+                }
+            }
+        });
+        
+        // Reposicionar o ocultar sugerencias al redimensionar
+        window.addEventListener('resize', () => {
+            const suggestions = document.getElementById('filterProductSuggestions');
+            const input = document.getElementById('filterProduct');
+            if (suggestions && input && suggestions.style.display !== 'none') {
+                const inputRect = input.getBoundingClientRect();
+                suggestions.style.top = `${inputRect.bottom}px`;
+                suggestions.style.left = `${inputRect.left}px`;
+                suggestions.style.width = `${inputRect.width}px`;
+            }
+        });
+    }
+
     // Filtros
     if (filterType) filterType.addEventListener('change', applyFiltersAndReload);
-    if (filterProduct) filterProduct.addEventListener('change', applyFiltersAndReload);
     if (dateFrom) dateFrom.addEventListener('change', applyFiltersAndReload);
     if (dateTo) dateTo.addEventListener('change', applyFiltersAndReload);
 
@@ -868,7 +1086,11 @@ function setupEventListeners() {
             // Limpiar también los campos de búsqueda
             if (searchTerm) searchTerm.value = '';
             if (filterType) filterType.value = '';
-            if (filterProduct) filterProduct.value = '';
+            if (filterProduct) {
+                filterProduct.value = '';
+                delete filterProduct.dataset.productId;
+            }
+            hideFilterProductSuggestions();
             if (dateFrom) dateFrom.value = '';
             if (dateTo) dateTo.value = '';
             
@@ -889,9 +1111,74 @@ function setupEventListeners() {
 // FUNCIONES DE REPORTES
 // ================================================
 
-async function exportMovimientosCsv() {
+// Función genérica para exportar movimientos a CSV
+async function exportMovimientosToCsv(movimientos, nombreArchivo) {
+    if (!movimientos || movimientos.length === 0) {
+        alert('No hay movimientos para exportar');
+        return;
+    }
+
+    // Crear CSV
+    const headers = [
+        'fecha_movimiento',
+        'tipo_movimiento',
+        'producto_codigo',
+        'producto_nombre',
+        'cantidad',
+        'motivo',
+        'referencia',
+        'notas'
+    ];
+    const lines = [headers.join(',')];
+
+    movimientos.forEach(m => {
+        const fecha = new Date(m.fecha).toLocaleString('es-CO');
+        const tipo = m.tipo_movimiento || '';
+        const codigo = m.productos?.codigo_interno || m.productos?.codigo_barras || '';
+        const nombre = m.productos?.nombre || '';
+        const cantidad = Number(m.cantidad) || 0;
+        const motivo = m.motivo || '';
+        const referencia = m.referencia || '';
+        const notas = m.notas || '';
+
+        const row = [
+            csvEscape(fecha),
+            csvEscape(tipo),
+            csvEscape(codigo),
+            csvEscape(nombre),
+            cantidad,
+            csvEscape(motivo),
+            csvEscape(referencia),
+            csvEscape(notas)
+        ];
+        lines.push(row.join(','));
+    });
+
+    const bom = '\uFEFF';
+    const content = bom + lines.join('\n');
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const name = `${nombreArchivo}_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.csv`;
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ===== Exportación CSV: Reporte Diario =====
+async function exportDailyReport() {
     try {
-        if (!window.db) return;
+        if (!window.db) return alert('Servicio no disponible');
+        
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const manana = new Date(hoy);
+        manana.setDate(manana.getDate() + 1);
         
         const { data: movimientos, error } = await window.supabaseClient
             .from('movimientos_inventario')
@@ -901,8 +1188,159 @@ async function exportMovimientosCsv() {
                 cantidad,
                 motivo,
                 referencia,
+                notas,
                 fecha,
-                created_by,
+                productos:producto_id(
+                    nombre,
+                    codigo_interno,
+                    codigo_barras
+                )
+            `)
+            .gte('fecha', hoy.toISOString())
+            .lt('fecha', manana.toISOString())
+            .order('fecha', { ascending: false });
+
+        if (error) {
+            console.error('Error exportando reporte diario:', error);
+            alert('Error al exportar reporte diario');
+            return;
+        }
+
+        await exportMovimientosToCsv(movimientos || [], 'reporte_movimientos_diario');
+        showToast('Reporte diario exportado correctamente', 'success');
+        
+    } catch (error) {
+        console.error('Error exportando reporte diario:', error);
+        alert('Error al exportar reporte diario');
+    }
+}
+
+// ===== Exportación CSV: Reporte Mensual =====
+async function exportMonthlyReport() {
+    try {
+        if (!window.db) return alert('Servicio no disponible');
+        
+        const hoy = new Date();
+        const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        primerDiaMes.setHours(0, 0, 0, 0);
+        const primerDiaSiguienteMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+        
+        const { data: movimientos, error } = await window.supabaseClient
+            .from('movimientos_inventario')
+            .select(`
+                id,
+                tipo_movimiento,
+                cantidad,
+                motivo,
+                referencia,
+                notas,
+                fecha,
+                productos:producto_id(
+                    nombre,
+                    codigo_interno,
+                    codigo_barras
+                )
+            `)
+            .gte('fecha', primerDiaMes.toISOString())
+            .lt('fecha', primerDiaSiguienteMes.toISOString())
+            .order('fecha', { ascending: false });
+
+        if (error) {
+            console.error('Error exportando reporte mensual:', error);
+            alert('Error al exportar reporte mensual');
+            return;
+        }
+
+        await exportMovimientosToCsv(movimientos || [], 'reporte_movimientos_mensual');
+        showToast('Reporte mensual exportado correctamente', 'success');
+        
+    } catch (error) {
+        console.error('Error exportando reporte mensual:', error);
+        alert('Error al exportar reporte mensual');
+    }
+}
+
+// ===== Exportación CSV: Reporte por Producto =====
+async function exportProductReport() {
+    try {
+        if (!window.db) return alert('Servicio no disponible');
+        
+        // Obtener el producto seleccionado del filtro
+        const productoFilter = filterProduct?.value || '';
+        
+        if (!productoFilter) {
+            alert('Por favor seleccione un producto del filtro "Producto" para generar el reporte');
+            return;
+        }
+
+        // Buscar el producto por código
+        const { data: productos, error: prodError } = await window.supabaseClient
+            .from('productos')
+            .select('id, nombre, codigo_interno, codigo_barras')
+            .or(`codigo_interno.eq.${productoFilter},codigo_barras.eq.${productoFilter}`)
+            .is('deleted_at', null)
+            .limit(1);
+
+        if (prodError || !productos || productos.length === 0) {
+            alert('Producto no encontrado');
+            return;
+        }
+
+        const productoId = productos[0].id;
+        
+        // Obtener todos los movimientos del producto
+        const { data: movimientos, error } = await window.supabaseClient
+            .from('movimientos_inventario')
+            .select(`
+                id,
+                tipo_movimiento,
+                cantidad,
+                motivo,
+                referencia,
+                notas,
+                fecha,
+                productos:producto_id(
+                    nombre,
+                    codigo_interno,
+                    codigo_barras
+                )
+            `)
+            .eq('producto_id', productoId)
+            .order('fecha', { ascending: false });
+
+        if (error) {
+            console.error('Error exportando reporte por producto:', error);
+            alert('Error al exportar reporte por producto');
+            return;
+        }
+
+        const nombreProducto = productos[0].nombre || 'producto';
+        const codigoProducto = productos[0].codigo_interno || productos[0].codigo_barras || '';
+        const nombreArchivo = `reporte_movimientos_producto_${codigoProducto}`.replace(/[^a-zA-Z0-9_]/g, '_');
+        
+        await exportMovimientosToCsv(movimientos || [], nombreArchivo);
+        showToast(`Reporte del producto "${nombreProducto}" exportado correctamente`, 'success');
+        
+    } catch (error) {
+        console.error('Error exportando reporte por producto:', error);
+        alert('Error al exportar reporte por producto');
+    }
+}
+
+async function exportMovimientosCsv() {
+    try {
+        if (!window.db) return alert('Servicio no disponible');
+        
+        const { data: movimientos, error } = await window.supabaseClient
+            .from('movimientos_inventario')
+            .select(`
+                id,
+                tipo_movimiento,
+                cantidad,
+                motivo,
+                referencia,
+                notas,
+                fecha,
                 productos:producto_id(
                     nombre,
                     codigo_interno,
@@ -917,58 +1355,8 @@ async function exportMovimientosCsv() {
             return;
         }
 
-        if (!movimientos || movimientos.length === 0) {
-            alert('No hay movimientos para exportar');
-            return;
-        }
-
-        // Crear CSV
-        const headers = [
-            'fecha_movimiento',
-            'tipo_movimiento',
-            'producto_codigo',
-            'producto_nombre',
-            'cantidad',
-            'motivo',
-            'referencia'
-        ];
-        const lines = [headers.join(',')];
-
-        movimientos.forEach(m => {
-            const fecha = new Date(m.fecha).toLocaleString('es-CO');
-            const tipo = m.tipo_movimiento || '';
-            const codigo = m.productos?.codigo_interno || m.productos?.codigo_barras || '';
-            const nombre = m.productos?.nombre || '';
-            const cantidad = Number(m.cantidad) || 0;
-            const motivo = m.motivo || '';
-            const referencia = m.referencia || '';
-
-            const row = [
-                csvEscape(fecha),
-                csvEscape(tipo),
-                csvEscape(codigo),
-                csvEscape(nombre),
-                cantidad,
-                csvEscape(motivo),
-                csvEscape(referencia)
-            ];
-            lines.push(row.join(','));
-        });
-
-        const bom = '\uFEFF';
-        const content = bom + lines.join('\n');
-        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const ts = new Date();
-        const pad = n => String(n).padStart(2, '0');
-        const name = `movimientos_inventario_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}${pad(ts.getSeconds())}.csv`;
-        a.href = url;
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        await exportMovimientosToCsv(movimientos || [], 'movimientos_inventario');
+        showToast('Todos los movimientos exportados correctamente', 'success');
         
     } catch (error) {
         console.error('Error exportando CSV:', error);
@@ -994,3 +1382,6 @@ document.addEventListener('DOMContentLoaded', initMovimientos);
 // Exportar funciones globales
 window.verDetallesMovimiento = verDetallesMovimiento;
 window.exportMovimientosCsv = exportMovimientosCsv;
+window.exportDailyReport = exportDailyReport;
+window.exportMonthlyReport = exportMonthlyReport;
+window.exportProductReport = exportProductReport;
