@@ -25,7 +25,7 @@
             </button>
         </div>
             <div class="pos-navbar-actions">
-            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+            <a href="./Menu.html" class="btn btn-link pos-home-btn" title="Ir al Menu">
                 <i class="fas fa-home"></i>
             </a>
         </div>
@@ -207,7 +207,7 @@
                         <div class="card-body">
                             <i class="fas fa-arrow-up fa-2x text-success mb-2"></i>
                             <h5 class="card-title">Entradas Hoy</h5>
-                            <h3 class="text-success">45</h3>
+                            <h3 class="text-success" id="entradasHoy">-</h3>
                         </div>
                     </div>
                 </div>
@@ -216,16 +216,16 @@
                         <div class="card-body">
                             <i class="fas fa-arrow-down fa-2x text-danger mb-2"></i>
                             <h5 class="card-title">Salidas Hoy</h5>
-                            <h3 class="text-danger">32</h3>
+                            <h3 class="text-danger" id="salidasHoy">-</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-3">
                     <div class="card pos-card text-center">
                         <div class="card-body">
-                            <i class="fas fa-exchange-alt fa-2x text-info mb-2"></i>
-                            <h5 class="card-title">Ajustes Hoy</h5>
-                            <h3 class="text-info">8</h3>
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Stock Bajo (Hoy)</h5>
+                            <h3 class="text-warning" id="productosStockBajo">-</h3>
                         </div>
                     </div>
                 </div>
@@ -234,19 +234,76 @@
                         <div class="card-body">
                             <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
                             <h5 class="card-title">Total Movimientos</h5>
-                            <h3 class="text-primary">85</h3>
+                            <h3 class="text-primary" id="totalMovimientos">-</h3>
                         </div>
                     </div>
                 </div>
             </div>
 
             <form id="movementsForm" class="p-3" novalidate>
+                <!-- 1. Nuevo Movimiento -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <strong>Nuevo Movimiento</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#nuevoMovimiento" aria-expanded="true" aria-controls="nuevoMovimiento">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="nuevoMovimiento">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Tipo de movimiento</label>
+                                <select class="form-select" id="movementType">
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="entrada">Entrada (Compra/Devolución)</option>
+                                    <option value="salida">Salida (Venta/Descuento)</option>
+                                    <option value="ajuste">Ajuste de inventario</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4 position-relative">
+                                <label class="form-label">Producto</label>
+                                <input type="text" class="form-control" id="productCode" placeholder="Código o nombre del producto">
+                                <div id="productSuggestions" class="list-group position-absolute w-100" style="z-index: 1000; display: none;"></div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" placeholder="Cantidad a ajustar">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Motivo</label>
+                                <input type="text" class="form-control" id="reason" placeholder="Motivo del movimiento">
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Referencia</label>
+                                <input type="text" class="form-control" id="reference" placeholder="Número de factura, orden, etc.">
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12">
+                                <label class="form-label">Notas</label>
+                                <textarea class="form-control" id="notes" rows="2" placeholder="Notas adicionales (opcional)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Filtros de Búsqueda -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-filter"></i>
                         <strong>Filtros de Búsqueda</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosBusqueda" aria-expanded="true" aria-controls="filtrosBusqueda">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="filtrosBusqueda">
                         <div class="row g-3">
                             <div class="col-12 col-lg-3">
                                 <label class="form-label">Buscar</label>
@@ -258,8 +315,6 @@
                                     <option value="">Todos</option>
                                     <option value="entrada">Entrada</option>
                                     <option value="salida">Salida</option>
-                                    <option value="ajuste">Ajuste</option>
-                                    <option value="transferencia">Transferencia</option>
                                 </select>
                             </div>
                             <div class="col-12 col-lg-2">
@@ -290,61 +345,18 @@
                     </div>
                 </div>
 
+                <!-- 3. Historial de Movimientos -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-plus-circle"></i>
-                        <strong>Nuevo Movimiento</strong>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-12 col-lg-3">
-                                <label class="form-label">Tipo de movimiento</label>
-                                <select class="form-select" id="movementType" required>
-                                    <option value="">Seleccionar tipo</option>
-                                    <option value="entrada">Entrada (Compra/Devolución)</option>
-                                    <option value="salida">Salida (Venta/Descuento)</option>
-                                    <option value="ajuste">Ajuste de inventario</option>
-                                    <option value="transferencia">Transferencia</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-lg-3">
-                                <label class="form-label">Producto</label>
-                                <input type="text" class="form-control" id="productCode" placeholder="Código o nombre del producto" required>
-                            </div>
-                            <div class="col-12 col-lg-2">
-                                <label class="form-label">Cantidad</label>
-                                <input type="number" class="form-control" id="quantity" placeholder="Cantidad" required>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                                <label class="form-label">Motivo/Referencia</label>
-                                <input type="text" class="form-control" id="reason" placeholder="Motivo del movimiento" required>
-                            </div>
-                        </div>
-                        <div class="row g-3 mt-2">
-                            <div class="col-12 col-lg-6">
-                                <label class="form-label">Observaciones</label>
-                                <textarea class="form-control" id="observations" rows="2" placeholder="Observaciones adicionales"></textarea>
-                            </div>
-                            <div class="col-12 col-lg-6">
-                                <label class="form-label">Usuario responsable</label>
-                                <select class="form-select" id="user" required>
-                                    <option value="">Seleccionar usuario</option>
-                                    <option value="admin">Administrador</option>
-                                    <option value="vendedor1">Vendedor 1</option>
-                                    <option value="vendedor2">Vendedor 2</option>
-                                    <option value="inventario">Personal de Inventario</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-history"></i>
                         <strong>Historial de Movimientos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#historialMovimientos" aria-expanded="true" aria-controls="historialMovimientos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="historialMovimientos">
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
@@ -355,195 +367,62 @@
                                         <th class="text-end">Cantidad</th>
                                         <th class="text-end">Stock Anterior</th>
                                         <th class="text-end">Stock Nuevo</th>
-                                        <th>Usuario</th>
-                                        <th>Referencia</th>
-                                        <th style="width: 100px;">Acciones</th>
+                                        <th style="width: 80px;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="movementsBody">
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <strong>2024-01-15</strong><br>
-                                                <small class="text-muted">14:30:25</small>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-success">Entrada</span></td>
-                                        <td>
-                                            <div>
-                                                <strong>Laptop HP Pavilion 15</strong><br>
-                                                <small class="text-muted">LAP-HP-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end"><strong>+5</strong></td>
-                                        <td class="text-end">10</td>
-                                        <td class="text-end"><strong>15</strong></td>
-                                        <td>admin</td>
-                                        <td>OC-001</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <strong>2024-01-15</strong><br>
-                                                <small class="text-muted">11:15:42</small>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-danger">Salida</span></td>
-                                        <td>
-                                            <div>
-                                                <strong>Samsung Galaxy S21</strong><br>
-                                                <small class="text-muted">CEL-SAM-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end"><strong>-2</strong></td>
-                                        <td class="text-end">5</td>
-                                        <td class="text-end"><strong>3</strong></td>
-                                        <td>vendedor1</td>
-                                        <td>VTA-001</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <strong>2024-01-15</strong><br>
-                                                <small class="text-muted">09:45:18</small>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-warning">Ajuste</span></td>
-                                        <td>
-                                            <div>
-                                                <strong>Camiseta Nike Dri-FIT</strong><br>
-                                                <small class="text-muted">CAM-NIK-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end"><strong>-3</strong></td>
-                                        <td class="text-end">3</td>
-                                        <td class="text-end"><strong>0</strong></td>
-                                        <td>inventario</td>
-                                        <td>AJ-001</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <strong>2024-01-14</strong><br>
-                                                <small class="text-muted">16:20:33</small>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-info">Transferencia</span></td>
-                                        <td>
-                                            <div>
-                                                <strong>Lámpara LED Moderna</strong><br>
-                                                <small class="text-muted">LAM-PHI-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end"><strong>+10</strong></td>
-                                        <td class="text-end">15</td>
-                                        <td class="text-end"><strong>25</strong></td>
-                                        <td>admin</td>
-                                        <td>TRF-001</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <strong>2024-01-14</strong><br>
-                                                <small class="text-muted">13:55:07</small>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-danger">Salida</span></td>
-                                        <td>
-                                            <div>
-                                                <strong>Laptop HP Pavilion 15</strong><br>
-                                                <small class="text-muted">LAP-HP-001</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-end"><strong>-1</strong></td>
-                                        <td class="text-end">11</td>
-                                        <td class="text-end"><strong>10</strong></td>
-                                        <td>vendedor2</td>
-                                        <td>VTA-002</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <!-- Los datos se cargan dinámicamente desde JavaScript -->
                                 </tbody>
                             </table>
                         </div>
+                        <div id="movementsPagination" class="d-flex justify-content-center mt-3"></div>
                     </div>
                 </div>
 
+                <!-- 4. Reportes de Movimientos -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-chart-bar"></i>
                         <strong>Reportes de Movimientos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#reportesMovimientos" aria-expanded="true" aria-controls="reportesMovimientos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="reportesMovimientos">
                         <div class="row g-3">
-                            <div class="col-12 col-lg-3">
+                            <div class="col-12 col-lg-4">
                                 <button type="button" class="btn btn-outline-primary w-100" id="dailyReportBtn">
                                     <i class="fas fa-calendar-day me-2"></i>Reporte Diario
                                 </button>
                             </div>
-                            <div class="col-12 col-lg-3">
+                            <div class="col-12 col-lg-4">
                                 <button type="button" class="btn btn-outline-success w-100" id="monthlyReportBtn">
                                     <i class="fas fa-calendar-alt me-2"></i>Reporte Mensual
                                 </button>
                             </div>
-                            <div class="col-12 col-lg-3">
+                            <div class="col-12 col-lg-4">
                                 <button type="button" class="btn btn-outline-warning w-100" id="productReportBtn">
                                     <i class="fas fa-box me-2"></i>Por Producto
-                                </button>
-                            </div>
-                            <div class="col-12 col-lg-3">
-                                <button type="button" class="btn btn-outline-info w-100" id="userReportBtn">
-                                    <i class="fas fa-user me-2"></i>Por Usuario
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- 5. Acciones -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-bolt"></i>
                         <strong>Acciones</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#acciones" aria-expanded="true" aria-controls="acciones">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="acciones">
                         <div class="d-flex justify-content-center flex-wrap gap-2">
                             <button type="button" class="btn btn-secondary" id="clearBtn">
                                 <i class="fas fa-eraser me-1"></i>Limpiar
@@ -582,8 +461,102 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=15"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    <script src="../assets/js/movimientos.js?v=21"></script>
+
+    <!-- Modal Detalle de Movimiento -->
+    <div class="modal fade" id="movementDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title mb-0">Detalle de Movimiento</h5>
+                            <small class="text-white-50">Tipo: <span id="detailMovementType" class="badge bg-secondary">—</span></small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-box text-primary"></i><strong class="text-white" style="opacity:1;">Producto</strong></div>
+                                    <div><strong class="text-white" style="opacity:1;">Nombre:</strong> <span id="detailProductName" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Código:</span> <span id="detailProductCode" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="mt-2"><span class="text-white" style="opacity:1;">Stock Actual:</span> <strong id="detailStockActual" class="text-white" style="opacity:1;">—</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-calendar-alt text-warning"></i><strong class="text-white" style="opacity:1;">Fecha y Hora</strong></div>
+                                    <div><span class="text-white" style="opacity:1;">Fecha:</span> <span id="detailMovementDate" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Hora:</span> <span id="detailMovementTime" class="text-white" style="opacity:1;">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-chart-line text-success"></i><strong class="text-white" style="opacity:1;">Stock</strong></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Stock Anterior</span><span id="detailStockAnterior" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Cantidad</span><span id="detailCantidad" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between border-top pt-2"><strong class="text-white" style="opacity:1;">Stock Nuevo</strong><strong id="detailStockNuevo" class="text-white" style="opacity:1;">—</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-transparent border-secondary">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            <strong class="text-white" style="opacity:1;">Información Adicional</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-lg-6">
+                                    <div class="mb-3">
+                                        <strong class="text-white" style="opacity:1;">Motivo:</strong>
+                                        <div id="detailMotivo" class="text-white mt-1" style="opacity:1;">—</div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="mb-3">
+                                        <strong class="text-white" style="opacity:1;">Referencia:</strong>
+                                        <div id="detailReferencia" class="text-white mt-1" style="opacity:1;">—</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <strong class="text-white" style="opacity:1;">Notas:</strong>
+                                        <div id="detailNotas" class="text-white mt-1" style="opacity:1;">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        // Prevenir el parpadeo del offcanvas
+        // Prevenir el parpadeo del offcanvas y manejar íconos de collapse
         document.addEventListener('DOMContentLoaded', function() {
             const offcanvasElement = document.getElementById('posSidebar');
             if (offcanvasElement) {
@@ -598,131 +571,31 @@
                     this.classList.remove('show');
                 });
             }
+
+            // Manejar cambio de íconos para secciones colapsables
+            const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
+            collapseElements.forEach(element => {
+                element.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    const targetId = this.getAttribute('data-bs-target');
+                    const target = document.querySelector(targetId);
+                    
+                    if (target) {
+                        if (target.classList.contains('show')) {
+                            icon.classList.remove('fa-chevron-up');
+                            icon.classList.add('fa-chevron-down');
+                    } else {
+                            icon.classList.remove('fa-chevron-down');
+                            icon.classList.add('fa-chevron-up');
+                        }
+                    }
+                });
+            });
         });
     </script>
     <script>
-        (function() {
-            const form = document.getElementById('movementsForm');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchBtn = document.getElementById('searchBtn');
-            const searchBtn2 = document.getElementById('searchBtn2');
-            const addMovementBtn = document.getElementById('addMovementBtn');
-            const exportBtn = document.getElementById('exportBtn');
-            const searchTerm = document.getElementById('searchTerm');
-            const filterType = document.getElementById('filterType');
-            const filterProduct = document.getElementById('filterProduct');
-            const dateFrom = document.getElementById('dateFrom');
-            const dateTo = document.getElementById('dateTo');
-            const movementType = document.getElementById('movementType');
-            const productCode = document.getElementById('productCode');
-            const quantity = document.getElementById('quantity');
-            const reason = document.getElementById('reason');
-            const observations = document.getElementById('observations');
-            const user = document.getElementById('user');
-
-            // Búsqueda en tiempo real
-            searchTerm.addEventListener('input', () => {
-                const searchValue = searchTerm.value.toLowerCase();
-                const rows = document.querySelectorAll('#movementsBody tr');
-                
-                rows.forEach(row => {
-                    const productName = row.cells[2].textContent.toLowerCase();
-                    const userText = row.cells[6].textContent.toLowerCase();
-                    const reference = row.cells[7].textContent.toLowerCase();
-                    
-                    if (productName.includes(searchValue) || userText.includes(searchValue) || reference.includes(searchValue)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-
-            // Aplicar filtros
-            function applyFilters() {
-                const type = filterType.value;
-                const product = filterProduct.value;
-                const fromDate = dateFrom.value;
-                const toDate = dateTo.value;
-                const rows = document.querySelectorAll('#movementsBody tr');
-                
-                rows.forEach(row => {
-                    const typeCell = row.cells[1].textContent.trim();
-                    const productCell = row.cells[2].textContent.trim();
-                    const dateCell = row.cells[0].textContent.trim();
-                    
-                    let showRow = true;
-                    
-                    if (type && !typeCell.includes(type)) {
-                        showRow = false;
-                    }
-                    
-                    if (product && !productCell.includes(product)) {
-                        showRow = false;
-                    }
-                    
-                    if (fromDate && dateCell < fromDate) {
-                        showRow = false;
-                    }
-                    
-                    if (toDate && dateCell > toDate) {
-                        showRow = false;
-                    }
-                    
-                    row.style.display = showRow ? '' : 'none';
-                });
-            }
-
-            // Event listeners para filtros
-            filterType.addEventListener('change', applyFilters);
-            filterProduct.addEventListener('change', applyFilters);
-            dateFrom.addEventListener('change', applyFilters);
-            dateTo.addEventListener('change', applyFilters);
-
-            // Buscar
-            function performSearch() {
-                const search = searchTerm.value.trim();
-                const type = filterType.value;
-                const product = filterProduct.value;
-                const fromDate = dateFrom.value;
-                const toDate = dateTo.value;
-                
-                if (search || type || product || fromDate || toDate) {
-                    alert(`Buscando movimientos: "${search}" tipo: "${type || 'Todos'}" producto: "${product || 'Todos'}" desde: "${fromDate || 'Todos'}" hasta: "${toDate || 'Todos'}"`);
-                } else {
-                    alert('Por favor ingrese criterios de búsqueda');
-                }
-            }
-
-            searchBtn.addEventListener('click', performSearch);
-            searchBtn2.addEventListener('click', performSearch);
-
-            // Agregar movimiento
-            addMovementBtn.addEventListener('click', () => {
-                if (form.checkValidity()) {
-                    const movementData = {
-                        type: movementType.value,
-                        product: productCode.value,
-                        quantity: quantity.value,
-                        reason: reason.value,
-                        observations: observations.value,
-                        user: user.value
-                    };
-                    
-                    console.log('Datos del movimiento:', movementData);
-                    alert('Movimiento agregado exitosamente');
-                    form.reset();
-                } else {
-                    form.reportValidity();
-                }
-            });
-
-            // Exportar
-            exportBtn.addEventListener('click', () => {
-                alert('Exportando movimientos a Excel...');
-            });
-
-            // Reportes
+        // Reportes adicionales (funcionalidad futura)
+        document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('dailyReportBtn').addEventListener('click', () => {
                 alert('Generando reporte diario de movimientos...');
             });
@@ -734,37 +607,7 @@
             document.getElementById('productReportBtn').addEventListener('click', () => {
                 alert('Generando reporte de movimientos por producto...');
             });
-
-            document.getElementById('userReportBtn').addEventListener('click', () => {
-                alert('Generando reporte de movimientos por usuario...');
-            });
-
-            // Limpiar formulario
-            clearBtn.addEventListener('click', () => {
-                form.reset();
-                // Mostrar todas las filas
-                const rows = document.querySelectorAll('#movementsBody tr');
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-            });
-
-            // Establecer fechas por defecto
-            const today = new Date();
-            const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-            
-            dateFrom.valueAsDate = lastWeek;
-            dateTo.valueAsDate = today;
-
-            // Actualizar resumen (simulación)
-            function updateSummary() {
-                console.log('Actualizando resumen de movimientos...');
-            }
-
-            // Inicializar
-            updateSummary();
-
-        })();
+        });
     </script>
 </body>
 </html>

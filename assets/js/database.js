@@ -1331,13 +1331,16 @@ class DatabaseService {
                 cantidad: Number(mov.cantidad) || 0,
                 motivo: mov.motivo?.trim() || null,
                 referencia: mov.referencia?.trim() || null,
+                notas: mov.notas?.trim() || null,
                 created_by: mov.usuario_id
             };
+            
             const { data, error } = await this.supabase
                 .from('movimientos_inventario')
                 .insert([insertData])
                 .select('*')
                 .single();
+            
             return { data, error };
         } catch (error) {
             return { data: null, error };

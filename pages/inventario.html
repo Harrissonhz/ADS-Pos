@@ -25,7 +25,7 @@
             </button>
         </div>
             <div class="pos-navbar-actions">
-            <a href="../index.html" class="btn btn-link pos-home-btn" title="Ir al Inicio">
+            <a href="./Menu.html" class="btn btn-link pos-home-btn" title="Ir al Menu">
                 <i class="fas fa-home"></i>
             </a>
         </div>
@@ -269,7 +269,6 @@
                                     <option value="entrada">Entrada (Compra/Devolución)</option>
                                     <option value="salida">Salida (Venta/Descuento)</option>
                                     <option value="ajuste">Ajuste de inventario</option>
-                                    <option value="transferencia">Transferencia</option>
                                 </select>
                             </div>
                             <div class="col-12 col-lg-4 position-relative">
@@ -311,7 +310,7 @@
                                 <label class="form-label">Buscar producto</label>
                                 <input type="text" class="form-control" id="searchProduct" placeholder="Nombre del producto">
                             </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-3">
                                 <label class="form-label">Filtrar por Código interno</label>
                                 <input type="text" class="form-control" id="filterInternalCode" placeholder="Ej: LAP-HP-001">
                             </div>
@@ -325,9 +324,9 @@
                                     <option value="Inactivo">Inactivo</option>
                                 </select>
                             </div>
-                            <div class="col-12 col-lg-1 d-grid">
+                            <div class="col-12 col-lg-2 d-grid">
                                 <label class="form-label">&nbsp;</label>
-                                <button type="button" class="btn btn-primary" id="searchBtn">
+                                <button type="button" class="btn btn-primary" id="searchBtn" style="white-space: nowrap;">
                                     <i class="fas fa-search me-1"></i>Buscar
                                 </button>
                             </div>
@@ -367,8 +366,7 @@
                                         <td><i class="fas fa-laptop text-primary"></i></td>
                                         <td>
                                             <div>
-                                                <strong>Laptop HP Pavilion 15</strong><br>
-                                                <small class="text-muted">HP - Pavilion 15</small>
+                                                <strong>Laptop HP Pavilion 15</strong>
                                             </div>
                                         </td>
                                         <td>LAP-HP-001</td>
@@ -391,8 +389,7 @@
                                         <td><i class="fas fa-mobile-alt text-info"></i></td>
                                         <td>
                                             <div>
-                                                <strong>Samsung Galaxy S21</strong><br>
-                                                <small class="text-muted">Samsung - Galaxy S21</small>
+                                                <strong>Samsung Galaxy S21</strong>
                                             </div>
                                         </td>
                                         <td>CEL-SAM-001</td>
@@ -415,8 +412,7 @@
                                         <td><i class="fas fa-tshirt text-warning"></i></td>
                                         <td>
                                             <div>
-                                                <strong>Camiseta Nike Dri-FIT</strong><br>
-                                                <small class="text-muted">Nike - Dri-FIT</small>
+                                                <strong>Camiseta Nike Dri-FIT</strong>
                                             </div>
                                         </td>
                                         <td>CAM-NIK-001</td>
@@ -439,8 +435,7 @@
                                         <td><i class="fas fa-home text-success"></i></td>
                                         <td>
                                             <div>
-                                                <strong>Lámpara LED Moderna</strong><br>
-                                                <small class="text-muted">Philips - LED</small>
+                                                <strong>Lámpara LED Moderna</strong>
                                             </div>
                                         </td>
                                         <td>LAM-PHI-001</td>
@@ -552,6 +547,94 @@
     <script src="../assets/js/database.js?v=12"></script>
     <script src="../assets/js/auth.js?v=8"></script>
     
-    <script src="../assets/js/inventario.js?v=2"></script>
+    <script src="../assets/js/inventario.js?v=4"></script>
+
+    <!-- Modal Historial de Movimientos -->
+    <div class="modal fade" id="productHistoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title mb-0">Historial de Movimientos</h5>
+                            <small class="text-white-50">Producto: <span id="historyProductName" class="text-white" style="opacity:1;">—</span></small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-box text-primary"></i><strong class="text-white" style="opacity:1;">Información del Producto</strong></div>
+                                    <div><span class="text-white" style="opacity:1;">Código:</span> <span id="historyProductCode" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Categoría:</span> <span id="historyProductCategory" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="mt-2"><span class="text-white" style="opacity:1;">Stock Actual:</span> <strong id="historyStockActual" class="text-white" style="opacity:1;">—</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-chart-line text-success"></i><strong class="text-white" style="opacity:1;">Resumen de Movimientos</strong></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Total Entradas</span><span id="historyTotalEntradas" class="text-success" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Total Salidas</span><span id="historyTotalSalidas" class="text-danger" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between border-top pt-2"><strong class="text-white" style="opacity:1;">Total Movimientos</strong><strong id="historyTotalMovimientos" class="text-white" style="opacity:1;">—</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-calendar-alt text-warning"></i><strong class="text-white" style="opacity:1;">Rango de Fechas</strong></div>
+                                    <div><span class="text-white" style="opacity:1;">Primer Movimiento:</span> <span id="historyFirstMovement" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Último Movimiento:</span> <span id="historyLastMovement" class="text-white" style="opacity:1;">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-transparent border-secondary">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-exchange-alt"></i>
+                            <strong class="text-white" style="opacity:1;">Movimientos de Inventario</strong>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha/Hora</th>
+                                            <th>Tipo</th>
+                                            <th>Cantidad</th>
+                                            <th>Stock Anterior</th>
+                                            <th>Stock Posterior</th>
+                                            <th>Motivo</th>
+                                            <th>Referencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyMovementsBody">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                <i class="fas fa-spinner fa-spin fa-2x mb-2"></i><br>
+                                                Cargando movimientos...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
