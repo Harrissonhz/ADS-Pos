@@ -379,14 +379,31 @@ ALTER TABLE movimientos_inventario ENABLE ROW LEVEL SECURITY;
 ALTER TABLE caja_apertura ENABLE ROW LEVEL SECURITY;
 ALTER TABLE configuracion_empresa ENABLE ROW LEVEL SECURITY;
 
+-- Forzar RLS solo en categorias (para resolver la alerta específica de Supabase)
+ALTER TABLE categorias FORCE ROW LEVEL SECURITY;
+
 -- Políticas básicas para usuarios autenticados
 CREATE POLICY "Usuarios autenticados pueden ver datos" ON usuarios FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar datos" ON usuarios FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden actualizar datos" ON usuarios FOR UPDATE USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Usuarios autenticados pueden ver categorias" ON categorias FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Usuarios autenticados pueden insertar categorias" ON categorias FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Usuarios autenticados pueden actualizar categorias" ON categorias FOR UPDATE USING (auth.role() = 'authenticated');
+-- Políticas afinadas para categorías
+-- SELECT restringe filas a no borradas lógicamente
+CREATE POLICY "Usuarios autenticados pueden ver categorias" 
+ON categorias 
+FOR SELECT 
+USING (auth.role() = 'authenticated' AND deleted_at IS NULL);
+
+CREATE POLICY "Usuarios autenticados pueden insertar categorias" 
+ON categorias 
+FOR INSERT 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Usuarios autenticados pueden actualizar categorias" 
+ON categorias 
+FOR UPDATE 
+USING (auth.role() = 'authenticated') 
+WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Usuarios autenticados pueden ver productos" ON productos FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar productos" ON productos FOR INSERT WITH CHECK (auth.role() = 'authenticated');

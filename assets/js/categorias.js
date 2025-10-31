@@ -673,6 +673,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Inicializando página de categorías - Versión 5.3 - BÚSQUEDA CORREGIDA');
     console.log('📅 Timestamp:', new Date().toISOString());
     
+    // Guardia de autenticación: requerir sesión como en el resto de páginas
+    try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (!session) {
+            console.warn('🔒 Sin sesión activa: redirigiendo a login');
+            if (window.auth && typeof window.auth.redirectToLogin === 'function') {
+                window.auth.redirectToLogin();
+            } else {
+                // Fallback en caso de que window.auth no esté disponible aún
+                if (window.location.pathname.includes('/pages/')) {
+                    window.location.href = 'login.html';
+                } else {
+                    window.location.href = 'pages/login.html';
+                }
+            }
+            return; // Detener inicialización si no hay sesión
+        }
+    } catch (e) {
+        console.error('❌ Error verificando sesión:', e);
+        return;
+    }
+    
     // Prevenir el parpadeo del offcanvas
     const offcanvasElement = document.getElementById('posSidebar');
     if (offcanvasElement) {
