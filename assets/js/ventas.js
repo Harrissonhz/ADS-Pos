@@ -947,9 +947,12 @@
         // Renderizar el carrito en el HTML
         function renderCart() {
             const cartBody = document.getElementById('cartBody');
-            if (!cartBody) return;
+            const cartBodyMobile = document.getElementById('cartBodyMobile');
+            
+            if (!cartBody || !cartBodyMobile) return;
 
             if (cart.length === 0) {
+                // Vista vacía para tabla desktop
                 cartBody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
@@ -958,9 +961,17 @@
                         </td>
                     </tr>
                 `;
+                // Vista vacía para móvil
+                cartBodyMobile.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                        <p class="mb-0">El carrito está vacío</p>
+                    </div>
+                `;
                 return;
             }
 
+            // Renderizar tabla para desktop
             cartBody.innerHTML = cart.map((item, index) => {
                 const subtotalWithDiscount = item.subtotal;
                 return `
@@ -998,6 +1009,56 @@
                             </button>
                         </td>
                     </tr>
+                `;
+            }).join('');
+
+            // Renderizar cards para móvil
+            cartBodyMobile.innerHTML = cart.map((item, index) => {
+                const subtotalWithDiscount = item.subtotal;
+                return `
+                    <div class="cart-item-card mb-3 p-3 border rounded" data-index="${index}" data-product-id="${item.productId}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong class="text-white">${item.name}</strong>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.removeProduct(${index})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <small class="text-white-50 d-block mb-1">Código: ${item.code}</small>
+                                <small class="text-white-50 d-block">${item.category}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-2 mt-2">
+                            <div class="col-6">
+                                <label class="form-label small text-white-50 mb-1">Cantidad</label>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.updateQuantity(${index}, -1)">-</button>
+                                    <input type="number" class="form-control text-center cart-quantity" value="${item.quantity}" min="1" onchange="window.updateQuantity(${index}, parseInt(this.value))">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.updateQuantity(${index}, 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-white-50 mb-1">Precio Unit.</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control text-center cart-price" value="${item.price}" min="0" step="0.01" onchange="window.updatePrice(${index}, parseFloat(this.value))">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-white-50 mb-1">Descuento (%)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-center cart-discount" value="${item.discount}" min="0" max="100" step="0.01" onchange="window.updateDiscount(${index}, parseFloat(this.value))">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-white-50 mb-1">Subtotal</label>
+                                <input type="text" class="form-control fw-bold text-success text-center" value="${formatCOP(subtotalWithDiscount)}" readonly>
+                            </div>
+                        </div>
+                    </div>
                 `;
             }).join('');
         }

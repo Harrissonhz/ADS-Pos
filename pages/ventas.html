@@ -365,7 +365,8 @@
                         </button>
                     </div>
                     <div class="card-body collapse show" id="carritoCompras">
-                        <div class="table-responsive">
+                        <!-- Vista de tabla para desktop -->
+                        <div class="table-responsive d-none d-md-block">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
                                     <tr>
@@ -382,6 +383,10 @@
                                     <!-- El carrito se renderiza dinámicamente desde JavaScript -->
                                 </tbody>
                             </table>
+                        </div>
+                        <!-- Vista de cards para móvil -->
+                        <div class="d-md-none" id="cartBodyMobile">
+                            <!-- El carrito móvil se renderiza dinámicamente desde JavaScript -->
                         </div>
                     </div>
                 </div>

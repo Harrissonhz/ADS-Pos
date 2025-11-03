@@ -508,7 +508,39 @@ body.pos-app .form-check-label {
 
 /* ===== RESPONSIVE PARA MÓVIL - VENTAS ===== */
 @media (max-width: 768px) {
-    /* Inputs del carrito más grandes en móvil */
+    /* Cards del carrito en móvil */
+    .cart-item-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    .cart-item-card .form-control,
+    .cart-item-card .input-group-text {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.75rem;
+        min-height: 44px;
+    }
+    
+    .cart-item-card .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: #0d6efd;
+        color: #fff;
+    }
+    
+    .cart-item-card .btn {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .cart-item-card .input-group .btn {
+        min-width: 44px;
+    }
+    
+    /* Inputs del carrito más grandes en móvil (para tabla desktop si se usa) */
     .cart-quantity-group,
     .cart-price-group,
     .cart-discount-group {
@@ -531,7 +563,7 @@ body.pos-app .form-check-label {
         padding: 0.5rem;
     }
     
-    /* Tabla del carrito más compacta en móvil */
+    /* Tabla del carrito más compacta en móvil (si se muestra) */
     .table-responsive {
         font-size: 0.875rem;
     }
