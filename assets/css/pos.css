@@ -505,3 +505,150 @@ body.pos-app .form-check-label {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* ===== RESPONSIVE PARA MÓVIL - VENTAS ===== */
+@media (max-width: 768px) {
+    /* Inputs del carrito más grandes en móvil */
+    .cart-quantity-group,
+    .cart-price-group,
+    .cart-discount-group {
+        width: 100% !important;
+        min-width: 100%;
+    }
+    
+    .cart-quantity-group .btn,
+    .cart-price-group .btn,
+    .cart-discount-group .btn {
+        min-width: 44px; /* Área táctil mínima recomendada */
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .cart-quantity-group .form-control,
+    .cart-price-group .form-control,
+    .cart-discount-group .form-control {
+        font-size: 1rem; /* Texto más grande para legibilidad */
+        padding: 0.5rem;
+    }
+    
+    /* Tabla del carrito más compacta en móvil */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive th,
+    .table-responsive td {
+        padding: 0.5rem 0.25rem;
+        white-space: nowrap;
+    }
+    
+    /* Ocultar columnas menos importantes en móvil */
+    .table-responsive .cart-subtotal {
+        font-size: 0.9rem;
+    }
+    
+    /* Asegurar que los botones del carrito sean táctiles */
+    .table-responsive .btn {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.5rem;
+    }
+    
+    /* Formularios más espaciados en móvil */
+    .pos-card .card-body {
+        padding: 1rem;
+    }
+    
+    /* Inputs más grandes en móvil */
+    .pos-card .form-control,
+    .pos-card .form-select {
+        font-size: 1rem;
+        padding: 0.75rem;
+        min-height: 44px; /* Área táctil mínima */
+    }
+    
+    /* Textarea más grande */
+    .pos-card textarea {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+    
+    /* Labels más legibles */
+    .pos-card .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    /* Input groups más grandes */
+    .pos-card .input-group .input-group-text {
+        font-size: 1rem;
+        padding: 0.75rem;
+        min-height: 44px;
+    }
+    
+    /* Botones de acción más grandes */
+    .pos-card .btn {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    /* Tabla de ventas recientes más compacta */
+    #ventasRecientes .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    #ventasRecientes .table-responsive th,
+    #ventasRecientes .table-responsive td {
+        padding: 0.4rem 0.2rem;
+    }
+    
+    /* Badges más grandes */
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* En pantallas muy pequeñas, hacer columnas aún más compactas */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table-responsive th,
+    .table-responsive td {
+        padding: 0.4rem 0.15rem;
+    }
+    
+    /* Ocultar texto en botones, solo iconos */
+    .table-responsive .btn-sm {
+        padding: 0.4rem;
+        min-width: 40px;
+        min-height: 40px;
+    }
+    
+    /* KPIs más compactos */
+    .pos-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .pos-card h4 {
+        font-size: 1.25rem;
+    }
+    
+    .pos-card h6 {
+        font-size: 0.85rem;
+    }
+    
+    /* Header más compacto */
+    .pos-login-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Formulario con menos padding */
+    #salesForm {
+        padding: 1rem !important;
+    }
+}

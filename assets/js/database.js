@@ -1375,6 +1375,162 @@ class DatabaseService {
             return { data: null, error };
         }
     }
+
+    // ===== FUNCIONES PARA VENTAS =====
+    /**
+     * Crea una venta con sus detalles
+     * @param {Object} ventaData - Datos de la venta
+     * @param {Array} detalles - Array de detalles de productos
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async createVenta(ventaData, detalles = []) {
+        try {
+            // Validaciones mínimas
+            if (!ventaData || !ventaData.fecha_venta) {
+                return { data: null, error: { message: 'La fecha de venta es obligatoria' } };
+            }
+            
+            // usuario_id requerido y debe ser UUID
+            if (!ventaData.usuario_id || !this._isValidUUID(ventaData.usuario_id)) {
+                return { data: null, error: { message: 'Usuario (vendedor) inválido o no autenticado' } };
+            }
+
+            // Validar que haya detalles
+            if (!detalles || detalles.length === 0) {
+                return { data: null, error: { message: 'Debe agregar al menos un producto a la venta' } };
+            }
+
+            const insertVenta = {
+                cliente_id: ventaData.cliente_id && this._isValidUUID(ventaData.cliente_id) ? ventaData.cliente_id : null,
+                usuario_id: ventaData.usuario_id,
+                fecha_venta: ventaData.fecha_venta,
+                metodo_pago: ventaData.metodo_pago || 'efectivo',
+                estado: ventaData.estado || 'completada',
+                subtotal: Number(ventaData.subtotal) || 0,
+                impuesto: Number(ventaData.impuesto) || 0,
+                descuento: Number(ventaData.descuento) || 0,
+                total: Number(ventaData.total) || 0,
+                notas: ventaData.notas?.trim() || null
+            };
+
+            // El trigger generate_sale_number() generará el numero_venta automáticamente
+            const { data: ventaRows, error: ventaErr } = await this.supabase
+                .from('ventas')
+                .insert([insertVenta])
+                .select();
+            
+            if (ventaErr) return { data: null, error: ventaErr };
+            if (!ventaRows || ventaRows.length === 0) {
+                return { data: null, error: { message: 'No se pudo crear la venta' } };
+            }
+
+            const ventaId = ventaRows[0].id;
+            const numeroVenta = ventaRows[0].numero_venta;
+
+            // Insertar detalles
+            const detallesToInsert = detalles.map(det => ({
+                venta_id: ventaId,
+                producto_id: det.producto_id,
+                cantidad: Number(det.cantidad) || 0,
+                precio_unitario: Number(det.precio_unitario) || 0,
+                descuento: Number(det.descuento) || 0,
+                tasa_impuesto: Number(det.tasa_impuesto) || 0,
+                subtotal: Number(det.subtotal) || 0,
+                impuesto: Number(det.impuesto) || 0,
+                total: Number(det.total) || 0
+            }));
+
+            const { data: detallesRows, error: detallesErr } = await this.supabase
+                .from('ventas_detalle')
+                .insert(detallesToInsert)
+                .select();
+
+            if (detallesErr) {
+                // Si falla la inserción de detalles, eliminar la venta creada
+                await this.supabase.from('ventas').delete().eq('id', ventaId);
+                return { data: null, error: detallesErr };
+            }
+
+            // Crear movimientos de inventario (tipo: 'salida') para cada producto
+            // El trigger actualizará automáticamente el stock_actual
+            const movimientos = [];
+            for (const detalle of detalles) {
+                const movResult = await this.createMovimientoInventario({
+                    producto_id: detalle.producto_id,
+                    tipo_movimiento: 'salida',
+                    cantidad: detalle.cantidad,
+                    motivo: `Venta: ${numeroVenta}`,
+                    referencia: numeroVenta,
+                    notas: `Venta ${numeroVenta} - ${detalle.cantidad} unidades`,
+                    usuario_id: ventaData.usuario_id
+                });
+                
+                if (movResult.error) {
+                    console.error(`Error creando movimiento para producto ${detalle.producto_id}:`, movResult.error);
+                    // Continuar con los demás movimientos aunque uno falle
+                } else {
+                    movimientos.push(movResult.data);
+                }
+            }
+
+            return {
+                data: {
+                    venta: ventaRows[0],
+                    detalles: detallesRows || [],
+                    movimientos: movimientos
+                },
+                error: null
+            };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene estadísticas de ventas para KPIs
+     * @param {Object} options - Opciones de consulta (fechaInicio, fechaFin)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getVentasStats(options = {}) {
+        try {
+            const { fechaInicio, fechaFin } = options;
+            
+            let query = this.supabase
+                .from('ventas')
+                .select('id, total, fecha_venta', { count: 'exact' })
+                .eq('estado', 'completada')
+                .is('deleted_at', null);
+
+            if (fechaInicio) {
+                query = query.gte('fecha_venta', fechaInicio);
+            }
+            if (fechaFin) {
+                query = query.lte('fecha_venta', fechaFin);
+            }
+
+            query = query.order('fecha_venta', { ascending: false });
+
+            const { data, error, count } = await query;
+
+            if (error) return { data: null, error, count: 0 };
+
+            const total = data?.reduce((sum, v) => sum + (Number(v.total) || 0), 0) || 0;
+            const promedio = data && data.length > 0 ? total / data.length : 0;
+            const ultimaVenta = data && data.length > 0 ? data[0] : null;
+
+            return {
+                data: {
+                    totalVentas: count || 0,
+                    totalMonto: total,
+                    promedio: promedio,
+                    ultimaVenta: ultimaVenta
+                },
+                error: null
+            };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
 }
 
 // Crear instancia global

@@ -201,82 +201,94 @@
             </div>
 
             <!-- Resumen de Ventas -->
-            <div class="row g-3 mb-4">
-                <div class="col-12 col-lg-3">
+            <div class="row g-2 g-md-3 mb-4">
+                <div class="col-6 col-lg-3">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
-                            <h5 class="card-title">Ventas Hoy</h5>
-                            <h3 class="text-primary">24</h3>
-                            <small class="text-muted">Transacciones</small>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-shopping-cart fa-2x text-primary mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-shopping-cart fa-lg text-primary mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Ventas Hoy</h6>
+                            <h4 class="text-primary mb-0">24</h4>
+                            <small class="text-muted d-none d-md-block">Transacciones</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-3">
+                <div class="col-6 col-lg-3">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
-                            <h5 class="card-title">Total Hoy</h5>
-                            <h3 class="text-success">$ 2.4M</h3>
-                            <small class="text-muted">Valor vendido</small>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-dollar-sign fa-lg text-success mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Total Hoy</h6>
+                            <h4 class="text-success mb-0">$ 2.4M</h4>
+                            <small class="text-muted d-none d-md-block">Valor vendido</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-3">
+                <div class="col-6 col-lg-3">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
-                            <h5 class="card-title">Promedio</h5>
-                            <h3 class="text-info">$ 100K</h3>
-                            <small class="text-muted">Por venta</small>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-chart-line fa-2x text-info mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-chart-line fa-lg text-info mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Promedio</h6>
+                            <h4 class="text-info mb-0">$ 100K</h4>
+                            <small class="text-muted d-none d-md-block">Por venta</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-3">
+                <div class="col-6 col-lg-3">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                            <h5 class="card-title">Última Venta</h5>
-                            <h3 class="text-warning">5 min</h3>
-                            <small class="text-muted">Hace</small>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-clock fa-2x text-warning mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-clock fa-lg text-warning mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Última Venta</h6>
+                            <h4 class="text-warning mb-0">5 min</h4>
+                            <small class="text-muted d-none d-md-block">Hace</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <form id="salesForm" class="p-3" novalidate>
+            <form id="salesForm" class="p-3 p-md-3" novalidate>
                 <!-- Nueva Venta -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-plus-circle"></i>
-                        <strong>Nueva Venta</strong>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-plus-circle"></i>
+                            <strong>Nueva Venta</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#nuevaVenta" aria-expanded="true" aria-controls="nuevaVenta">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="nuevaVenta">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Cliente</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="customerSearch" placeholder="Buscar cliente...">
-                                    <button class="btn btn-outline-secondary" type="button" id="searchCustomerBtn">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-outline-primary" type="button" id="newCustomerBtn">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="customerSearch" placeholder="Buscar cliente..." autocomplete="off">
+                                        <input type="hidden" id="selectedCustomerId">
+                                        <button class="btn btn-outline-primary" type="button" id="newCustomerBtn" onclick="window.location.href='./clientes.html'">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Vendedor</label>
-                                <select class="form-select" id="salesperson">
-                                    <option value="admin" selected>admin</option>
-                                    <option value="vendedor1">vendedor1</option>
-                                    <option value="vendedor2">vendedor2</option>
-                                    <option value="cajero1">cajero1</option>
-                                </select>
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="salespersonSearch" placeholder="Buscar vendedor..." autocomplete="off">
+                                        <input type="hidden" id="selectedSalespersonId">
+                                        <button class="btn btn-outline-secondary" type="button" id="searchSalespersonBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Fecha y Hora</label>
-                                <input type="datetime-local" class="form-control" id="saleDateTime" value="2024-01-15T18:30">
+                                <input type="datetime-local" class="form-control" id="saleDateTime">
                             </div>
                         </div>
                     </div>
@@ -284,34 +296,58 @@
 
                 <!-- Búsqueda de Productos -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-search"></i>
-                        <strong>Búsqueda de Productos</strong>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-search"></i>
+                            <strong>Búsqueda de Productos</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#busquedaProductos" aria-expanded="true" aria-controls="busquedaProductos">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="busquedaProductos">
                         <div class="row g-3">
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Buscar producto</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="productSearch" placeholder="Código, nombre o descripción...">
-                                    <button class="btn btn-outline-secondary" type="button" id="searchProductBtn">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="productSearch" placeholder="Código, nombre o descripción..." autocomplete="off">
+                                        <input type="hidden" id="selectedProductId">
+                                        <button class="btn btn-outline-secondary" type="button" id="listProductsBtn" title="Listar todos los productos">
+                                            <i class="fas fa-list"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-3">
                                 <label class="form-label">Categoría</label>
-                                <select class="form-select" id="productCategory">
-                                    <option value="">Todas las categorías</option>
-                                    <option value="electronica">Electrónica</option>
-                                    <option value="ropa">Ropa</option>
-                                    <option value="hogar">Hogar</option>
-                                    <option value="deportes">Deportes</option>
-                                </select>
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="productCategory" placeholder="Buscar categoría..." autocomplete="off">
+                                        <input type="hidden" id="selectedCategoryId">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-12 col-lg-3">
                                 <label class="form-label">Cantidad</label>
                                 <input type="number" class="form-control" id="productQuantity" value="1" min="1">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Precio</label>
+                                <input type="number" class="form-control" id="productPrice" placeholder="Precio de venta" min="0" step="0.01">
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Stock</label>
+                                <input type="text" class="form-control" id="productStock" placeholder="Stock disponible" readonly>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="form-label">Estado</label>
+                                <input type="text" class="form-control" id="productStatus" placeholder="Estado del producto" readonly>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-success" id="addToCartBtn">
+                                    <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -319,11 +355,16 @@
 
                 <!-- Carrito de Compras -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-shopping-cart"></i>
-                        <strong>Carrito de Compras</strong>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-shopping-cart"></i>
+                            <strong>Carrito de Compras</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#carritoCompras" aria-expanded="true" aria-controls="carritoCompras">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="carritoCompras">
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
@@ -338,64 +379,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="cartBody">
-                                    <tr>
-                                        <td>PROD001</td>
-                                        <td>
-                                            <div>
-                                                <strong>Laptop HP Pavilion</strong><br>
-                                                <small class="text-muted">Electrónica</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="input-group input-group-sm" style="width: 100px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('PROD001', -1)">-</button>
-                                                <input type="number" class="form-control text-center" value="1" min="1" onchange="updateQuantity('PROD001', this.value)">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('PROD001', 1)">+</button>
-                                            </div>
-                                        </td>
-                                        <td>$ 1,500,000</td>
-                                        <td>
-                                            <div class="input-group input-group-sm" style="width: 80px;">
-                                                <input type="number" class="form-control text-center" value="0" min="0" max="100" step="0.01">
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                        </td>
-                                        <td class="fw-bold">$ 1,500,000</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProduct('PROD001')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>PROD002</td>
-                                        <td>
-                                            <div>
-                                                <strong>Mouse Inalámbrico</strong><br>
-                                                <small class="text-muted">Electrónica</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="input-group input-group-sm" style="width: 100px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('PROD002', -1)">-</button>
-                                                <input type="number" class="form-control text-center" value="2" min="1" onchange="updateQuantity('PROD002', this.value)">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('PROD002', 1)">+</button>
-                                            </div>
-                                        </td>
-                                        <td>$ 45,000</td>
-                                        <td>
-                                            <div class="input-group input-group-sm" style="width: 80px;">
-                                                <input type="number" class="form-control text-center" value="5" min="0" max="100" step="0.01">
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                        </td>
-                                        <td class="fw-bold">$ 85,500</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProduct('PROD002')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <!-- El carrito se renderiza dinámicamente desde JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -406,30 +390,35 @@
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-lg-6">
                         <div class="card pos-card">
-                            <div class="card-header d-flex align-items-center gap-2">
-                                <i class="fas fa-calculator"></i>
-                                <strong>Totales</strong>
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-calculator"></i>
+                                    <strong>Totales</strong>
+                                </div>
+                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#totales" aria-expanded="true" aria-controls="totales">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body collapse show" id="totales">
                                 <div class="row g-2">
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">Subtotal</label>
-                                        <input type="text" class="form-control" value="$ 1,585,500" readonly>
+                                        <input type="text" class="form-control" value="$ 0" readonly>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">Descuento Global</label>
                                         <div class="input-group">
                                             <input type="number" class="form-control" value="0" min="0" max="100" step="0.01">
                                             <span class="input-group-text">%</span>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">IVA (19%)</label>
-                                        <input type="text" class="form-control" value="$ 300,245" readonly>
+                                        <input type="text" class="form-control" value="$ 0" readonly>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">Total</label>
-                                        <input type="text" class="form-control fw-bold text-success" value="$ 1,885,745" readonly>
+                                        <input type="text" class="form-control fw-bold text-success" value="$ 0" readonly id="totalVenta">
                                     </div>
                                 </div>
                             </div>
@@ -437,11 +426,16 @@
                     </div>
                     <div class="col-12 col-lg-6">
                         <div class="card pos-card">
-                            <div class="card-header d-flex align-items-center gap-2">
-                                <i class="fas fa-credit-card"></i>
-                                <strong>Método de Pago</strong>
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-credit-card"></i>
+                                    <strong>Método de Pago</strong>
+                                </div>
+                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#metodoPago" aria-expanded="true" aria-controls="metodoPago">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body collapse show" id="metodoPago">
                                 <div class="row g-2">
                                     <div class="col-12">
                                         <label class="form-label">Método</label>
@@ -452,13 +446,13 @@
                                             <option value="mixto">Mixto</option>
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">Monto Recibido</label>
-                                        <input type="number" class="form-control" id="amountReceived" value="2000000" min="0">
+                                        <input type="number" class="form-control" id="amountReceived" value="0" min="0">
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label">Cambio</label>
-                                        <input type="text" class="form-control" value="$ 114,255" readonly>
+                                        <input type="text" class="form-control" value="$ 0" readonly id="cambioVenta">
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">Observaciones</label>
@@ -470,40 +464,18 @@
                     </div>
                 </div>
 
-                <!-- Acciones -->
-                <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-bolt"></i>
-                        <strong>Acciones</strong>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center flex-wrap gap-2">
-                            <button type="button" class="btn btn-success" id="processSaleBtn">
-                                <i class="fas fa-check me-1"></i>Procesar Venta
-                            </button>
-                            <button type="button" class="btn btn-primary" id="saveDraftBtn">
-                                <i class="fas fa-save me-1"></i>Guardar Borrador
-                            </button>
-                            <button type="button" class="btn btn-warning" id="holdSaleBtn">
-                                <i class="fas fa-pause me-1"></i>Pausar Venta
-                            </button>
-                            <button type="button" class="btn btn-info" id="printReceiptBtn">
-                                <i class="fas fa-print me-1"></i>Imprimir Recibo
-                            </button>
-                            <button type="button" class="btn btn-secondary" id="clearCartBtn">
-                                <i class="fas fa-trash me-1"></i>Limpiar Carrito
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Ventas Recientes -->
                 <div class="card pos-card mb-4">
-                    <div class="card-header d-flex align-items-center gap-2">
-                        <i class="fas fa-history"></i>
-                        <strong>Ventas Recientes</strong>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-history"></i>
+                            <strong>Ventas Recientes</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#ventasRecientes" aria-expanded="true" aria-controls="ventasRecientes">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body collapse show" id="ventasRecientes">
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
@@ -571,6 +543,48 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Acciones -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-bolt"></i>
+                            <strong>Acciones</strong>
+                        </div>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#acciones" aria-expanded="true" aria-controls="acciones">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="acciones">
+                        <div class="row g-2 justify-content-center">
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
+                                <button type="button" class="btn btn-success w-100" id="processSaleBtn">
+                                    <i class="fas fa-check me-1"></i>Procesar Venta
+                                </button>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
+                                <button type="button" class="btn btn-primary w-100" id="saveDraftBtn">
+                                    <i class="fas fa-save me-1"></i>Guardar Borrador
+                                </button>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
+                                <button type="button" class="btn btn-warning w-100" id="holdSaleBtn">
+                                    <i class="fas fa-pause me-1"></i>Pausar Venta
+                                </button>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
+                                <button type="button" class="btn btn-info w-100" id="printReceiptBtn">
+                                    <i class="fas fa-print me-1"></i>Imprimir Recibo
+                                </button>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
+                                <button type="button" class="btn btn-secondary w-100" id="clearCartBtn">
+                                    <i class="fas fa-trash me-1"></i>Limpiar Carrito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
 
             <div class="text-center mt-4 pos-login-footer">
@@ -593,125 +607,24 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Prevenir el parpadeo del offcanvas
-        document.addEventListener('DOMContentLoaded', function() {
-            const offcanvasElement = document.getElementById('posSidebar');
-            if (offcanvasElement) {
-                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                
-                // Manejar eventos del offcanvas
-                offcanvasElement.addEventListener('show.bs.offcanvas', function() {
-                    this.classList.add('show');
-                });
-                
-                offcanvasElement.addEventListener('hide.bs.offcanvas', function() {
-                    this.classList.remove('show');
-                });
-            }
-        });
-    </script>
-    <script>
-        (function() {
-            const salesForm = document.getElementById('salesForm');
-            const processSaleBtn = document.getElementById('processSaleBtn');
-            const saveDraftBtn = document.getElementById('saveDraftBtn');
-            const holdSaleBtn = document.getElementById('holdSaleBtn');
-            const printReceiptBtn = document.getElementById('printReceiptBtn');
-            const clearCartBtn = document.getElementById('clearCartBtn');
-            const customerSearch = document.getElementById('customerSearch');
-            const productSearch = document.getElementById('productSearch');
-            const amountReceived = document.getElementById('amountReceived');
-            const paymentMethod = document.getElementById('paymentMethod');
 
-            // Búsqueda de clientes
-            customerSearch.addEventListener('input', () => {
-                const searchTerm = customerSearch.value.toLowerCase();
-                if (searchTerm.length > 2) {
-                    console.log('Buscando cliente:', searchTerm);
-                    // Aquí se implementaría la búsqueda real de clientes
-                }
-            });
+    <!-- Contenedor de sugerencias de clientes -->
+    <div id="customerSuggestions" style="position: fixed; z-index: 1050; display: none;"></div>
+    
+    <!-- Contenedor de sugerencias de vendedores -->
+    <div id="salespersonSuggestionsFixed" style="position: fixed; z-index: 1050; display: none;"></div>
+    
+    <!-- Contenedor de sugerencias de productos -->
+    <div id="productSuggestionsFixed" style="position: fixed; z-index: 1050; display: none;"></div>
+    
+    <!-- Contenedor de sugerencias de categorías -->
+    <div id="categorySuggestionsFixed" style="position: fixed; z-index: 1050; display: none;"></div>
 
-            // Búsqueda de productos
-            productSearch.addEventListener('input', () => {
-                const searchTerm = productSearch.value.toLowerCase();
-                if (searchTerm.length > 2) {
-                    console.log('Buscando producto:', searchTerm);
-                    // Aquí se implementaría la búsqueda real de productos
-                }
-            });
-
-            // Cálculo de cambio
-            function calculateChange() {
-                const total = 1885745; // Total de la venta
-                const received = parseFloat(amountReceived.value) || 0;
-                const change = received - total;
-                
-                // Actualizar el campo de cambio
-                const changeField = document.querySelector('input[readonly]');
-                if (changeField) {
-                    changeField.value = change >= 0 ? `$ ${change.toLocaleString()}` : 'Insuficiente';
-                    changeField.className = change >= 0 ? 'form-control' : 'form-control text-danger';
-                }
-            }
-
-            amountReceived.addEventListener('input', calculateChange);
-
-            // Procesar venta
-            processSaleBtn.addEventListener('click', () => {
-                if (confirm('¿Procesar esta venta?')) {
-                    alert('Venta procesada exitosamente');
-                    // Aquí se implementaría el procesamiento real de la venta
-                }
-            });
-
-            // Guardar borrador
-            saveDraftBtn.addEventListener('click', () => {
-                alert('Borrador guardado exitosamente');
-            });
-
-            // Pausar venta
-            holdSaleBtn.addEventListener('click', () => {
-                alert('Venta pausada. Puedes continuarla más tarde.');
-            });
-
-            // Imprimir recibo
-            printReceiptBtn.addEventListener('click', () => {
-                alert('Enviando a impresora...');
-            });
-
-            // Limpiar carrito
-            clearCartBtn.addEventListener('click', () => {
-                if (confirm('¿Limpiar el carrito de compras?')) {
-                    document.getElementById('cartBody').innerHTML = '';
-                    alert('Carrito limpiado');
-                }
-            });
-
-            // Funciones globales para el carrito
-            window.updateQuantity = function(productCode, change) {
-                console.log('Actualizando cantidad para:', productCode, 'cambio:', change);
-                // Aquí se implementaría la actualización real de cantidades
-            };
-
-            window.removeProduct = function(productCode) {
-                if (confirm('¿Eliminar este producto del carrito?')) {
-                    console.log('Eliminando producto:', productCode);
-                    // Aquí se implementaría la eliminación real del producto
-                }
-            };
-
-            // Actualizar estadísticas (simulación)
-            function updateStats() {
-                console.log('Actualizando estadísticas de ventas...');
-            }
-
-            // Inicializar
-            updateStats();
-            calculateChange();
-
-        })();
-    </script>
+    <!-- Scripts del sistema -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=12"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    <script src="../assets/js/ventas.js?v=1"></script>
 </body>
 </html>
