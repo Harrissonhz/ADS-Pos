@@ -224,53 +224,150 @@
                 </div>
             </div>
 
-            <!-- Métricas Principales -->
-            <div class="row g-4 mb-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
-                            <h3 class="text-white">$2,450,000</h3>
-                            <p class="text-white-50 mb-1">Ventas Hoy</p>
-                            <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+12.5% vs ayer
-                            </small>
+            <!-- KPIs Financieros Principales (Históricos/Comparativos) -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>KPIs Financieros Principales</h5>
+                                <small class="text-white-50">Indicadores históricos y comparativos mensuales y anuales</small>
+                            </div>
+                            <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#kpiFinancieros" aria-expanded="true" aria-controls="kpiFinancieros">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="kpiFinancieros">
+                            <div class="row g-4">
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-calendar-alt fa-3x text-success mb-2"></i>
+                                    <h3 id="kpiVentasMesActual" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ventas del Mes</p>
+                                    <small class="text-white-50 d-block"><i class="fas fa-exchange-alt me-1"></i>Vs mes ant: <span id="kpiVentasMesVsAnterior">—</span></small>
+                                    <small class="text-white-50">YoY: <span id="kpiVentasMesVsAnioAnterior">—</span></small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-chart-line fa-3x text-primary mb-2"></i>
+                                    <h3 id="kpiVentasAnioActual" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ventas Acumuladas Año</p>
+                                    <small class="text-white-50 d-block">Vs 2024: <span id="kpiVentasAnioAnterior">—</span></small>
+                                    <small class="text-white-50">YoY: <span id="kpiCrecimientoYoY">—</span></small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-layer-group fa-3x text-success mb-2"></i>
+                                    <h3 id="kpiVentasTotales" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ventas Totales (Histórico)</p>
+                                    <small class="text-white-50">Suma de todos los años</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-coins fa-3x text-warning mb-2"></i>
+                                    <h3 id="kpiUtilidadNetaMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Utilidad Neta (Mes)</p>
+                                    <small class="text-white-50">Vs mes ant: <span id="kpiUtilidadVsAnterior">—</span></small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-wallet fa-3x text-danger mb-2"></i>
+                                    <h3 id="kpiGastosMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Gastos del Mes</p>
+                                    <small class="text-white-50">Vs mes ant: <span id="kpiGastosVsAnterior">—</span></small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-balance-scale fa-3x text-secondary mb-2"></i>
+                                    <h3 id="kpiMargenMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Margen de Utilidad (Mes)</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-percentage fa-3x text-info mb-2"></i>
+                                    <h3 id="kpiRoiMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">ROI del Mes</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
-                            <h3 class="text-white">156</h3>
-                            <p class="text-white-50 mb-1">Transacciones</p>
-                            <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+8.3% vs ayer
-                            </small>
+            </div>
+
+            <!-- KPIs Operativos (Tiempo Real/Día a Día) -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>KPIs Operativos</h5>
+                                <small class="text-white-50">Indicadores en tiempo real del día actual</small>
+                            </div>
+                            <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#kpiOperativos" aria-expanded="true" aria-controls="kpiOperativos">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="kpiOperativos">
+                            <div class="row g-4">
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                                    <h3 id="kpiVentasHoy" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ventas Hoy</p>
+                                    <small class="text-white-50"><i class="fas fa-arrow-right-arrow-left me-1"></i>Vs ayer: <span id="kpiVentasHoyVsAyer">—</span></small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
+                                    <h3 id="kpiTransaccionesHoy" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Transacciones Hoy</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-box fa-2x text-warning mb-2"></i>
+                                    <h3 id="kpiProductosVendidosHoy" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Productos Vendidos Hoy</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-triangle-exclamation fa-2x text-danger mb-2"></i>
+                                    <h3 id="kpiStockBajo" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Productos con Stock Bajo</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-cubes fa-2x text-info mb-2"></i>
+                                    <h3 id="kpiTotalProductos" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Total Productos</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-users fa-3x text-info mb-3"></i>
-                            <h3 class="text-white">89</h3>
-                            <p class="text-white-50 mb-1">Clientes Atendidos</p>
-                            <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+5.7% vs ayer
-                            </small>
+            </div>
+
+            <!-- KPIs Comparativos/Tendencias -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card pos-card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>KPIs Comparativos y Tendencias</h5>
+                                <small class="text-white-50">Análisis comparativo y tendencias del negocio</small>
+                            </div>
+                            <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#kpiComparativos" aria-expanded="true" aria-controls="kpiComparativos">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-box fa-3x text-warning mb-3"></i>
-                            <h3 class="text-white">1,234</h3>
-                            <p class="text-white-50 mb-1">Productos Vendidos</p>
-                            <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+15.2% vs ayer
-                            </small>
+                        <div class="card-body collapse show" id="kpiComparativos">
+                            <div class="row g-4">
+                                <div class="col-lg-12">
+                                    <div class="card pos-card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0"><i class="fas fa-list-ol me-2"></i>Top 3 Categorías de Gastos del Mes</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="topGastosContainer" class="text-white-50">
+                                                <p class="mb-0">Los datos se cargarán próximamente...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -516,6 +613,29 @@
                     this.classList.remove('show');
                 });
             }
+
+            // Sincronizar chevrons de los colapsos de KPIs
+            const collapseElements = ['kpiFinancieros', 'kpiOperativos', 'kpiComparativos'];
+            collapseElements.forEach(id => {
+                const collapseElement = document.getElementById(id);
+                if (collapseElement) {
+                    const header = collapseElement.previousElementSibling;
+                    const button = header?.querySelector('button[data-bs-toggle="collapse"]');
+                    const chevron = button?.querySelector('.fa-chevron-up, .fa-chevron-down');
+                    
+                    if (chevron) {
+                        collapseElement.addEventListener('show.bs.collapse', function() {
+                            chevron.classList.remove('fa-chevron-down');
+                            chevron.classList.add('fa-chevron-up');
+                        });
+                        
+                        collapseElement.addEventListener('hide.bs.collapse', function() {
+                            chevron.classList.remove('fa-chevron-up');
+                            chevron.classList.add('fa-chevron-down');
+                        });
+                    }
+                }
+            });
         });
     </script>
     <script>

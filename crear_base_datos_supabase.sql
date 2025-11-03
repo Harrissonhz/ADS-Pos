@@ -327,6 +327,65 @@ CREATE TABLE configuracion_empresa (
 -- ÍNDICES OPTIMIZADOS
 -- ================================================
 
+-- ================================================
+-- 14. Tablas de Finanzas (para KPIs/Reportes/ROI)
+-- ================================================
+
+-- Catálogo de categorías de gasto (normaliza los conceptos de gasto)
+CREATE TABLE gasto_categorias (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    activa BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES usuarios(id),
+    updated_by UUID REFERENCES usuarios(id),
+    deleted_at TIMESTAMPTZ NULL
+);
+
+-- Resumen mensual de finanzas (ventas/gastos/ROI por mes)
+CREATE TABLE finanzas_mensuales (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    anio INTEGER NOT NULL,
+    mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
+    ventas_brutas DECIMAL(14,2) NOT NULL DEFAULT 0,
+    devoluciones DECIMAL(14,2) NOT NULL DEFAULT 0,
+    descuentos DECIMAL(14,2) NOT NULL DEFAULT 0,
+    ventas_netas DECIMAL(14,2) NOT NULL DEFAULT 0,
+    costo_mercaderia_vendida DECIMAL(14,2) NOT NULL DEFAULT 0,
+    gastos_operativos_total DECIMAL(14,2) NOT NULL DEFAULT 0,
+    inversion_marketing DECIMAL(14,2) NOT NULL DEFAULT 0,
+    otros_ingresos DECIMAL(14,2) NOT NULL DEFAULT 0,
+    otros_gastos DECIMAL(14,2) NOT NULL DEFAULT 0,
+    utilidad_bruta DECIMAL(14,2) NOT NULL DEFAULT 0,
+    utilidad_neta DECIMAL(14,2) NOT NULL DEFAULT 0,
+    roi_calculado DECIMAL(9,4),
+    notas TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES usuarios(id),
+    updated_by UUID REFERENCES usuarios(id),
+    deleted_at TIMESTAMPTZ NULL,
+    UNIQUE(anio, mes)
+);
+
+-- Detalle mensual de gastos por categoría (para desgloses y comparativos)
+CREATE TABLE gastos_mensuales_detalle (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    anio INTEGER NOT NULL,
+    mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
+    categoria_id UUID REFERENCES gasto_categorias(id) NOT NULL,
+    monto DECIMAL(14,2) NOT NULL DEFAULT 0,
+    notas TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES usuarios(id),
+    updated_by UUID REFERENCES usuarios(id),
+    deleted_at TIMESTAMPTZ NULL,
+    UNIQUE(anio, mes, categoria_id)
+);
+
 -- Índices para búsquedas frecuentes
 CREATE INDEX idx_categorias_codigo ON categorias(codigo);
 CREATE INDEX idx_categorias_padre ON categorias(categoria_padre_id);
@@ -350,6 +409,12 @@ CREATE INDEX idx_compras_usuario ON compras(usuario_id);
 CREATE INDEX idx_compras_detalle_compra ON compras_detalle(compra_id);
 CREATE INDEX idx_compras_detalle_producto ON compras_detalle(producto_id);
 CREATE INDEX idx_caja_apertura_cajero ON caja_apertura(cajero_id);
+
+-- Índices para finanzas
+CREATE INDEX idx_gasto_categorias_nombre ON gasto_categorias(nombre);
+CREATE INDEX idx_finanzas_periodo ON finanzas_mensuales(anio, mes);
+CREATE INDEX idx_gastos_mensuales_periodo ON gastos_mensuales_detalle(anio, mes);
+CREATE INDEX idx_gastos_mensuales_categoria ON gastos_mensuales_detalle(categoria_id);
 
 -- Índices para soft deletes
 CREATE INDEX idx_usuarios_deleted_at ON usuarios(deleted_at);
@@ -378,6 +443,9 @@ ALTER TABLE compras_detalle ENABLE ROW LEVEL SECURITY;
 ALTER TABLE movimientos_inventario ENABLE ROW LEVEL SECURITY;
 ALTER TABLE caja_apertura ENABLE ROW LEVEL SECURITY;
 ALTER TABLE configuracion_empresa ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gasto_categorias ENABLE ROW LEVEL SECURITY;
+ALTER TABLE finanzas_mensuales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gastos_mensuales_detalle ENABLE ROW LEVEL SECURITY;
 
 -- Forzar RLS solo en categorias (para resolver la alerta específica de Supabase)
 ALTER TABLE categorias FORCE ROW LEVEL SECURITY;
@@ -448,6 +516,19 @@ CREATE POLICY "Usuarios autenticados pueden actualizar caja_apertura" ON caja_ap
 CREATE POLICY "Usuarios autenticados pueden ver configuracion_empresa" ON configuracion_empresa FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar configuracion_empresa" ON configuracion_empresa FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden actualizar configuracion_empresa" ON configuracion_empresa FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- Políticas para finanzas
+CREATE POLICY "Usuarios autenticados pueden ver gasto_categorias" ON gasto_categorias FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden insertar gasto_categorias" ON gasto_categorias FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden actualizar gasto_categorias" ON gasto_categorias FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Usuarios autenticados pueden ver finanzas_mensuales" ON finanzas_mensuales FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden insertar finanzas_mensuales" ON finanzas_mensuales FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden actualizar finanzas_mensuales" ON finanzas_mensuales FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Usuarios autenticados pueden ver gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden insertar gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden actualizar gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR UPDATE USING (auth.role() = 'authenticated');
 
 -- ================================================
 -- FUNCIONES AUXILIARES
@@ -526,6 +607,9 @@ CREATE TRIGGER update_facturacion_updated_at BEFORE UPDATE ON facturacion FOR EA
 CREATE TRIGGER update_compras_updated_at BEFORE UPDATE ON compras FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_caja_apertura_updated_at BEFORE UPDATE ON caja_apertura FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_configuracion_empresa_updated_at BEFORE UPDATE ON configuracion_empresa FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_gasto_categorias_updated_at BEFORE UPDATE ON gasto_categorias FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_finanzas_mensuales_updated_at BEFORE UPDATE ON finanzas_mensuales FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_gastos_mensuales_detalle_updated_at BEFORE UPDATE ON gastos_mensuales_detalle FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Trigger para actualizar stock automáticamente
 CREATE TRIGGER update_stock_on_movement
