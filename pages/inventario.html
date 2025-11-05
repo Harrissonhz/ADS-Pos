@@ -201,49 +201,59 @@
             </div>
 
             <!-- Resumen del Inventario -->
-            <div class="row row-cols-5 g-3 mb-4">
-                <div class="col">
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-boxes fa-2x text-primary mb-2"></i>
-                            <h5 class="card-title">Total Productos</h5>
-                            <h3 class="text-primary" id="totalProductos">—</h3>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-boxes fa-2x text-primary mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-boxes fa-lg text-primary mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Total Productos</h6>
+                            <h4 class="text-primary mb-0" id="totalProductos">—</h4>
+                            <small class="text-muted d-none d-md-block">Productos</small>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
-                            <h5 class="card-title">Stock Bajo</h5>
-                            <h3 class="text-warning" id="stockBajo">—</h3>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-exclamation-triangle fa-lg text-warning mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Stock Bajo</h6>
+                            <h4 class="text-warning mb-0" id="stockBajo">—</h4>
+                            <small class="text-muted d-none d-md-block">Alerta</small>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
-                            <h5 class="card-title">Sin Stock</h5>
-                            <h3 class="text-danger" id="sinStock">—</h3>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-times-circle fa-2x text-danger mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-times-circle fa-lg text-danger mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Sin Stock</h6>
+                            <h4 class="text-danger mb-0" id="sinStock">—</h4>
+                            <small class="text-muted d-none d-md-block">Agotados</small>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
-                            <h5 class="card-title">Valor Total Costo</h5>
-                            <h3 class="text-success" id="valorInventarioCosto">—</h3>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-dollar-sign fa-lg text-success mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Valor Total Costo</h6>
+                            <h4 class="text-success mb-0" id="valorInventarioCosto">—</h4>
+                            <small class="text-muted d-none d-md-block">Costo</small>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
                     <div class="card pos-card text-center">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
-                            <h5 class="card-title">Valor Total Venta</h5>
-                            <h3 class="text-success" id="valorInventario">—</h3>
+                        <div class="card-body p-2 p-md-3">
+                            <i class="fas fa-dollar-sign fa-2x text-success mb-1 mb-md-2 d-none d-md-inline-block"></i>
+                            <i class="fas fa-dollar-sign fa-lg text-success mb-1 d-md-none"></i>
+                            <h6 class="card-title mb-1 mb-md-2 small">Valor Total Venta</h6>
+                            <h4 class="text-success mb-0" id="valorInventario">—</h4>
+                            <small class="text-muted d-none d-md-block">Venta</small>
                         </div>
                     </div>
                 </div>
