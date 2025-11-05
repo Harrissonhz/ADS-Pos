@@ -636,6 +636,39 @@ body.pos-app .form-check-label {
         padding: 0.4rem 0.2rem;
     }
     
+    /* Cards de ventas recientes en móvil */
+    .sale-item-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        transition: background-color 0.2s ease;
+    }
+    
+    .sale-item-card:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    .sale-item-card .btn {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .sale-item-card .badge {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .sale-item-card strong {
+        font-size: 1rem;
+        color: #fff;
+    }
+    
+    .sale-item-card small {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
     /* Badges más grandes */
     .badge {
         font-size: 0.85rem;
@@ -682,5 +715,232 @@ body.pos-app .form-check-label {
     /* Formulario con menos padding */
     #salesForm {
         padding: 1rem !important;
+    }
+    
+    /* Modal más compacto en móvil */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-content {
+        border-radius: 0.5rem;
+    }
+    
+    .modal-header {
+        padding: 1rem 0.75rem;
+    }
+    
+    .modal-header .modal-title {
+        font-size: 1.1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem 0.75rem;
+    }
+    
+    .modal-footer {
+        padding: 0.75rem;
+    }
+    
+    /* Tabla del modal más compacta */
+    #saleDetailModal .table-responsive {
+        font-size: 0.75rem;
+    }
+    
+    #saleDetailModal .table th,
+    #saleDetailModal .table td {
+        padding: 0.35rem 0.25rem;
+        white-space: nowrap;
+    }
+    
+    /* Ocultar columnas menos importantes en tabla del modal en móvil muy pequeño */
+    #saleDetailModal .table th:nth-child(2),
+    #saleDetailModal .table td:nth-child(2) {
+        display: none; /* Ocultar columna Código en pantallas muy pequeñas */
+    }
+    
+    #saleDetailModal .table th:nth-child(5),
+    #saleDetailModal .table td:nth-child(5) {
+        display: none; /* Ocultar columna Descuento en pantallas muy pequeñas */
+    }
+    
+    /* Cards de información del modal más compactas */
+    #saleDetailModal .card-body {
+        padding: 0.75rem;
+    }
+    
+    #saleDetailModal .card-header {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Botón de cerrar modal más grande en móvil */
+    .btn-close {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Mejoras adicionales para tablets */
+@media (min-width: 577px) and (max-width: 991px) {
+    /* Modal en tablet */
+    .modal-dialog.modal-xl {
+        max-width: 90%;
+    }
+    
+    /* Tabla del modal más legible en tablet */
+    #saleDetailModal .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    #saleDetailModal .table th,
+    #saleDetailModal .table td {
+        padding: 0.5rem 0.35rem;
+    }
+}
+
+/* Mejoras para el modal de detalles en móvil */
+@media (max-width: 768px) {
+    /* Modal full width en móvil */
+    .modal-dialog.modal-xl {
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .modal-content {
+        border-radius: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    /* Header del modal más compacto */
+    #saleDetailModal .modal-header {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+    }
+    
+    #saleDetailModal .modal-header .d-flex {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    #saleDetailModal .modal-header .bg-success {
+        width: 36px;
+        height: 36px;
+    }
+    
+    #saleDetailModal .modal-header .modal-title {
+        font-size: 1rem;
+    }
+    
+    #saleDetailModal .modal-header small {
+        font-size: 0.75rem;
+    }
+    
+    /* Cards de información apiladas mejor */
+    #saleDetailModal .row.g-3 {
+        margin-bottom: 0.75rem;
+    }
+    
+    #saleDetailModal .row.g-3 > div {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Información del cliente más compacta */
+    #saleDetailModal #detailClientExtra {
+        font-size: 0.8rem;
+        word-break: break-word;
+    }
+    
+    /* Tabla de productos más compacta */
+    #saleDetailModal .table-responsive {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    
+    #saleDetailModal .table thead th {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.25rem;
+        font-weight: 600;
+    }
+    
+    #saleDetailModal .table tbody td {
+        padding: 0.4rem 0.25rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Botones del modal más grandes */
+    #saleDetailModal .modal-footer .btn {
+        min-height: 44px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Mejoras para pantallas muy pequeñas */
+@media (max-width: 576px) {
+    /* Modal header más compacto */
+    #saleDetailModal .modal-header {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    #saleDetailModal .modal-header .bg-success {
+        width: 32px;
+        height: 32px;
+    }
+    
+    #saleDetailModal .modal-header .bg-success i {
+        font-size: 0.875rem;
+    }
+    
+    #saleDetailModal .modal-header .modal-title {
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+    
+    /* Cards de información más compactas */
+    #saleDetailModal .card-body {
+        padding: 0.5rem;
+    }
+    
+    #saleDetailModal .card-body strong {
+        font-size: 0.85rem;
+    }
+    
+    #saleDetailModal .card-body .text-white {
+        font-size: 0.8rem;
+    }
+    
+    /* Tabla aún más compacta */
+    #saleDetailModal .table-responsive {
+        font-size: 0.7rem;
+    }
+    
+    #saleDetailModal .table thead th {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.2rem;
+    }
+    
+    #saleDetailModal .table tbody td {
+        padding: 0.35rem 0.2rem;
+        font-size: 0.7rem;
+    }
+    
+    /* Footer más compacto */
+    #saleDetailModal .modal-footer {
+        padding: 0.5rem;
+    }
+    
+    #saleDetailModal .modal-footer .btn {
+        width: 100%;
+        margin-top: 0.5rem;
     }
 }

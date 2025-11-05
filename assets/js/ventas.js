@@ -1111,6 +1111,16 @@
                 }
             }
 
+            // Actualizar "Monto Recibido" con el total calculado
+            const amountReceivedInput = document.getElementById('amountReceived');
+            if (amountReceivedInput) {
+                // Solo actualizar si el campo está vacío o tiene valor 0
+                const currentValue = parseFloat(amountReceivedInput.value || 0);
+                if (currentValue === 0 || !amountReceivedInput.value || amountReceivedInput.value.trim() === '') {
+                    amountReceivedInput.value = total.toFixed(2);
+                }
+            }
+
             // Actualizar cálculo de cambio
             calculateChange();
         }
@@ -1920,6 +1930,10 @@
                 // Actualizar KPIs
                 await updateSalesKPIs();
 
+                // Recargar ventas recientes
+                currentPageVentas = 1; // Resetear a la primera página
+                await loadVentasRecientes();
+
                 // Restaurar botón
                 processSaleBtn.disabled = false;
                 processSaleBtn.innerHTML = originalBtnText;
@@ -2216,6 +2230,575 @@
         // Inicializar
         updateStats();
         calculateChange();
+
+        // ===== PAGINACIÓN DE VENTAS RECIENTES =====
+        let ventasRecientesData = [];
+        let currentPageVentas = 1;
+        const pageSizeVentas = 10;
+        let totalVentasCount = 0;
+
+        // Cargar ventas recientes desde la base de datos
+        async function loadVentasRecientes() {
+            try {
+                if (!window.supabaseClient) return;
+                
+                const offset = (currentPageVentas - 1) * pageSizeVentas;
+                
+                // Query para obtener ventas con JOIN a clientes usando la sintaxis de Supabase
+                // Supabase permite hacer joins usando el nombre de la foreign key relation
+                let query = window.supabaseClient
+                    .from('ventas')
+                    .select(`
+                        id,
+                        numero_venta,
+                        fecha_venta,
+                        total,
+                        metodo_pago,
+                        estado,
+                        notas,
+                        cliente_id,
+                        usuario_id,
+                        clientes:cliente_id(
+                            id,
+                            nombre_completo,
+                            tipo_id,
+                            numero_id
+                        )
+                    `, { count: 'exact' })
+                    .eq('estado', 'completada')
+                    .is('deleted_at', null)
+                    .order('fecha_venta', { ascending: false })
+                    .range(offset, offset + pageSizeVentas - 1);
+
+                const { data: ventas, error, count } = await query;
+
+                if (error) {
+                    console.error('Error cargando ventas recientes:', error);
+                    console.error('Detalles del error:', JSON.stringify(error, null, 2));
+                    return;
+                }
+
+                if (!ventas || ventas.length === 0) {
+                    totalVentasCount = count || 0;
+                    ventasRecientesData = [];
+                    renderVentasRecientes();
+                    renderPaginationVentas();
+                    return;
+                }
+
+                // Los clientes ya vienen en el JOIN desde la consulta anterior
+                // Verificar si el JOIN funcionó correctamente
+                console.log('Ventas recibidas con JOIN:', ventas.length);
+                ventas.forEach((v, index) => {
+                    console.log(`Venta ${index + 1}:`, {
+                        numero: v.numero_venta,
+                        cliente_id: v.cliente_id,
+                        cliente_join: v.clientes ? `✅ ${v.clientes.nombre_completo}` : '❌ null'
+                    });
+                });
+
+                // Obtener IDs únicos de usuarios para consultar por separado
+                const usuarioIds = ventas.filter(v => v.usuario_id).map(v => v.usuario_id);
+                const ventaIds = ventas.map(v => v.id);
+
+                // Obtener información de usuarios
+                const usuariosMap = new Map();
+                if (usuarioIds.length > 0) {
+                    const { data: usuarios, error: usuariosError } = await window.supabaseClient
+                        .from('usuarios')
+                        .select('id, nombre, apellido')
+                        .in('id', usuarioIds);
+                    
+                    if (!usuariosError && usuarios) {
+                        usuarios.forEach(u => usuariosMap.set(u.id, u));
+                    }
+                }
+
+                // Obtener productos por venta con JOIN a la tabla productos
+                const { data: detalles, error: detallesError } = await window.supabaseClient
+                    .from('ventas_detalle')
+                    .select(`
+                        venta_id,
+                        cantidad,
+                        productos:producto_id(
+                            id,
+                            nombre
+                        )
+                    `)
+                    .in('venta_id', ventaIds);
+
+                // Agrupar productos por venta
+                const productosPorVenta = {};
+                if (!detallesError && detalles) {
+                    detalles.forEach(d => {
+                        if (!productosPorVenta[d.venta_id]) {
+                            productosPorVenta[d.venta_id] = [];
+                        }
+                        if (d.productos && d.productos.nombre) {
+                            const cantidad = d.cantidad || 1;
+                            const nombreProducto = d.productos.nombre;
+                            // Si hay cantidad > 1, mostrar cantidad x nombre
+                            const productoTexto = cantidad > 1 
+                                ? `${cantidad}x ${nombreProducto}` 
+                                : nombreProducto;
+                            productosPorVenta[d.venta_id].push(productoTexto);
+                        }
+                    });
+                }
+
+                // Si el JOIN no funcionó, hacer consultas individuales de clientes faltantes
+                const clientesFaltantes = ventas.filter(v => v.cliente_id && !v.clientes);
+                if (clientesFaltantes.length > 0) {
+                    console.log(`⚠️ ${clientesFaltantes.length} ventas sin cliente del JOIN. Consultando individualmente...`);
+                    const clienteIdsFaltantes = [...new Set(clientesFaltantes.map(v => v.cliente_id))];
+                    
+                    for (const clienteId of clienteIdsFaltantes) {
+                        try {
+                            const { data: cliente, error } = await window.supabaseClient
+                                .from('clientes')
+                                .select('id, nombre_completo, tipo_id, numero_id')
+                                .eq('id', clienteId)
+                                .maybeSingle();
+                            
+                            if (!error && cliente) {
+                                // Actualizar todas las ventas que usan este cliente
+                                ventas.forEach(v => {
+                                    if (v.cliente_id === clienteId && !v.clientes) {
+                                        v.clientes = cliente;
+                                        console.log(`✅ Cliente encontrado: "${cliente.nombre_completo}"`);
+                                    }
+                                });
+                            }
+                        } catch (err) {
+                            console.error(`Error consultando cliente ${clienteId}:`, err);
+                        }
+                    }
+                }
+                
+                // Combinar datos - los clientes ya vienen del JOIN o de las consultas individuales
+                ventas.forEach(v => {
+                    v.usuarios = v.usuario_id ? usuariosMap.get(v.usuario_id) : null;
+                    // Obtener nombres de productos para esta venta
+                    v.productos_nombres = productosPorVenta[v.id] || [];
+                    v.productos_count = v.productos_nombres.length;
+                });
+                
+                console.log('Ventas procesadas:', ventas.map(v => ({
+                    numero: v.numero_venta,
+                    cliente_id: v.cliente_id,
+                    cliente_nombre: v.clientes?.nombre_completo || 'No encontrado'
+                })));
+
+                totalVentasCount = count || 0;
+                ventasRecientesData = ventas || [];
+                
+                renderVentasRecientes();
+                renderPaginationVentas();
+            } catch (error) {
+                console.error('Error en loadVentasRecientes:', error);
+            }
+        }
+
+        // Renderizar ventas recientes en la tabla y cards móviles
+        function renderVentasRecientes() {
+            const recentSalesBody = document.getElementById('recentSalesBody');
+            const recentSalesBodyMobile = document.getElementById('recentSalesBodyMobile');
+            
+            if (!recentSalesBody || !recentSalesBodyMobile) return;
+            
+            // Limpiar ambas vistas
+            recentSalesBody.innerHTML = '';
+            recentSalesBodyMobile.innerHTML = '';
+            
+            if (!ventasRecientesData || ventasRecientesData.length === 0) {
+                // Vista vacía para tabla desktop
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="6" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x mb-2"></i><br>No hay ventas recientes para mostrar</td>';
+                recentSalesBody.appendChild(tr);
+                
+                // Vista vacía para móvil
+                recentSalesBodyMobile.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p class="mb-0">No hay ventas recientes para mostrar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ventasRecientesData.forEach(venta => {
+                const fecha = new Date(venta.fecha_venta);
+                const fechaStr = fecha.toLocaleDateString('es-CO');
+                
+                // Obtener nombre del cliente - SIEMPRE mostrar nombre_completo si existe
+                let clienteNombre = 'Cliente General';
+                
+                // Verificar si tenemos el objeto cliente con nombre_completo
+                if (venta.clientes) {
+                    if (venta.clientes.nombre_completo) {
+                        clienteNombre = venta.clientes.nombre_completo.trim();
+                    } else {
+                        console.warn(`Venta ${venta.numero_venta}: Cliente encontrado pero sin nombre_completo. Cliente ID: ${venta.clientes.id}`);
+                    }
+                } else if (venta.cliente_id) {
+                    // Si hay cliente_id pero no se encontró el cliente después de todas las consultas
+                    console.error(`Venta ${venta.numero_venta}: cliente_id=${venta.cliente_id} existe pero no se pudo encontrar el cliente en la base de datos`);
+                    clienteNombre = 'Cliente no encontrado';
+                }
+                
+                // Obtener nombres de productos
+                let productosText = 'Sin productos';
+                if (venta.productos_nombres && venta.productos_nombres.length > 0) {
+                    // Mostrar los nombres de los productos separados por coma
+                    // Si hay más de 3 productos, mostrar los primeros 2 y "... y X más"
+                    if (venta.productos_nombres.length > 3) {
+                        const primeros = venta.productos_nombres.slice(0, 2).join(', ');
+                        const restantes = venta.productos_nombres.length - 2;
+                        productosText = `${primeros}... y ${restantes} más`;
+                    } else {
+                        productosText = venta.productos_nombres.join(', ');
+                    }
+                }
+                
+                // Formatear total
+                const totalFormateado = formatCOP(Number(venta.total) || 0);
+                
+                // Renderizar fila para tabla desktop
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${venta.numero_venta || '-'}</td>
+                    <td>${clienteNombre}</td>
+                    <td>${productosText}</td>
+                    <td class="fw-bold">${totalFormateado}</td>
+                    <td>${fechaStr}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles" onclick="verDetallesVenta('${venta.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Reimprimir" onclick="reimprimirVenta('${venta.id}')">
+                            <i class="fas fa-print"></i>
+                        </button>
+                    </td>
+                `;
+                recentSalesBody.appendChild(tr);
+                
+                // Renderizar card para móvil
+                const card = document.createElement('div');
+                card.className = 'sale-item-card mb-3 p-3 border rounded';
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong class="text-white">Venta #${venta.numero_venta || '-'}</strong>
+                                <span class="badge bg-success">${totalFormateado}</span>
+                            </div>
+                            <small class="text-white-50 d-block mb-1">
+                                <i class="fas fa-user me-1"></i>${clienteNombre}
+                            </small>
+                            <small class="text-white-50 d-block mb-2">
+                                <i class="fas fa-calendar me-1"></i>${fechaStr}
+                            </small>
+                            <div class="mb-2">
+                                <small class="text-white-50 d-block">
+                                    <i class="fas fa-box me-1"></i>Productos:
+                                </small>
+                                <small class="text-white">${productosText}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-info" title="Ver detalles" onclick="verDetallesVenta('${venta.id}')">
+                            <i class="fas fa-eye me-1"></i>Ver
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Reimprimir" onclick="reimprimirVenta('${venta.id}')">
+                            <i class="fas fa-print me-1"></i>Imprimir
+                        </button>
+                    </div>
+                `;
+                recentSalesBodyMobile.appendChild(card);
+            });
+        }
+
+        // Renderizar paginación de ventas recientes
+        function renderPaginationVentas() {
+            const container = document.getElementById('recentSalesPagination');
+            if (!container) {
+                console.log('No se encontró el contenedor de paginación de ventas');
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            const totalPages = Math.max(1, Math.ceil(totalVentasCount / pageSizeVentas));
+            
+            if (totalPages <= 1) {
+                return;
+            }
+
+            // Botón Previous
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'btn btn-sm btn-outline-light me-2';
+            prevBtn.type = 'button';
+            prevBtn.disabled = currentPageVentas <= 1;
+            prevBtn.textContent = 'Anterior';
+            prevBtn.onclick = async (e) => {
+                e.preventDefault();
+                if (currentPageVentas > 1) {
+                    currentPageVentas--;
+                    await loadVentasRecientes();
+                }
+            };
+            container.appendChild(prevBtn);
+
+            // Indicador de página
+            const pageInfo = document.createElement('span');
+            pageInfo.className = 'text-white-50';
+            pageInfo.textContent = `Página ${currentPageVentas} de ${totalPages}`;
+            container.appendChild(pageInfo);
+
+            // Botón Next
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-sm btn-outline-light ms-2';
+            nextBtn.type = 'button';
+            nextBtn.disabled = currentPageVentas >= totalPages;
+            nextBtn.textContent = 'Siguiente';
+            nextBtn.onclick = async (e) => {
+                e.preventDefault();
+                if (currentPageVentas < totalPages) {
+                    currentPageVentas++;
+                    await loadVentasRecientes();
+                }
+            };
+            container.appendChild(nextBtn);
+        }
+
+        // Función para mostrar detalles de venta en modal
+        window.verDetallesVenta = async function(ventaId) {
+            try {
+                if (!window.supabaseClient) {
+                    alert('Error: No hay conexión con la base de datos');
+                    return;
+                }
+
+                // Obtener datos de la venta con información del cliente y usuario
+                const { data: venta, error: ventaError } = await window.supabaseClient
+                    .from('ventas')
+                    .select(`
+                        id,
+                        numero_venta,
+                        fecha_venta,
+                        metodo_pago,
+                        estado,
+                        subtotal,
+                        impuesto,
+                        descuento,
+                        total,
+                        notas,
+                        cliente_id,
+                        usuario_id,
+                        clientes:cliente_id(
+                            id,
+                            nombre_completo,
+                            tipo_id,
+                            numero_id,
+                            email,
+                            telefono
+                        ),
+                        usuarios:usuario_id(
+                            id,
+                            nombre_completo,
+                            email
+                        )
+                    `)
+                    .eq('id', ventaId)
+                    .single();
+
+                if (ventaError || !venta) {
+                    console.error('Error cargando venta:', ventaError);
+                    alert('No se pudo cargar la información de la venta');
+                    return;
+                }
+
+                // Obtener detalles de la venta con información de productos
+                const { data: detalles, error: detallesError } = await window.supabaseClient
+                    .from('ventas_detalle')
+                    .select(`
+                        id,
+                        cantidad,
+                        precio_unitario,
+                        descuento,
+                        tasa_impuesto,
+                        subtotal,
+                        impuesto,
+                        total,
+                        productos:producto_id(
+                            id,
+                            nombre,
+                            codigo_interno,
+                            codigo_barras
+                        )
+                    `)
+                    .eq('venta_id', ventaId);
+
+                if (detallesError) {
+                    console.error('Error cargando detalles:', detallesError);
+                    alert('No se pudo cargar el detalle de productos');
+                    return;
+                }
+
+                // Poblar encabezado del modal
+                const saleNumberEl = document.getElementById('detailSaleNumber');
+                const statusBadgeEl = document.getElementById('detailStatusBadge');
+                const clientEl = document.getElementById('detailClient');
+                const clientExtraEl = document.getElementById('detailClientExtra');
+                const saleDateEl = document.getElementById('detailSaleDate');
+                const paymentMethodEl = document.getElementById('detailPaymentMethod');
+                const salespersonEl = document.getElementById('detailSalesperson');
+                const subtotalEl = document.getElementById('detailSubtotal');
+                const discountEl = document.getElementById('detailDiscount');
+                const taxEl = document.getElementById('detailTax');
+                const totalEl = document.getElementById('detailTotal');
+                const notesEl = document.getElementById('detailNotes');
+                const notesSectionEl = document.getElementById('detailNotesSection');
+                const itemsBody = document.getElementById('detailItemsBody');
+
+                // Número de venta
+                if (saleNumberEl) saleNumberEl.textContent = `#${venta.numero_venta || '—'}`;
+
+                // Estado
+                if (statusBadgeEl) {
+                    const estado = String(venta.estado || '—').toLowerCase();
+                    let cls = 'bg-secondary';
+                    if (estado === 'completada') cls = 'bg-success';
+                    else if (estado === 'pendiente') cls = 'bg-warning';
+                    else if (estado === 'cancelada') cls = 'bg-danger';
+                    else if (estado === 'reembolsada') cls = 'bg-info';
+                    statusBadgeEl.className = `badge ${cls}`;
+                    statusBadgeEl.textContent = venta.estado || '—';
+                }
+
+                // Cliente
+                if (clientEl) {
+                    if (venta.clientes && venta.clientes.nombre_completo) {
+                        clientEl.textContent = venta.clientes.nombre_completo;
+                    } else {
+                        clientEl.textContent = 'Cliente General';
+                    }
+                }
+
+                // Información extra del cliente
+                if (clientExtraEl && venta.clientes) {
+                    const clienteInfo = [];
+                    if (venta.clientes.tipo_id && venta.clientes.numero_id) {
+                        clienteInfo.push(`${venta.clientes.tipo_id}: ${venta.clientes.numero_id}`);
+                    }
+                    if (venta.clientes.telefono) {
+                        clienteInfo.push(`Tel: ${venta.clientes.telefono}`);
+                    }
+                    if (venta.clientes.email) {
+                        clienteInfo.push(`Email: ${venta.clientes.email}`);
+                    }
+                    clientExtraEl.innerHTML = clienteInfo.length > 0 
+                        ? `<span class="text-white" style="opacity:1;">${clienteInfo.join(' | ')}</span>`
+                        : '<span class="text-white" style="opacity:1;">&nbsp;</span>';
+                } else if (clientExtraEl) {
+                    clientExtraEl.innerHTML = '<span class="text-white" style="opacity:1;">&nbsp;</span>';
+                }
+
+                // Fecha
+                if (saleDateEl) {
+                    const fecha = new Date(venta.fecha_venta);
+                    saleDateEl.textContent = fecha.toLocaleString('es-CO', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) || '—';
+                }
+
+                // Método de pago
+                if (paymentMethodEl) {
+                    const metodos = {
+                        'efectivo': 'Efectivo',
+                        'tarjeta': 'Tarjeta',
+                        'transferencia': 'Transferencia',
+                        'mixto': 'Mixto'
+                    };
+                    paymentMethodEl.textContent = metodos[venta.metodo_pago] || venta.metodo_pago || '—';
+                }
+
+                // Vendedor
+                if (salespersonEl) {
+                    if (venta.usuarios) {
+                        salespersonEl.textContent = venta.usuarios.nombre_completo || venta.usuarios.email || '—';
+                    } else {
+                        salespersonEl.textContent = '—';
+                    }
+                }
+
+                // Totales
+                if (subtotalEl) subtotalEl.textContent = formatCOP(Number(venta.subtotal) || 0);
+                if (discountEl) discountEl.textContent = formatCOP(Number(venta.descuento) || 0);
+                if (taxEl) taxEl.textContent = formatCOP(Number(venta.impuesto) || 0);
+                if (totalEl) totalEl.textContent = formatCOP(Number(venta.total) || 0);
+
+                // Observaciones
+                if (notesEl && notesSectionEl) {
+                    if (venta.notas && venta.notas.trim()) {
+                        notesEl.textContent = venta.notas;
+                        notesSectionEl.style.display = 'block';
+                    } else {
+                        notesEl.textContent = '—';
+                        notesSectionEl.style.display = 'none';
+                    }
+                }
+
+                // Poblar items
+                if (itemsBody) {
+                    itemsBody.innerHTML = '';
+                    if (detalles && detalles.length > 0) {
+                        detalles.forEach(d => {
+                            const tr = document.createElement('tr');
+                            const codigo = d.productos?.codigo_interno || d.productos?.codigo_barras || '-';
+                            const descuentoPorcentaje = Number(d.descuento) || 0;
+                            const descuentoTexto = descuentoPorcentaje > 0 ? `${descuentoPorcentaje}%` : formatCOP(0);
+                            tr.innerHTML = `
+                                <td><strong>${d.productos?.nombre || 'Producto'}</strong></td>
+                                <td>${codigo}</td>
+                                <td class="text-end">${Number(d.cantidad) || 0}</td>
+                                <td class="text-end">${formatCOP(Number(d.precio_unitario) || 0)}</td>
+                                <td class="text-end">${descuentoTexto}</td>
+                                <td class="text-end">${formatCOP(Number(d.impuesto) || 0)}</td>
+                                <td class="text-end">${formatCOP(Number(d.total) || 0)}</td>`;
+                            itemsBody.appendChild(tr);
+                        });
+                    } else {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td colspan="7" class="text-center text-muted">No hay productos en esta venta</td>';
+                        itemsBody.appendChild(tr);
+                    }
+                }
+
+                // Mostrar modal
+                const modalEl = document.getElementById('saleDetailModal');
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('Error en verDetallesVenta:', error);
+                alert('Ocurrió un error al cargar los detalles de la venta');
+            }
+        };
+
+        window.reimprimirVenta = function(ventaId) {
+            // TODO: Implementar reimpresión de venta
+            alert('Reimprimir venta: ' + ventaId);
+        };
+
+        // Cargar ventas recientes al inicializar
+        loadVentasRecientes();
 
         // ===== LISTENER GLOBAL PARA OCULTAR TODOS LOS DROPDOWNS =====
         // Ocultar todos los dropdowns cuando se hace clic fuera de ellos o cuando cambia el foco
