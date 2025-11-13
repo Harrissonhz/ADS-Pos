@@ -165,6 +165,9 @@
                 <td>$ ${Number(p.precio_venta || 0).toLocaleString('es-CO')}</td>
                 <td><span class="badge ${p.activo ? 'bg-success' : 'bg-secondary'}">${p.activo ? 'Activo' : 'Inactivo'}</span></td>
                 <td>
+                    <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver" data-action="view" data-id="${p.id}">
+                        <i class="fas fa-eye"></i>
+                    </button>
                     <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar" data-action="edit" data-id="${p.id}">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -175,7 +178,13 @@
             `;
             tbody.appendChild(row);
         });
-        // Delegación de eventos para Edit/Delete
+        // Delegación de eventos para View/Edit/Delete
+        tbody.querySelectorAll('button[data-action="view"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-id');
+                await viewProductDetail(id);
+            });
+        });
         tbody.querySelectorAll('button[data-action="edit"]').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.getAttribute('data-id');
@@ -258,8 +267,28 @@
             }
 
             const offset = (currentPage - 1) * pageSize;
+            const searchTerm = (document.getElementById('searchProduct')?.value || '').trim();
             const internalCode = (document.getElementById('filterInternalCode')?.value || '').trim();
-            const result = await window.db.getProductos({ orderBy: 'nombre', ascending: true, limit: pageSize, offset, internalCode });
+            const filterStatus = document.getElementById('filterStatus')?.value || '';
+            
+            // Construir filtros
+            const filters = {};
+            if (filterStatus === 'activo') {
+                filters.activo = true;
+            } else if (filterStatus === 'inactivo') {
+                filters.activo = false;
+            }
+            // Nota: 'descontinuado' no está implementado en la BD, se maneja como inactivo
+            
+            const result = await window.db.getProductos({ 
+                orderBy: 'nombre', 
+                ascending: true, 
+                limit: pageSize, 
+                offset, 
+                search: searchTerm,
+                internalCode,
+                filters
+            });
             if (result.error) throw result.error;
             totalProducts = Number(result.count || 0);
             console.log(`✅ ${result.data?.length || 0} productos cargados (total: ${totalProducts})`);
@@ -290,6 +319,7 @@
             document.getElementById('brand').value = p.marca || '';
             document.getElementById('model').value = p.modelo || '';
             document.getElementById('description').value = p.descripcion || '';
+            document.getElementById('imageUrl').value = p.imagen_url || '';
             document.getElementById('salePrice').value = p.precio_venta ?? '';
             document.getElementById('purchasePrice').value = p.precio_compra ?? '';
             document.getElementById('profitMargin').value = p.margen_ganancia ?? '';
@@ -318,6 +348,86 @@
         } catch (err) {
             console.error('❌ Error al preparar edición:', err);
             alert('No se pudo cargar el producto');
+        }
+    }
+
+    // Ver detalle del producto en modal
+    async function viewProductDetail(id) {
+        try {
+            // Traer el producto por id desde Supabase
+            const { data, error } = await window.supabaseClient
+                .from('productos')
+                .select('*, categoria:categorias ( id, nombre )')
+                .eq('id', id)
+                .single();
+            if (error) throw error;
+            const p = data;
+
+            // Llenar el modal con los datos
+            document.getElementById('detailProductName').textContent = p.nombre || '—';
+            document.getElementById('detailProductCode').textContent = p.codigo_interno || p.codigo_barras || '—';
+            document.getElementById('detailName').textContent = p.nombre || '—';
+            document.getElementById('detailInternalCode').textContent = p.codigo_interno || '—';
+            document.getElementById('detailBarcode').textContent = p.codigo_barras || '—';
+            document.getElementById('detailCategory').textContent = p.categoria?.nombre || '—';
+            document.getElementById('detailBrand').textContent = p.marca || '—';
+            document.getElementById('detailModel').textContent = p.modelo || '—';
+
+            // Precios
+            document.getElementById('detailSalePrice').textContent = p.precio_venta ? `$ ${Number(p.precio_venta).toLocaleString('es-CO')}` : '—';
+            document.getElementById('detailPurchasePrice').textContent = p.precio_compra ? `$ ${Number(p.precio_compra).toLocaleString('es-CO')}` : '—';
+            document.getElementById('detailWholesalePrice').textContent = p.precio_mayorista ? `$ ${Number(p.precio_mayorista).toLocaleString('es-CO')}` : '—';
+            document.getElementById('detailProfitMargin').textContent = p.margen_ganancia ? `${Number(p.margen_ganancia).toFixed(2)}%` : '—';
+            document.getElementById('detailMaxDiscount').textContent = p.descuento_max ? `${Number(p.descuento_max).toFixed(2)}%` : '0%';
+            document.getElementById('detailTaxRate').textContent = p.tasa_impuesto ? `${Number(p.tasa_impuesto).toFixed(2)}%` : '19%';
+
+            // Inventario
+            document.getElementById('detailCurrentStock').textContent = Number(p.stock_actual) || 0;
+            document.getElementById('detailMinStock').textContent = Number(p.stock_min) || 0;
+            document.getElementById('detailMaxStock').textContent = Number(p.stock_max) || 0;
+            const statusBadge = document.getElementById('detailStatus');
+            if (p.activo) {
+                statusBadge.textContent = 'Activo';
+                statusBadge.className = 'badge bg-success';
+            } else {
+                statusBadge.textContent = 'Inactivo';
+                statusBadge.className = 'badge bg-secondary';
+            }
+
+            // Descripción
+            document.getElementById('detailDescription').textContent = p.descripcion || 'Sin descripción';
+
+            // Imagen del producto (mostrar solo si existe)
+            const imageSection = document.getElementById('detailImageSection');
+            const productImage = document.getElementById('detailProductImage');
+            if (p.imagen_url && p.imagen_url.trim()) {
+                productImage.src = p.imagen_url.trim();
+                productImage.alt = p.nombre || 'Imagen del producto';
+                productImage.onerror = function() {
+                    this.style.display = 'none';
+                    imageSection.style.display = 'none';
+                };
+                imageSection.style.display = 'block';
+            } else {
+                imageSection.style.display = 'none';
+            }
+
+            // Peso y dimensiones (mostrar solo si existen)
+            const additionalInfo = document.getElementById('detailAdditionalInfo');
+            if (p.peso || p.dimensiones) {
+                document.getElementById('detailWeight').textContent = p.peso ? `${Number(p.peso)} kg` : '—';
+                document.getElementById('detailDimensions').textContent = p.dimensiones || '—';
+                additionalInfo.style.display = 'block';
+            } else {
+                additionalInfo.style.display = 'none';
+            }
+
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+            modal.show();
+        } catch (err) {
+            console.error('❌ Error al cargar detalle del producto:', err);
+            alert('No se pudo cargar el detalle del producto');
         }
     }
 
@@ -354,6 +464,7 @@
             marca: document.getElementById('brand').value.trim(),
             modelo: document.getElementById('model').value.trim(),
             descripcion: document.getElementById('description').value.trim(),
+            imagen_url: document.getElementById('imageUrl').value.trim(),
             precio_venta: document.getElementById('salePrice').value,
             precio_compra: document.getElementById('purchasePrice').value,
             margen_ganancia: document.getElementById('profitMargin').value,
@@ -461,34 +572,33 @@
         const saveBtn = document.getElementById('saveBtn');
         if (saveBtn) saveBtn.addEventListener('click', handleSave);
 
-        // Búsqueda y filtros (placeholder, se migrarán a funciones con datos reales luego)
+        // Búsqueda y filtros (búsqueda en base de datos)
         const searchInput = document.getElementById('searchProduct');
         const filterInternalCode = document.getElementById('filterInternalCode');
         const filterStatus = document.getElementById('filterStatus');
-        if (searchInput) {
-            searchInput.addEventListener('input', () => {
-                const term = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('#productsBody tr');
-                rows.forEach(row => {
-                    const productName = row.cells[1]?.textContent.toLowerCase() || '';
-                    const code = row.cells[2]?.textContent.toLowerCase() || '';
-                    row.style.display = (productName.includes(term) || code.includes(term)) ? '' : 'none';
-                });
-            });
-        }
-        async function applyFilters() {
-            currentPage = 1;
-            await loadProducts();
-        }
-        if (filterInternalCode) filterInternalCode.addEventListener('input', debounce(applyFilters, 300));
-        if (filterStatus) filterStatus.addEventListener('change', applyFilters);
-
+        
         function debounce(fn, delay) {
             let t;
             return (...args) => {
                 clearTimeout(t);
                 t = setTimeout(() => fn.apply(this, args), delay);
             };
+        }
+        
+        async function applyFilters() {
+            currentPage = 1;
+            await loadProducts();
+        }
+        
+        // Búsqueda en base de datos con debounce
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(applyFilters, 500));
+        }
+        if (filterInternalCode) {
+            filterInternalCode.addEventListener('input', debounce(applyFilters, 300));
+        }
+        if (filterStatus) {
+            filterStatus.addEventListener('change', applyFilters);
         }
     });
 })();

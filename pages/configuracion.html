@@ -208,7 +208,7 @@
                             <i class="fas fa-server fa-2x text-primary mb-2"></i>
                             <h5 class="card-title">Estado del Sistema</h5>
                             <h3 class="text-success">Online</h3>
-                            <small class="text-muted">Funcionando correctamente</small>
+                            <small class="text-white">Funcionando correctamente</small>
                         </div>
                     </div>
                 </div>
@@ -218,7 +218,7 @@
                             <i class="fas fa-database fa-2x text-info mb-2"></i>
                             <h5 class="card-title">Base de Datos</h5>
                             <h3 class="text-info">Conectada</h3>
-                            <small class="text-muted">Última actualización: 2 min</small>
+                            <small class="text-white">Última actualización: 2 min</small>
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                             <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
                             <h5 class="card-title">Seguridad</h5>
                             <h3 class="text-success">Activa</h3>
-                            <small class="text-muted">Cifrado SSL habilitado</small>
+                            <small class="text-white">Cifrado SSL habilitado</small>
                         </div>
                     </div>
                 </div>
@@ -238,7 +238,7 @@
                             <i class="fas fa-clock fa-2x text-warning mb-2"></i>
                             <h5 class="card-title">Tiempo Activo</h5>
                             <h3 class="text-warning">15d 8h</h3>
-                            <small class="text-muted">Sin interrupciones</small>
+                            <small class="text-white">Sin interrupciones</small>
                         </div>
                     </div>
                 </div>
@@ -329,6 +329,35 @@
                                     <option value="prefijo_consecutivo">Prefijo + Consecutivo (FAC-0001)</option>
                                     <option value="fecha_consecutivo">Fecha + Consecutivo (20240115-0001)</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración de Recibo/Factura -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="fas fa-receipt"></i>
+                        <strong>Configuración de Recibo/Factura</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">URL del Logo</label>
+                                <input type="url" class="form-control" id="logoUrl" placeholder="https://ejemplo.com/logo.png">
+                                <small class="text-white-50">URL de la imagen del logo de la empresa</small>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Vista Previa del Logo</label>
+                                <div class="border rounded p-2 text-center" style="min-height: 100px; background-color: rgba(255,255,255,0.1);">
+                                    <img id="logoPreview" src="" alt="Logo" style="max-height: 80px; max-width: 100%; display: none;">
+                                    <small class="text-white-50 d-block" id="logoPreviewText">No hay logo cargado</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Mensaje Legal / Pie de Página</label>
+                                <textarea class="form-control" id="mensajeLegal" rows="4" placeholder="Ejemplo: Factura de venta. Este documento es válido como comprobante de pago. Conserve este documento para garantías y devoluciones."></textarea>
+                                <small class="text-white-50">Mensaje que aparecerá en el pie del recibo o factura</small>
                             </div>
                         </div>
                     </div>
@@ -616,6 +645,13 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts del sistema -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase-config.js?v=8"></script>
+    <script src="../assets/js/database.js?v=17"></script>
+    <script src="../assets/js/auth.js?v=8"></script>
+    
     <script>
         // Prevenir el parpadeo del offcanvas
         document.addEventListener('DOMContentLoaded', function() {
@@ -635,12 +671,84 @@
         });
     </script>
     <script>
-        (function() {
+        (async function() {
             const form = document.getElementById('configForm');
             const resetBtn = document.getElementById('resetBtn');
             const backupBtn = document.getElementById('backupBtn');
             const testBtn = document.getElementById('testBtn');
             const exportConfigBtn = document.getElementById('exportConfigBtn');
+
+            // Función para cargar configuración desde la base de datos
+            async function loadConfiguracion() {
+                try {
+                    if (!window.db) {
+                        console.error('Servicio de base de datos no disponible');
+                        return;
+                    }
+
+                    const result = await window.db.getConfiguracionEmpresa();
+                    
+                    if (result.error) {
+                        console.error('Error cargando configuración:', result.error);
+                        return;
+                    }
+
+                    if (result.data) {
+                        const config = result.data;
+                        
+                        // Mapear datos de la BD a los campos del formulario
+                        if (config.nombre_empresa) document.getElementById('companyName').value = config.nombre_empresa;
+                        if (config.nit) document.getElementById('companyNit').value = config.nit;
+                        if (config.direccion) document.getElementById('companyAddress').value = config.direccion;
+                        if (config.telefono) document.getElementById('companyPhone').value = config.telefono;
+                        if (config.email) document.getElementById('companyEmail').value = config.email;
+                        if (config.sitio_web) document.getElementById('companyWebsite').value = config.sitio_web;
+                        if (config.resolucion_dian) document.getElementById('dianResolution').value = config.resolucion_dian;
+                        if (config.rango_desde) document.getElementById('rangeFrom').value = config.rango_desde;
+                        if (config.rango_hasta) document.getElementById('rangeTo').value = config.rango_hasta;
+                        if (config.fecha_vencimiento_resolucion) {
+                            const fechaVenc = new Date(config.fecha_vencimiento_resolucion);
+                            document.getElementById('expirationDate').value = fechaVenc.toISOString().split('T')[0];
+                        }
+                        if (config.prefijo_facturacion) document.getElementById('prefix').value = config.prefijo_facturacion;
+                        if (config.impuesto_default) document.getElementById('defaultIva').value = config.impuesto_default;
+                        if (config.moneda) document.getElementById('mainCurrency').value = config.moneda;
+                        if (config.logo_url) {
+                            document.getElementById('logoUrl').value = config.logo_url;
+                            updateLogoPreview(config.logo_url);
+                        }
+                        if (config.mensaje_legal) document.getElementById('mensajeLegal').value = config.mensaje_legal;
+                    }
+                } catch (error) {
+                    console.error('Error en loadConfiguracion:', error);
+                }
+            }
+
+            // Función para esperar a que los scripts estén cargados
+            async function waitForScripts() {
+                let attempts = 0;
+                const maxAttempts = 20; // 2 segundos máximo
+                
+                while (!window.db && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (!window.db) {
+                    console.warn('Servicio de base de datos no disponible después de esperar');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            // Cargar configuración cuando todo esté listo
+            window.addEventListener('load', async () => {
+                const scriptsReady = await waitForScripts();
+                if (scriptsReady) {
+                    await loadConfiguracion();
+                }
+            });
 
             // Restaurar valores por defecto
             resetBtn.addEventListener('click', () => {
@@ -698,22 +806,130 @@
             });
 
             // Envío del formulario
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                if (form.checkValidity()) {
-                    const formData = new FormData(form);
-                    const configData = Object.fromEntries(formData);
-                    
-                    // Simular guardado
-                    alert('Configuración guardada exitosamente');
-                    console.log('Configuración del sistema:', configData);
-                } else {
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
                     alert('Por favor complete todos los campos requeridos');
+                    return;
+                }
+
+                if (!window.db) {
+                    alert('❌ Error: No hay conexión con el servicio de base de datos');
+                    return;
+                }
+
+                // Deshabilitar botón de guardar mientras se procesa
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+
+                try {
+                    console.log('🔵 Iniciando guardado de configuración...');
+                    
+                    // Mapear campos del formulario a los campos de la base de datos
+                    const configData = {
+                        nombre_empresa: document.getElementById('companyName').value.trim(),
+                        nit: document.getElementById('companyNit').value.trim(),
+                        direccion: document.getElementById('companyAddress').value.trim(),
+                        telefono: document.getElementById('companyPhone').value.trim(),
+                        email: document.getElementById('companyEmail').value.trim(),
+                        sitio_web: document.getElementById('companyWebsite').value.trim() || null,
+                        resolucion_dian: document.getElementById('dianResolution').value.trim() || null,
+                        rango_desde: document.getElementById('rangeFrom').value || null,
+                        rango_hasta: document.getElementById('rangeTo').value || null,
+                        fecha_vencimiento_resolucion: document.getElementById('expirationDate').value || null,
+                        prefijo_facturacion: document.getElementById('prefix').value.trim() || null,
+                        impuesto_default: document.getElementById('defaultIva').value || 19.00,
+                        moneda: document.getElementById('mainCurrency').value || 'COP',
+                        zona_horaria: 'America/Bogota', // Valor por defecto
+                        logo_url: document.getElementById('logoUrl').value.trim() || null,
+                        mensaje_legal: document.getElementById('mensajeLegal').value.trim() || null
+                    };
+
+                    console.log('🔵 Datos del formulario mapeados:', configData);
+
+                    // Validar campos requeridos
+                    if (!configData.nombre_empresa || !configData.nit || !configData.direccion || 
+                        !configData.telefono || !configData.email) {
+                        console.error('❌ Campos requeridos faltantes');
+                        alert('❌ Por favor complete todos los campos requeridos');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        return;
+                    }
+
+                    // Verificar que window.db esté disponible
+                    if (!window.db) {
+                        console.error('❌ window.db no está disponible');
+                        alert('❌ Error: No hay conexión con el servicio de base de datos');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        return;
+                    }
+
+                    console.log('🔵 Llamando a saveConfiguracionEmpresa...');
+                    
+                    // Guardar en la base de datos
+                    const result = await window.db.saveConfiguracionEmpresa(configData);
+
+                    console.log('🔵 Resultado de saveConfiguracionEmpresa:', result);
+
+                    if (result.error) {
+                        console.error('❌ Error guardando configuración:', result.error);
+                        console.error('❌ Detalles del error:', JSON.stringify(result.error, null, 2));
+                        alert(`❌ Error al guardar la configuración:\n\n${result.error.message || JSON.stringify(result.error)}\n\nRevisa la consola para más detalles.`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        return;
+                    }
+
+                    // Éxito
+                    console.log('✅ Configuración guardada exitosamente:', result.data);
+                    alert('✅ Configuración guardada exitosamente');
+                    
+                } catch (error) {
+                    console.error('❌ Excepción en submit:', error);
+                    console.error('❌ Stack trace:', error.stack);
+                    alert(`❌ Ocurrió un error al guardar la configuración:\n\n${error.message}\n\nRevisa la consola para más detalles.`);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 }
                 
                 form.classList.add('was-validated');
             });
+
+            // Función para actualizar vista previa del logo
+            function updateLogoPreview(url) {
+                const logoPreview = document.getElementById('logoPreview');
+                const logoPreviewText = document.getElementById('logoPreviewText');
+                
+                if (url && url.trim()) {
+                    logoPreview.src = url;
+                    logoPreview.style.display = 'block';
+                    logoPreviewText.style.display = 'none';
+                    logoPreview.onerror = function() {
+                        this.style.display = 'none';
+                        logoPreviewText.style.display = 'block';
+                        logoPreviewText.textContent = 'Error al cargar la imagen';
+                    };
+                } else {
+                    logoPreview.style.display = 'none';
+                    logoPreviewText.style.display = 'block';
+                    logoPreviewText.textContent = 'No hay logo cargado';
+                }
+            }
+
+            // Event listener para actualizar vista previa del logo
+            const logoUrlInput = document.getElementById('logoUrl');
+            if (logoUrlInput) {
+                logoUrlInput.addEventListener('input', function() {
+                    updateLogoPreview(this.value);
+                });
+            }
 
             // Validaciones en tiempo real
             const rangeFrom = document.getElementById('rangeFrom');

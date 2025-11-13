@@ -208,8 +208,8 @@
                             <i class="fas fa-shopping-cart fa-2x text-primary mb-1 mb-md-2 d-none d-md-inline-block"></i>
                             <i class="fas fa-shopping-cart fa-lg text-primary mb-1 d-md-none"></i>
                             <h6 class="card-title mb-1 mb-md-2 small">Ventas Hoy</h6>
-                            <h4 class="text-primary mb-0">24</h4>
-                            <small class="text-muted d-none d-md-block">Transacciones</small>
+                            <h4 class="text-primary mb-0" id="kpiVentasHoy">—</h4>
+                            <small class="text-white d-none d-md-block">Transacciones</small>
                         </div>
                     </div>
                 </div>
@@ -219,8 +219,8 @@
                             <i class="fas fa-dollar-sign fa-2x text-success mb-1 mb-md-2 d-none d-md-inline-block"></i>
                             <i class="fas fa-dollar-sign fa-lg text-success mb-1 d-md-none"></i>
                             <h6 class="card-title mb-1 mb-md-2 small">Total Hoy</h6>
-                            <h4 class="text-success mb-0">$ 2.4M</h4>
-                            <small class="text-muted d-none d-md-block">Valor vendido</small>
+                            <h4 class="text-success mb-0" id="kpiTotalHoy">—</h4>
+                            <small class="text-white d-none d-md-block">Valor vendido</small>
                         </div>
                     </div>
                 </div>
@@ -230,8 +230,8 @@
                             <i class="fas fa-chart-line fa-2x text-info mb-1 mb-md-2 d-none d-md-inline-block"></i>
                             <i class="fas fa-chart-line fa-lg text-info mb-1 d-md-none"></i>
                             <h6 class="card-title mb-1 mb-md-2 small">Promedio</h6>
-                            <h4 class="text-info mb-0">$ 100K</h4>
-                            <small class="text-muted d-none d-md-block">Por venta</small>
+                            <h4 class="text-info mb-0" id="kpiPromedio">—</h4>
+                            <small class="text-white d-none d-md-block">Por venta</small>
                         </div>
                     </div>
                 </div>
@@ -241,8 +241,8 @@
                             <i class="fas fa-clock fa-2x text-warning mb-1 mb-md-2 d-none d-md-inline-block"></i>
                             <i class="fas fa-clock fa-lg text-warning mb-1 d-md-none"></i>
                             <h6 class="card-title mb-1 mb-md-2 small">Última Venta</h6>
-                            <h4 class="text-warning mb-0">5 min</h4>
-                            <small class="text-muted d-none d-md-block">Hace</small>
+                            <h4 class="text-warning mb-0" id="kpiUltimaVenta">—</h4>
+                            <small class="text-white d-none d-md-block">Hace</small>
                         </div>
                     </div>
                 </div>
@@ -253,24 +253,24 @@
                 <div class="card pos-card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-plus-circle"></i>
-                            <strong>Nueva Venta</strong>
+                        <i class="fas fa-plus-circle"></i>
+                        <strong>Nueva Venta</strong>
                         </div>
-                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#nuevaVenta" aria-expanded="true" aria-controls="nuevaVenta">
-                            <i class="fas fa-chevron-up"></i>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#nuevaVenta" aria-expanded="false" aria-controls="nuevaVenta">
+                            <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="card-body collapse show" id="nuevaVenta">
+                    <div class="card-body collapse" id="nuevaVenta">
                         <div class="row g-3">
                             <div class="col-12 col-lg-4">
                                 <label class="form-label">Cliente</label>
                                 <div class="position-relative">
-                                    <div class="input-group">
+                                <div class="input-group">
                                         <input type="text" class="form-control" id="customerSearch" placeholder="Buscar cliente..." autocomplete="off">
                                         <input type="hidden" id="selectedCustomerId">
                                         <button class="btn btn-outline-primary" type="button" id="newCustomerBtn" onclick="window.location.href='./clientes.html'">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
+                                        <i class="fas fa-plus"></i>
+                                    </button>
                                     </div>
                                 </div>
                             </div>
@@ -298,8 +298,8 @@
                 <div class="card pos-card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-search"></i>
-                            <strong>Búsqueda de Productos</strong>
+                        <i class="fas fa-search"></i>
+                        <strong>Búsqueda de Productos</strong>
                         </div>
                         <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#busquedaProductos" aria-expanded="true" aria-controls="busquedaProductos">
                             <i class="fas fa-chevron-up"></i>
@@ -310,12 +310,12 @@
                             <div class="col-12 col-lg-6">
                                 <label class="form-label">Buscar producto</label>
                                 <div class="position-relative">
-                                    <div class="input-group">
+                                <div class="input-group">
                                         <input type="text" class="form-control" id="productSearch" placeholder="Código, nombre o descripción..." autocomplete="off">
                                         <input type="hidden" id="selectedProductId">
                                         <button class="btn btn-outline-secondary" type="button" id="listProductsBtn" title="Listar todos los productos">
                                             <i class="fas fa-list"></i>
-                                        </button>
+                                    </button>
                                     </div>
                                 </div>
                             </div>
@@ -357,14 +357,14 @@
                 <div class="card pos-card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-shopping-cart"></i>
-                            <strong>Carrito de Compras</strong>
+                        <i class="fas fa-shopping-cart"></i>
+                        <strong>Carrito de Compras</strong>
                         </div>
-                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#carritoCompras" aria-expanded="true" aria-controls="carritoCompras">
-                            <i class="fas fa-chevron-up"></i>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#carritoCompras" aria-expanded="false" aria-controls="carritoCompras">
+                            <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="card-body collapse show" id="carritoCompras">
+                    <div class="card-body collapse" id="carritoCompras">
                         <!-- Vista de tabla para desktop -->
                         <div class="table-responsive d-none d-md-block">
                             <table class="table table-sm align-middle mb-0">
@@ -397,14 +397,14 @@
                         <div class="card pos-card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="fas fa-calculator"></i>
-                                    <strong>Totales</strong>
+                                <i class="fas fa-calculator"></i>
+                                <strong>Totales</strong>
                                 </div>
-                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#totales" aria-expanded="true" aria-controls="totales">
-                                    <i class="fas fa-chevron-up"></i>
+                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#totales" aria-expanded="false" aria-controls="totales">
+                                    <i class="fas fa-chevron-down"></i>
                                 </button>
                             </div>
-                            <div class="card-body collapse show" id="totales">
+                            <div class="card-body collapse" id="totales">
                                 <div class="row g-2">
                                     <div class="col-12 col-md-6">
                                         <label class="form-label">Subtotal</label>
@@ -433,14 +433,14 @@
                         <div class="card pos-card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="fas fa-credit-card"></i>
-                                    <strong>Método de Pago</strong>
+                                <i class="fas fa-credit-card"></i>
+                                <strong>Método de Pago</strong>
                                 </div>
-                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#metodoPago" aria-expanded="true" aria-controls="metodoPago">
-                                    <i class="fas fa-chevron-up"></i>
+                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#metodoPago" aria-expanded="false" aria-controls="metodoPago">
+                                    <i class="fas fa-chevron-down"></i>
                                 </button>
                             </div>
-                            <div class="card-body collapse show" id="metodoPago">
+                            <div class="card-body collapse" id="metodoPago">
                                 <div class="row g-2">
                                     <div class="col-12">
                                         <label class="form-label">Método</label>
@@ -473,14 +473,14 @@
                 <div class="card pos-card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-history"></i>
-                            <strong>Ventas Recientes</strong>
+                        <i class="fas fa-history"></i>
+                        <strong>Ventas Recientes</strong>
                         </div>
-                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#ventasRecientes" aria-expanded="true" aria-controls="ventasRecientes">
-                            <i class="fas fa-chevron-up"></i>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#ventasRecientes" aria-expanded="false" aria-controls="ventasRecientes">
+                            <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="card-body collapse show" id="ventasRecientes">
+                    <div class="card-body collapse" id="ventasRecientes">
                         <!-- Vista de tabla para desktop -->
                         <div class="table-responsive d-none d-md-block">
                             <table class="table table-sm align-middle mb-0">
@@ -491,7 +491,7 @@
                                         <th>Productos</th>
                                         <th>Total</th>
                                         <th>Fecha</th>
-                                        <th style="width: 100px;">Acciones</th>
+                                        <th style="width: 200px;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recentSalesBody">
@@ -526,21 +526,6 @@
                                 </button>
                             </div>
                             <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
-                                <button type="button" class="btn btn-primary w-100" id="saveDraftBtn">
-                                    <i class="fas fa-save me-1"></i>Guardar Borrador
-                                </button>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
-                                <button type="button" class="btn btn-warning w-100" id="holdSaleBtn">
-                                    <i class="fas fa-pause me-1"></i>Pausar Venta
-                                </button>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
-                                <button type="button" class="btn btn-info w-100" id="printReceiptBtn">
-                                    <i class="fas fa-print me-1"></i>Imprimir Recibo
-                                </button>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-auto">
                                 <button type="button" class="btn btn-secondary w-100" id="clearCartBtn">
                                     <i class="fas fa-trash me-1"></i>Limpiar Carrito
                                 </button>
@@ -570,6 +555,9 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jsPDF para generar documentos PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
     <!-- Contenedor de sugerencias de clientes -->
     <div id="customerSuggestions" style="position: fixed; z-index: 1050; display: none;"></div>
@@ -586,9 +574,9 @@
     <!-- Scripts del sistema -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="../assets/js/supabase-config.js?v=8"></script>
-    <script src="../assets/js/database.js?v=12"></script>
+    <script src="../assets/js/database.js?v=14"></script>
     <script src="../assets/js/auth.js?v=8"></script>
-    <script src="../assets/js/ventas.js?v=1"></script>
+    <script src="../assets/js/ventas.js?v=8"></script>
 
     <!-- Modal Detalle de Venta -->
     <div class="modal fade" id="saleDetailModal" tabindex="-1" aria-hidden="true">

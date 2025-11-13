@@ -65,6 +65,7 @@ CREATE TABLE productos (
     marca VARCHAR(100),
     modelo VARCHAR(100),
     descripcion TEXT,
+    imagen_url TEXT,
     precio_compra DECIMAL(10,2),
     precio_venta DECIMAL(10,2) NOT NULL,
     precio_mayorista DECIMAL(10,2),
@@ -315,9 +316,13 @@ CREATE TABLE configuracion_empresa (
     resolucion_dian VARCHAR(50),
     rango_desde INTEGER,
     rango_hasta INTEGER,
+    fecha_vencimiento_resolucion DATE,
+    prefijo_facturacion VARCHAR(10),
     impuesto_default DECIMAL(5,2) DEFAULT 19.00,
     moneda VARCHAR(3) DEFAULT 'COP',
     zona_horaria VARCHAR(50) DEFAULT 'America/Bogota',
+    logo_url TEXT,
+    mensaje_legal TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     updated_by UUID REFERENCES usuarios(id)
@@ -492,6 +497,7 @@ CREATE POLICY "Usuarios autenticados pueden actualizar ventas" ON ventas FOR UPD
 CREATE POLICY "Usuarios autenticados pueden ver ventas_detalle" ON ventas_detalle FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar ventas_detalle" ON ventas_detalle FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden actualizar ventas_detalle" ON ventas_detalle FOR UPDATE USING (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden eliminar ventas_detalle" ON ventas_detalle FOR DELETE USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Usuarios autenticados pueden ver facturacion" ON facturacion FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar facturacion" ON facturacion FOR INSERT WITH CHECK (auth.role() = 'authenticated');
@@ -592,6 +598,112 @@ $$ language 'plpgsql';
 -- Crear secuencia para números de venta
 CREATE SEQUENCE IF NOT EXISTS sale_sequence START 1;
 
+-- Función para actualizar finanzas mensuales cuando se crea o actualiza una venta
+CREATE OR REPLACE FUNCTION update_finanzas_mensuales_on_venta()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_anio INTEGER;
+    v_mes INTEGER;
+    v_costo_mercaderia DECIMAL(14,2) := 0;
+    v_ventas_brutas DECIMAL(14,2) := 0;
+    v_descuentos DECIMAL(14,2) := 0;
+    v_ventas_netas DECIMAL(14,2) := 0;
+    v_utilidad_bruta DECIMAL(14,2) := 0;
+BEGIN
+    -- Solo procesar ventas completadas
+    IF NEW.estado != 'completada' THEN
+        RETURN NEW;
+    END IF;
+    
+    -- Extraer año y mes de la fecha de venta
+    v_anio := EXTRACT(YEAR FROM NEW.fecha_venta);
+    v_mes := EXTRACT(MONTH FROM NEW.fecha_venta);
+    
+    -- Calcular costo de mercadería vendida (suma de precio_compra * cantidad de los detalles)
+    SELECT COALESCE(SUM(p.precio_compra * vd.cantidad), 0)
+    INTO v_costo_mercaderia
+    FROM ventas_detalle vd
+    JOIN productos p ON p.id = vd.producto_id
+    WHERE vd.venta_id = NEW.id
+      AND p.precio_compra IS NOT NULL;
+    
+    -- Calcular valores de la venta
+    -- Ventas brutas = subtotal + impuesto (antes de descuentos)
+    v_ventas_brutas := NEW.subtotal + NEW.impuesto;
+    -- Descuentos
+    v_descuentos := NEW.descuento;
+    -- Ventas netas = total final
+    v_ventas_netas := NEW.total;
+    -- Utilidad bruta = ventas netas - costo de mercadería vendida
+    v_utilidad_bruta := v_ventas_netas - v_costo_mercaderia;
+    
+    -- Si es UPDATE, primero revertir los valores de la venta anterior
+    IF TG_OP = 'UPDATE' AND OLD.estado = 'completada' THEN
+        DECLARE
+            v_old_anio INTEGER;
+            v_old_mes INTEGER;
+            v_old_costo_mercaderia DECIMAL(14,2) := 0;
+            v_old_ventas_brutas DECIMAL(14,2) := 0;
+            v_old_descuentos DECIMAL(14,2) := 0;
+            v_old_ventas_netas DECIMAL(14,2) := 0;
+            v_old_utilidad_bruta DECIMAL(14,2) := 0;
+        BEGIN
+            v_old_anio := EXTRACT(YEAR FROM OLD.fecha_venta);
+            v_old_mes := EXTRACT(MONTH FROM OLD.fecha_venta);
+            
+            -- Calcular valores de la venta anterior
+            SELECT COALESCE(SUM(p.precio_compra * vd.cantidad), 0)
+            INTO v_old_costo_mercaderia
+            FROM ventas_detalle vd
+            JOIN productos p ON p.id = vd.producto_id
+            WHERE vd.venta_id = OLD.id
+              AND p.precio_compra IS NOT NULL;
+            
+            v_old_ventas_brutas := OLD.subtotal + OLD.impuesto;
+            v_old_descuentos := OLD.descuento;
+            v_old_ventas_netas := OLD.total;
+            v_old_utilidad_bruta := v_old_ventas_netas - v_old_costo_mercaderia;
+            
+            -- Revertir valores del mes anterior
+            UPDATE finanzas_mensuales
+            SET
+                ventas_brutas = ventas_brutas - v_old_ventas_brutas,
+                descuentos = descuentos - v_old_descuentos,
+                ventas_netas = ventas_netas - v_old_ventas_netas,
+                costo_mercaderia_vendida = costo_mercaderia_vendida - v_old_costo_mercaderia,
+                utilidad_bruta = utilidad_bruta - v_old_utilidad_bruta,
+                utilidad_neta = utilidad_neta - v_old_utilidad_bruta,
+                updated_at = NOW()
+            WHERE anio = v_old_anio AND mes = v_old_mes;
+        END;
+    END IF;
+    
+    -- Insertar o actualizar el registro mensual (UPSERT)
+    INSERT INTO finanzas_mensuales (anio, mes, ventas_brutas, descuentos, ventas_netas, costo_mercaderia_vendida, utilidad_bruta, utilidad_neta)
+    VALUES (
+        v_anio,
+        v_mes,
+        v_ventas_brutas,
+        v_descuentos,
+        v_ventas_netas,
+        v_costo_mercaderia,
+        v_utilidad_bruta,
+        v_utilidad_bruta  -- utilidad_neta inicialmente igual a utilidad_bruta (se ajusta con gastos después)
+    )
+    ON CONFLICT (anio, mes)
+    DO UPDATE SET
+        ventas_brutas = finanzas_mensuales.ventas_brutas + v_ventas_brutas,
+        descuentos = finanzas_mensuales.descuentos + v_descuentos,
+        ventas_netas = finanzas_mensuales.ventas_netas + v_ventas_netas,
+        costo_mercaderia_vendida = finanzas_mensuales.costo_mercaderia_vendida + v_costo_mercaderia,
+        utilidad_bruta = finanzas_mensuales.utilidad_bruta + v_utilidad_bruta,
+        utilidad_neta = finanzas_mensuales.utilidad_neta + v_utilidad_bruta,
+        updated_at = NOW();
+    
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
 -- ================================================
 -- TRIGGERS
 -- ================================================
@@ -620,6 +732,108 @@ CREATE TRIGGER update_stock_on_movement
 CREATE TRIGGER generate_sale_number_trigger
     BEFORE INSERT ON ventas
     FOR EACH ROW EXECUTE FUNCTION generate_sale_number();
+
+-- Trigger para actualizar finanzas mensuales cuando se crea o actualiza una venta
+CREATE TRIGGER update_finanzas_mensuales_on_venta_trigger
+    AFTER INSERT OR UPDATE ON ventas
+    FOR EACH ROW EXECUTE FUNCTION update_finanzas_mensuales_on_venta();
+
+-- Función para recalcular finanzas cuando se insertan/actualizan/eliminan detalles de venta
+-- Esto asegura que el costo de mercadería se calcule correctamente incluso si los detalles
+-- se insertan después del trigger de la venta
+CREATE OR REPLACE FUNCTION recalculate_finanzas_on_venta_detalle()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_venta_id UUID;
+    v_anio INTEGER;
+    v_mes INTEGER;
+    v_costo_mercaderia_nuevo DECIMAL(14,2) := 0;
+    v_costo_mercaderia_anterior DECIMAL(14,2) := 0;
+    v_venta_record RECORD;
+    v_utilidad_bruta_nueva DECIMAL(14,2) := 0;
+    v_utilidad_bruta_anterior DECIMAL(14,2) := 0;
+BEGIN
+    -- Determinar el ID de la venta según la operación
+    IF TG_OP = 'DELETE' THEN
+        v_venta_id := OLD.venta_id;
+    ELSE
+        v_venta_id := NEW.venta_id;
+    END IF;
+    
+    -- Obtener información completa de la venta
+    SELECT fecha_venta, estado, subtotal, impuesto, descuento, total
+    INTO v_venta_record
+    FROM ventas
+    WHERE id = v_venta_id;
+    
+    -- Solo procesar si la venta está completada
+    IF v_venta_record.estado != 'completada' THEN
+        RETURN COALESCE(NEW, OLD);
+    END IF;
+    
+    -- Extraer año y mes
+    v_anio := EXTRACT(YEAR FROM v_venta_record.fecha_venta);
+    v_mes := EXTRACT(MONTH FROM v_venta_record.fecha_venta);
+    
+    -- Calcular costo de mercadería vendida con todos los detalles actuales (después del cambio)
+    SELECT COALESCE(SUM(p.precio_compra * vd.cantidad), 0)
+    INTO v_costo_mercaderia_nuevo
+    FROM ventas_detalle vd
+    JOIN productos p ON p.id = vd.producto_id
+    WHERE vd.venta_id = v_venta_id
+      AND p.precio_compra IS NOT NULL;
+    
+    -- Calcular utilidad bruta nueva
+    v_utilidad_bruta_nueva := v_venta_record.total - v_costo_mercaderia_nuevo;
+    
+    -- Si es UPDATE o DELETE, calcular el costo anterior (antes del cambio)
+    IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+        -- Calcular costo anterior: restar el detalle que cambió/eliminó
+        DECLARE
+            v_diferencia_costo DECIMAL(14,2) := 0;
+        BEGIN
+            IF TG_OP = 'UPDATE' THEN
+                -- Diferencia = (precio_compra_nuevo * cantidad_nueva) - (precio_compra_anterior * cantidad_anterior)
+                SELECT COALESCE(
+                    (SELECT precio_compra FROM productos WHERE id = NEW.producto_id) * NEW.cantidad -
+                    (SELECT precio_compra FROM productos WHERE id = OLD.producto_id) * OLD.cantidad,
+                    0
+                ) INTO v_diferencia_costo;
+            ELSIF TG_OP = 'DELETE' THEN
+                -- Restar el costo del detalle eliminado
+                SELECT COALESCE(
+                    (SELECT precio_compra FROM productos WHERE id = OLD.producto_id) * OLD.cantidad,
+                    0
+                ) INTO v_diferencia_costo;
+            END IF;
+            
+            -- El costo anterior sería el nuevo menos la diferencia
+            v_costo_mercaderia_anterior := v_costo_mercaderia_nuevo - v_diferencia_costo;
+            v_utilidad_bruta_anterior := v_venta_record.total - v_costo_mercaderia_anterior;
+        END;
+    ELSE
+        -- En INSERT, el costo anterior es 0 (no había detalle antes)
+        v_costo_mercaderia_anterior := 0;
+        v_utilidad_bruta_anterior := v_venta_record.total;
+    END IF;
+    
+    -- Actualizar finanzas mensuales: ajustar la diferencia
+    UPDATE finanzas_mensuales
+    SET
+        costo_mercaderia_vendida = costo_mercaderia_vendida - v_costo_mercaderia_anterior + v_costo_mercaderia_nuevo,
+        utilidad_bruta = utilidad_bruta - v_utilidad_bruta_anterior + v_utilidad_bruta_nueva,
+        utilidad_neta = utilidad_neta - v_utilidad_bruta_anterior + v_utilidad_bruta_nueva,
+        updated_at = NOW()
+    WHERE anio = v_anio AND mes = v_mes;
+    
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ language 'plpgsql';
+
+-- Trigger para recalcular finanzas cuando cambian los detalles de venta
+CREATE TRIGGER recalculate_finanzas_on_venta_detalle_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON ventas_detalle
+    FOR EACH ROW EXECUTE FUNCTION recalculate_finanzas_on_venta_detalle();
 
 -- ================================================
 -- DATOS INICIALES
@@ -652,6 +866,26 @@ VALUES ('ADS Store', '900123456-7', 'Calle 123 #45-67, Bogotá, Colombia', '+57 
 -- Compatible con Supabase
 -- Listo para producción
 -- Incluye jerarquía de categorías y códigos únicos
+
+-- ================================================
+-- ALTER TABLE: Agregar campos faltantes a configuracion_empresa
+-- Ejecutar si la tabla ya existe y necesita actualizarse
+-- ================================================
+-- NOTA: Si estás creando la base de datos desde cero, estos campos ya están incluidos
+-- en la definición de la tabla configuracion_empresa (líneas 319-325).
+-- Este ALTER TABLE solo es necesario si la tabla ya existía sin estos campos.
+
+-- ALTER TABLE configuracion_empresa
+-- ADD COLUMN IF NOT EXISTS fecha_vencimiento_resolucion DATE,
+-- ADD COLUMN IF NOT EXISTS prefijo_facturacion VARCHAR(10),
+-- ADD COLUMN IF NOT EXISTS logo_url TEXT,
+-- ADD COLUMN IF NOT EXISTS mensaje_legal TEXT;
+
+-- Comentarios para documentación
+-- COMMENT ON COLUMN configuracion_empresa.fecha_vencimiento_resolucion IS 'Fecha de vencimiento de la resolución DIAN';
+-- COMMENT ON COLUMN configuracion_empresa.prefijo_facturacion IS 'Prefijo para numeración de documentos (ej: FAC, FV, NC, ND)';
+-- COMMENT ON COLUMN configuracion_empresa.logo_url IS 'URL del logo de la empresa para usar en recibos y facturas';
+-- COMMENT ON COLUMN configuracion_empresa.mensaje_legal IS 'Mensaje legal o pie de página para documentos fiscales';
 
 -- ================================================
 -- FIN DEL SCRIPT OPTIMIZADO

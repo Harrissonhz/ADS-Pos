@@ -249,6 +249,11 @@
                                 <label class="form-label">Descripción</label>
                                 <textarea class="form-control" id="description" rows="3" placeholder="Descripción detallada del producto"></textarea>
                             </div>
+                            <div class="col-12">
+                                <label class="form-label">URL de la Imagen</label>
+                                <input type="url" class="form-control" id="imageUrl" placeholder="https://outletshop.github.io/imgTienda/img/AL001-CompresorPortatil/1.jpg">
+                                <small class="text-muted">Ingrese la URL completa de la imagen del producto</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -457,82 +462,11 @@
                                         <th>Stock</th>
                                         <th>Precio</th>
                                         <th>Estado</th>
-                                        <th style="width: 100px;">Acciones</th>
+                                        <th style="width: 140px;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="productsBody">
-                                    <tr>
-                                        <td><i class="fas fa-laptop text-primary"></i></td>
-                                        <td>
-                                            <div>
-                                                <strong>Laptop HP Pavilion 15</strong><br>
-                                                <small class="text-muted">HP - Pavilion 15</small>
-                                            </div>
-                                        </td>
-                                        <td>LAP-HP-001</td>
-                                        <td>Electrónicos</td>
-                                        <td>
-                                            <span class="badge bg-success">15</span>
-                                        </td>
-                                        <td>$ 2,500,000</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><i class="fas fa-mobile-alt text-info"></i></td>
-                                        <td>
-                                            <div>
-                                                <strong>Samsung Galaxy S21</strong><br>
-                                                <small class="text-muted">Samsung - Galaxy S21</small>
-                                            </div>
-                                        </td>
-                                        <td>CEL-SAM-001</td>
-                                        <td>Electrónicos</td>
-                                        <td>
-                                            <span class="badge bg-warning">3</span>
-                                        </td>
-                                        <td>$ 1,800,000</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><i class="fas fa-tshirt text-warning"></i></td>
-                                        <td>
-                                            <div>
-                                                <strong>Camiseta Nike Dri-FIT</strong><br>
-                                                <small class="text-muted">Nike - Dri-FIT</small>
-                                            </div>
-                                        </td>
-                                        <td>CAM-NIK-001</td>
-                                        <td>Ropa y Accesorios</td>
-                                        <td>
-                                            <span class="badge bg-danger">0</span>
-                                        </td>
-                                        <td>$ 89,900</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <!-- Los productos se cargan dinámicamente desde JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -599,6 +533,105 @@
     <script src="../assets/js/database.js?v=12"></script>
     <script src="../assets/js/auth.js?v=8"></script>
     
-    <script src="../assets/js/productos.js?v=1"></script>
+    <script src="../assets/js/productos.js?v=2"></script>
+
+    <!-- Modal Detalle de Producto -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-0">
+                    <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="modal-title mb-0" id="detailProductName">Producto</h5>
+                            <small class="text-white-50">Código: <span id="detailProductCode" class="text-white" style="opacity:1;">—</span></small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <!-- Imagen del Producto -->
+                    <div class="row g-3 mb-3" id="detailImageSection" style="display: none;">
+                        <div class="col-12 text-center">
+                            <div class="card bg-transparent border-secondary">
+                                <div class="card-body">
+                                    <img id="detailProductImage" src="" alt="Imagen del producto" class="img-fluid rounded" style="max-height: 300px; max-width: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-box text-primary"></i><strong class="text-white" style="opacity:1;">Información Básica</strong></div>
+                                    <div><span class="text-white" style="opacity:1;">Nombre:</span> <span id="detailName" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Código Interno:</span> <span id="detailInternalCode" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Código de Barras:</span> <span id="detailBarcode" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Categoría:</span> <span id="detailCategory" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Marca:</span> <span id="detailBrand" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Modelo:</span> <span id="detailModel" class="text-white" style="opacity:1;">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-dollar-sign text-success"></i><strong class="text-white" style="opacity:1;">Precios</strong></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Precio de Venta</span><span id="detailSalePrice" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Precio de Compra</span><span id="detailPurchasePrice" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Precio Mayorista</span><span id="detailWholesalePrice" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Margen de Ganancia</span><span id="detailProfitMargin" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Descuento Máximo</span><span id="detailMaxDiscount" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Tasa de Impuesto</span><span id="detailTaxRate" class="text-white" style="opacity:1;">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="card bg-transparent border-secondary h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2 gap-2"><i class="fas fa-warehouse text-warning"></i><strong class="text-white" style="opacity:1;">Inventario</strong></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Stock Actual</span><span id="detailCurrentStock" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Stock Mínimo</span><span id="detailMinStock" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between"><span class="text-white" style="opacity:1;">Stock Máximo</span><span id="detailMaxStock" class="text-white" style="opacity:1;">—</span></div>
+                                    <div class="d-flex justify-content-between border-top pt-2"><span class="text-white" style="opacity:1;">Estado</span><span id="detailStatus" class="badge bg-secondary">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-transparent border-secondary">
+                        <div class="card-header d-flex align-items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            <strong class="text-white" style="opacity:1;">Descripción</strong>
+                        </div>
+                        <div class="card-body">
+                            <p id="detailDescription" class="text-white mb-0" style="opacity:1;">—</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3" id="detailAdditionalInfo" style="display: none;">
+                        <div class="col-12 col-lg-6">
+                            <div class="card bg-transparent border-secondary">
+                                <div class="card-header d-flex align-items-center gap-2">
+                                    <i class="fas fa-weight"></i>
+                                    <strong class="text-white" style="opacity:1;">Peso y Dimensiones</strong>
+                                </div>
+                                <div class="card-body">
+                                    <div><span class="text-white" style="opacity:1;">Peso:</span> <span id="detailWeight" class="text-white" style="opacity:1;">—</span></div>
+                                    <div><span class="text-white" style="opacity:1;">Dimensiones:</span> <span id="detailDimensions" class="text-white" style="opacity:1;">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -454,6 +454,7 @@ class DatabaseService {
                 marca: productoData.marca?.trim() || null,
                 modelo: productoData.modelo?.trim() || null,
                 descripcion: productoData.descripcion?.trim() || null,
+                imagen_url: productoData.imagen_url?.trim() || null,
                 precio_compra: productoData.precio_compra !== '' && productoData.precio_compra !== undefined ? Number(productoData.precio_compra) : null,
                 precio_venta: Number(productoData.precio_venta),
                 precio_mayorista: productoData.precio_mayorista !== '' && productoData.precio_mayorista !== undefined ? Number(productoData.precio_mayorista) : null,
@@ -509,6 +510,7 @@ class DatabaseService {
                 marca: productoData.marca !== undefined ? (productoData.marca?.trim() || null) : undefined,
                 modelo: productoData.modelo !== undefined ? (productoData.modelo?.trim() || null) : undefined,
                 descripcion: productoData.descripcion !== undefined ? (productoData.descripcion?.trim() || null) : undefined,
+                imagen_url: productoData.imagen_url !== undefined ? (productoData.imagen_url?.trim() || null) : undefined,
                 precio_compra: productoData.precio_compra !== undefined ? (productoData.precio_compra === '' ? null : Number(productoData.precio_compra)) : undefined,
                 precio_venta: productoData.precio_venta !== undefined ? Number(productoData.precio_venta) : undefined,
                 precio_mayorista: productoData.precio_mayorista !== undefined ? (productoData.precio_mayorista === '' ? null : Number(productoData.precio_mayorista)) : undefined,
@@ -1487,6 +1489,351 @@ class DatabaseService {
     }
 
     /**
+     * Actualiza una venta existente y todos sus detalles relacionados
+     * @param {String} ventaId - ID de la venta a actualizar
+     * @param {Object} ventaData - Datos actualizados de la venta
+     * @param {Array} detalles - Array de detalles actualizados
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async updateVenta(ventaId, ventaData, detalles = []) {
+        try {
+            // Validaciones mínimas
+            if (!ventaId || !this._isValidUUID(ventaId)) {
+                return { data: null, error: { message: 'ID de venta inválido' } };
+            }
+
+            if (!ventaData || !ventaData.fecha_venta) {
+                return { data: null, error: { message: 'La fecha de venta es obligatoria' } };
+            }
+
+            if (!ventaData.usuario_id || !this._isValidUUID(ventaData.usuario_id)) {
+                return { data: null, error: { message: 'Usuario (vendedor) inválido o no autenticado' } };
+            }
+
+            if (!detalles || detalles.length === 0) {
+                return { data: null, error: { message: 'Debe agregar al menos un producto a la venta' } };
+            }
+
+            // Obtener la venta original para revertir movimientos de inventario
+            const { data: ventaOriginal, error: ventaOriginalError } = await this.supabase
+                .from('ventas')
+                .select('numero_venta')
+                .eq('id', ventaId)
+                .single();
+
+            if (ventaOriginalError || !ventaOriginal) {
+                return { data: null, error: { message: 'Venta no encontrada' } };
+            }
+
+            const numeroVenta = ventaOriginal.numero_venta;
+
+            // Obtener detalles originales para revertir movimientos
+            const { data: detallesOriginales, error: detallesOriginalesError } = await this.supabase
+                .from('ventas_detalle')
+                .select('producto_id, cantidad')
+                .eq('venta_id', ventaId);
+
+            if (detallesOriginalesError) {
+                return { data: null, error: detallesOriginalesError };
+            }
+
+            // Obtener movimientos originales de inventario para revertirlos
+            const { data: movimientosOriginales, error: movimientosError } = await this.supabase
+                .from('movimientos_inventario')
+                .select('id, producto_id, cantidad')
+                .eq('referencia', numeroVenta)
+                .eq('tipo_movimiento', 'salida');
+
+            // Actualizar la venta
+            const updateVentaData = {
+                cliente_id: ventaData.cliente_id && this._isValidUUID(ventaData.cliente_id) ? ventaData.cliente_id : null,
+                usuario_id: ventaData.usuario_id,
+                fecha_venta: ventaData.fecha_venta,
+                metodo_pago: ventaData.metodo_pago || 'efectivo',
+                estado: ventaData.estado || 'completada',
+                subtotal: Number(ventaData.subtotal) || 0,
+                impuesto: Number(ventaData.impuesto) || 0,
+                descuento: Number(ventaData.descuento) || 0,
+                total: Number(ventaData.total) || 0,
+                notas: ventaData.notas?.trim() || null
+            };
+
+            const { data: ventaActualizada, error: ventaError } = await this.supabase
+                .from('ventas')
+                .update(updateVentaData)
+                .eq('id', ventaId)
+                .select()
+                .single();
+
+            if (ventaError) {
+                return { data: null, error: ventaError };
+            }
+
+            // Eliminar detalles antiguos
+            // Primero verificamos cuántos detalles existen
+            const { data: detallesExistentes, error: checkError } = await this.supabase
+                .from('ventas_detalle')
+                .select('id')
+                .eq('venta_id', ventaId);
+
+            if (checkError) {
+                console.error('Error al verificar detalles existentes:', checkError);
+                return { data: null, error: checkError };
+            }
+
+            // Eliminar todos los detalles antiguos
+            const { data: detallesEliminados, error: deleteDetallesError } = await this.supabase
+                .from('ventas_detalle')
+                .delete()
+                .eq('venta_id', ventaId)
+                .select();
+
+            if (deleteDetallesError) {
+                console.error('Error al eliminar detalles antiguos:', deleteDetallesError);
+                return { data: null, error: deleteDetallesError };
+            }
+
+            // Verificar que se eliminaron los detalles
+            if (detallesExistentes && detallesExistentes.length > 0) {
+                console.log(`✅ Se eliminaron ${detallesExistentes.length} detalles antiguos de la venta ${ventaId}`);
+            }
+
+            // Insertar nuevos detalles
+            const detallesToInsert = detalles.map(det => ({
+                venta_id: ventaId,
+                producto_id: det.producto_id,
+                cantidad: Number(det.cantidad) || 0,
+                precio_unitario: Number(det.precio_unitario) || 0,
+                descuento: Number(det.descuento) || 0,
+                tasa_impuesto: Number(det.tasa_impuesto) || 0,
+                subtotal: Number(det.subtotal) || 0,
+                impuesto: Number(det.impuesto) || 0,
+                total: Number(det.total) || 0
+            }));
+
+            const { data: detallesRows, error: detallesErr } = await this.supabase
+                .from('ventas_detalle')
+                .insert(detallesToInsert)
+                .select();
+
+            if (detallesErr) {
+                return { data: null, error: detallesErr };
+            }
+
+            // Revertir movimientos de inventario antiguos (crear movimientos de entrada)
+            if (movimientosOriginales && movimientosOriginales.length > 0) {
+                for (const movOriginal of movimientosOriginales) {
+                    // Crear movimiento de entrada para revertir la salida anterior
+                    const movResult = await this.createMovimientoInventario({
+                        producto_id: movOriginal.producto_id,
+                        tipo_movimiento: 'entrada',
+                        cantidad: movOriginal.cantidad,
+                        motivo: `Reversión de venta: ${numeroVenta}`,
+                        referencia: numeroVenta,
+                        notas: `Reversión de venta ${numeroVenta} - ${movOriginal.cantidad} unidades`,
+                        usuario_id: ventaData.usuario_id
+                    });
+
+                    if (movResult.error) {
+                        console.error(`Error revirtiendo movimiento para producto ${movOriginal.producto_id}:`, movResult.error);
+                    }
+                }
+            }
+
+            // Crear nuevos movimientos de inventario (tipo: 'salida') para cada producto
+            const movimientos = [];
+            for (const detalle of detalles) {
+                const movResult = await this.createMovimientoInventario({
+                    producto_id: detalle.producto_id,
+                    tipo_movimiento: 'salida',
+                    cantidad: detalle.cantidad,
+                    motivo: `Venta: ${numeroVenta}`,
+                    referencia: numeroVenta,
+                    notas: `Venta ${numeroVenta} - ${detalle.cantidad} unidades`,
+                    usuario_id: ventaData.usuario_id
+                });
+
+                if (movResult.error) {
+                    console.error(`Error creando movimiento para producto ${detalle.producto_id}:`, movResult.error);
+                } else {
+                    movimientos.push(movResult.data);
+                }
+            }
+
+            return {
+                data: {
+                    venta: ventaActualizada,
+                    detalles: detallesRows || [],
+                    movimientos: movimientos
+                },
+                error: null
+            };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Elimina una venta (soft delete) y revierte todos los cambios relacionados
+     * @param {String} ventaId - ID de la venta a eliminar
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async deleteVenta(ventaId) {
+        try {
+            // Validaciones mínimas
+            if (!ventaId || !this._isValidUUID(ventaId)) {
+                return { data: null, error: { message: 'ID de venta inválido' } };
+            }
+
+            // Obtener la venta original
+            const { data: ventaOriginal, error: ventaOriginalError } = await this.supabase
+                .from('ventas')
+                .select('numero_venta, fecha_venta, estado, subtotal, impuesto, descuento, total')
+                .eq('id', ventaId)
+                .is('deleted_at', null)
+                .single();
+
+            if (ventaOriginalError || !ventaOriginal) {
+                return { data: null, error: { message: 'Venta no encontrada o ya eliminada' } };
+            }
+
+            const numeroVenta = ventaOriginal.numero_venta;
+
+            // Solo procesar si la venta está completada
+            if (ventaOriginal.estado !== 'completada') {
+                // Si no está completada, solo hacer soft delete sin revertir movimientos
+                const { error: deleteError } = await this.supabase
+                    .from('ventas')
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', ventaId);
+
+                if (deleteError) {
+                    return { data: null, error: deleteError };
+                }
+
+                return { data: { venta: { id: ventaId, numero_venta: numeroVenta } }, error: null };
+            }
+
+            // Obtener detalles de la venta para calcular costo de mercadería
+            const { data: detalles, error: detallesError } = await this.supabase
+                .from('ventas_detalle')
+                .select('producto_id, cantidad')
+                .eq('venta_id', ventaId);
+
+            if (detallesError) {
+                return { data: null, error: detallesError };
+            }
+
+            // Calcular costo de mercadería vendida
+            let costoMercaderia = 0;
+            if (detalles && detalles.length > 0) {
+                for (const detalle of detalles) {
+                    const { data: producto } = await this.supabase
+                        .from('productos')
+                        .select('precio_compra')
+                        .eq('id', detalle.producto_id)
+                        .single();
+
+                    if (producto && producto.precio_compra) {
+                        costoMercaderia += (Number(producto.precio_compra) * Number(detalle.cantidad));
+                    }
+                }
+            }
+
+            // Obtener movimientos de inventario relacionados para revertirlos
+            const { data: movimientosOriginales, error: movimientosError } = await this.supabase
+                .from('movimientos_inventario')
+                .select('id, producto_id, cantidad')
+                .eq('referencia', numeroVenta)
+                .eq('tipo_movimiento', 'salida');
+
+            // Revertir movimientos de inventario (crear movimientos de entrada)
+            if (movimientosOriginales && movimientosOriginales.length > 0) {
+                // Obtener usuario actual para los movimientos de reversión
+                let currentUserId = null;
+                try {
+                    if (this.supabase) {
+                        const { data: { session } } = await this.supabase.auth.getSession();
+                        currentUserId = session?.user?.id || null;
+                    }
+                } catch (error) {
+                    console.error('Error obteniendo usuario actual:', error);
+                }
+
+                for (const movOriginal of movimientosOriginales) {
+                    // Crear movimiento de entrada para revertir la salida
+                    const movResult = await this.createMovimientoInventario({
+                        producto_id: movOriginal.producto_id,
+                        tipo_movimiento: 'entrada',
+                        cantidad: movOriginal.cantidad,
+                        motivo: `Reversión de venta eliminada: ${numeroVenta}`,
+                        referencia: numeroVenta,
+                        notas: `Reversión de venta eliminada ${numeroVenta} - ${movOriginal.cantidad} unidades`,
+                        usuario_id: currentUserId
+                    });
+
+                    if (movResult.error) {
+                        console.error(`Error revirtiendo movimiento para producto ${movOriginal.producto_id}:`, movResult.error);
+                    }
+                }
+            }
+
+            // Actualizar finanzas mensuales (revertir valores de esta venta)
+            const fechaVenta = new Date(ventaOriginal.fecha_venta);
+            const anio = fechaVenta.getFullYear();
+            const mes = fechaVenta.getMonth() + 1;
+
+            const ventasBrutas = ventaOriginal.subtotal + ventaOriginal.impuesto;
+            const ventasNetas = ventaOriginal.total;
+            const utilidadBruta = ventasNetas - costoMercaderia;
+
+            // Actualizar finanzas mensuales restando los valores de esta venta
+            const { data: finanzasActuales, error: finanzasError } = await this.supabase
+                .from('finanzas_mensuales')
+                .select('*')
+                .eq('anio', anio)
+                .eq('mes', mes)
+                .maybeSingle();
+
+            if (!finanzasError && finanzasActuales) {
+                await this.supabase
+                    .from('finanzas_mensuales')
+                    .update({
+                        ventas_brutas: Math.max(0, finanzasActuales.ventas_brutas - ventasBrutas),
+                        descuentos: Math.max(0, finanzasActuales.descuentos - ventaOriginal.descuento),
+                        ventas_netas: Math.max(0, finanzasActuales.ventas_netas - ventasNetas),
+                        costo_mercaderia_vendida: Math.max(0, finanzasActuales.costo_mercaderia_vendida - costoMercaderia),
+                        utilidad_bruta: Math.max(0, finanzasActuales.utilidad_bruta - utilidadBruta),
+                        utilidad_neta: Math.max(0, finanzasActuales.utilidad_neta - utilidadBruta),
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('anio', anio)
+                    .eq('mes', mes);
+            }
+
+            // Hacer soft delete de la venta
+            const { error: deleteError } = await this.supabase
+                .from('ventas')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', ventaId);
+
+            if (deleteError) {
+                return { data: null, error: deleteError };
+            }
+
+            return {
+                data: {
+                    venta: { id: ventaId, numero_venta: numeroVenta },
+                    movimientos_revertidos: movimientosOriginales?.length || 0
+                },
+                error: null
+            };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
      * Obtiene estadísticas de ventas para KPIs
      * @param {Object} options - Opciones de consulta (fechaInicio, fechaFin)
      * @returns {Promise<Object>} - Resultado con data y error
@@ -1528,6 +1875,141 @@ class DatabaseService {
                 error: null
             };
         } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene la configuración de la empresa
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getConfiguracionEmpresa() {
+        try {
+            const { data, error } = await this.supabase
+                .from('configuracion_empresa')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                return { data: null, error };
+            }
+
+            return { data: data || null, error: null };
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Guarda o actualiza la configuración de la empresa
+     * @param {Object} configData - Datos de configuración
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async saveConfiguracionEmpresa(configData) {
+        try {
+            console.log('🔵 saveConfiguracionEmpresa - Iniciando, datos recibidos:', configData);
+
+            // Obtener usuario actual para updated_by
+            let currentUserId = null;
+            try {
+                if (this.supabase) {
+                    const { data: { session }, error: sessionError } = await this.supabase.auth.getSession();
+                    if (sessionError) {
+                        console.error('Error obteniendo sesión:', sessionError);
+                    } else {
+                        currentUserId = session?.user?.id || null;
+                        console.log('🔵 Usuario actual:', currentUserId);
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting current user:', error);
+            }
+
+            // Preparar datos para insertar/actualizar
+            const dataToSave = {
+                nombre_empresa: configData.nombre_empresa?.trim() || '',
+                nit: configData.nit?.trim() || '',
+                direccion: configData.direccion?.trim() || '',
+                telefono: configData.telefono?.trim() || '',
+                email: configData.email?.trim() || '',
+                sitio_web: configData.sitio_web?.trim() || null,
+                resolucion_dian: configData.resolucion_dian?.trim() || null,
+                rango_desde: configData.rango_desde ? parseInt(configData.rango_desde) : null,
+                rango_hasta: configData.rango_hasta ? parseInt(configData.rango_hasta) : null,
+                fecha_vencimiento_resolucion: configData.fecha_vencimiento_resolucion?.trim() || null,
+                prefijo_facturacion: configData.prefijo_facturacion?.trim() || null,
+                impuesto_default: configData.impuesto_default ? parseFloat(configData.impuesto_default) : 19.00,
+                moneda: configData.moneda?.trim() || 'COP',
+                zona_horaria: configData.zona_horaria?.trim() || 'America/Bogota',
+                logo_url: configData.logo_url?.trim() || null,
+                mensaje_legal: configData.mensaje_legal?.trim() || null,
+                updated_at: new Date().toISOString(),
+                updated_by: currentUserId
+            };
+
+            console.log('🔵 Datos preparados para guardar:', dataToSave);
+
+            // Verificar si ya existe una configuración
+            const { data: existingConfig, error: checkError } = await this.supabase
+                .from('configuracion_empresa')
+                .select('id')
+                .limit(1)
+                .maybeSingle();
+
+            if (checkError) {
+                console.error('❌ Error verificando configuración existente:', checkError);
+                return { data: null, error: checkError };
+            }
+
+            console.log('🔵 Configuración existente:', existingConfig);
+
+            let result;
+            if (existingConfig && existingConfig.id) {
+                // Actualizar configuración existente
+                console.log('🔵 Actualizando configuración existente, ID:', existingConfig.id);
+                const { data, error } = await this.supabase
+                    .from('configuracion_empresa')
+                    .update(dataToSave)
+                    .eq('id', existingConfig.id)
+                    .select()
+                    .single();
+
+                result = { data, error };
+                
+                if (error) {
+                    console.error('❌ Error actualizando configuración:', error);
+                } else {
+                    console.log('✅ Configuración actualizada exitosamente:', data);
+                }
+            } else {
+                // Crear nueva configuración
+                console.log('🔵 Creando nueva configuración');
+                const { data, error } = await this.supabase
+                    .from('configuracion_empresa')
+                    .insert(dataToSave)
+                    .select()
+                    .single();
+
+                result = { data, error };
+                
+                if (error) {
+                    console.error('❌ Error insertando configuración:', error);
+                } else {
+                    console.log('✅ Configuración creada exitosamente:', data);
+                }
+            }
+
+            if (result.error) {
+                console.error('❌ Error final en saveConfiguracionEmpresa:', result.error);
+                return { data: null, error: result.error };
+            }
+
+            console.log('✅ saveConfiguracionEmpresa - Completado exitosamente');
+            return { data: result.data, error: null };
+        } catch (error) {
+            console.error('❌ Excepción en saveConfiguracionEmpresa:', error);
             return { data: null, error };
         }
     }

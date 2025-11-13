@@ -9,16 +9,16 @@
         const form = document.getElementById('userForm');
         const saveBtn = form ? form.querySelector('button[type="submit"]') : null;
         const fullName = document.getElementById('fullName');
-        const username = document.getElementById('username');
-        const email = document.getElementById('email');
+        const username = document.getElementById('userName');
+        const email = document.getElementById('userEmail');
         const phone = document.getElementById('phone');
         const documentId = document.getElementById('documentId');
         const birthDate = document.getElementById('birthDate');
         const address = document.getElementById('address');
         const userRole = document.getElementById('userRole');
         const userStatus = document.getElementById('userStatus');
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirmPassword');
+        const password = document.getElementById('userPassword');
+        const confirmPassword = document.getElementById('confirmUserPassword');
         const togglePasswordBtn = document.getElementById('togglePassword');
         const searchTerm = document.getElementById('searchTerm');
         const filterRole = document.getElementById('filterRole');
@@ -143,6 +143,10 @@
             e?.preventDefault?.();
             if (!form.checkValidity()) {
                 form.reportValidity();
+                return;
+            }
+            if (!password || !confirmPassword) {
+                alert('Error: No se encontraron los campos de contraseña');
                 return;
             }
             if (password.value !== confirmPassword.value) {

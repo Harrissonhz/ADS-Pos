@@ -411,7 +411,7 @@
         }
 
         // Verificar cache (solo para consultas de al menos 2 caracteres)
-        const cacheKey = getCacheKey('salesperson', query, { role: 'Vendedor' });
+        const cacheKey = getCacheKey('salesperson', query, { role: 'seller' });
         if (query.length >= 2 && searchCache[cacheKey]) {
             const inputElement = document.getElementById('salespersonSearch');
             if (inputElement) {
@@ -423,7 +423,7 @@
         try {
             const result = await window.db.getUsuarios({
                 search: query,
-                role: 'Vendedor',
+                role: 'seller',
                 status: 'active',
                 limit: 10,
                 offset: 0
@@ -463,7 +463,7 @@
 
         try {
             const result = await window.db.getUsuarios({
-                role: 'Vendedor',
+                role: 'seller',
                 status: 'active',
                 limit: 1,
                 offset: 0,
@@ -1720,9 +1720,6 @@
         // ===== LÓGICA DEL FORMULARIO DE VENTAS =====
         const salesForm = document.getElementById('salesForm');
         const processSaleBtn = document.getElementById('processSaleBtn');
-        const saveDraftBtn = document.getElementById('saveDraftBtn');
-        const holdSaleBtn = document.getElementById('holdSaleBtn');
-        const printReceiptBtn = document.getElementById('printReceiptBtn');
         const clearCartBtn = document.getElementById('clearCartBtn');
         const amountReceived = document.getElementById('amountReceived');
         const paymentMethod = document.getElementById('paymentMethod');
@@ -1911,7 +1908,18 @@
                     throw new Error('No hay conexión con el servicio de base de datos');
                 }
 
-                const result = await window.db.createVenta(ventaData, detalles);
+                // Verificar si estamos en modo edición
+                const isEditing = processSaleBtn.getAttribute('data-editing') === 'true';
+                const ventaId = processSaleBtn.getAttribute('data-venta-id');
+
+                let result;
+                if (isEditing && ventaId) {
+                    // Actualizar venta existente
+                    result = await window.db.updateVenta(ventaId, ventaData, detalles);
+                } else {
+                    // Crear nueva venta
+                    result = await window.db.createVenta(ventaData, detalles);
+                }
 
                 if (result.error) {
                     throw new Error(result.error.message || 'Error al procesar la venta');
@@ -1922,17 +1930,28 @@
                 const numeroVenta = result.data?.venta?.numero_venta || 'N/A';
                 
                 // Mostrar mensaje de éxito
-                alert(`✅ Venta procesada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
+                if (isEditing) {
+                    alert(`✅ Venta actualizada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
+                } else {
+                    alert(`✅ Venta procesada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
+                }
 
-                // Limpiar formulario
+                // Limpiar formulario y modo edición
                 clearSaleForm();
+                
+                // Restaurar botón a modo normal
+                if (processSaleBtn) {
+                    processSaleBtn.removeAttribute('data-editing');
+                    processSaleBtn.removeAttribute('data-venta-id');
+                    processSaleBtn.innerHTML = '<i class="fas fa-check me-1"></i>Procesar Venta';
+                }
 
-                // Actualizar KPIs
-                await updateSalesKPIs();
-
-                // Recargar ventas recientes
+                // Actualizar KPIs y recargar ventas recientes en paralelo
                 currentPageVentas = 1; // Resetear a la primera página
-                await loadVentasRecientes();
+                await Promise.all([
+                    updateSalesKPIs(),
+                    loadVentasRecientes()
+                ]);
 
                 // Restaurar botón
                 processSaleBtn.disabled = false;
@@ -1956,6 +1975,14 @@
             cart = [];
             renderCart();
             updateCartTotals();
+
+            // Limpiar modo edición del botón
+            const processSaleBtn = document.getElementById('processSaleBtn');
+            if (processSaleBtn) {
+                processSaleBtn.removeAttribute('data-editing');
+                processSaleBtn.removeAttribute('data-venta-id');
+                processSaleBtn.innerHTML = '<i class="fas fa-check me-1"></i>Procesar Venta';
+            }
 
             // Limpiar campos de búsqueda
             const customerSearch = document.getElementById('customerSearch');
@@ -2034,6 +2061,18 @@
             try {
                 if (!window.db) return;
 
+                // Obtener elementos de los KPIs una sola vez
+                const ventasHoyCard = document.getElementById('kpiVentasHoy');
+                const totalHoyCard = document.getElementById('kpiTotalHoy');
+                const promedioCard = document.getElementById('kpiPromedio');
+                const ultimaVentaCard = document.getElementById('kpiUltimaVenta');
+                
+                // Mostrar indicador de carga
+                if (ventasHoyCard) ventasHoyCard.textContent = '...';
+                if (totalHoyCard) totalHoyCard.textContent = '...';
+                if (promedioCard) promedioCard.textContent = '...';
+                if (ultimaVentaCard) ultimaVentaCard.textContent = '...';
+
                 // Obtener fecha de hoy (inicio y fin del día)
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
@@ -2050,16 +2089,17 @@
 
                 if (stats.error) {
                     console.error('Error obteniendo estadísticas:', stats.error);
+                    // Restaurar placeholders en caso de error
+                    if (ventasHoyCard) ventasHoyCard.textContent = '—';
+                    if (totalHoyCard) totalHoyCard.textContent = '—';
+                    if (promedioCard) promedioCard.textContent = '—';
+                    if (ultimaVentaCard) ultimaVentaCard.textContent = '—';
                     return;
                 }
 
                 const data = stats.data || {};
 
-                // Actualizar tarjetas
-                const ventasHoyCard = document.querySelector('.row.g-2.g-md-3.mb-4 .col-6.col-lg-3:nth-child(1) h4');
-                const totalHoyCard = document.querySelector('.row.g-2.g-md-3.mb-4 .col-6.col-lg-3:nth-child(2) h4');
-                const promedioCard = document.querySelector('.row.g-2.g-md-3.mb-4 .col-6.col-lg-3:nth-child(3) h4');
-                const ultimaVentaCard = document.querySelector('.row.g-2.g-md-3.mb-4 .col-6.col-lg-3:nth-child(4) h4');
+                // Actualizar tarjetas usando IDs específicos
 
                 if (ventasHoyCard) {
                     ventasHoyCard.textContent = data.totalVentas || 0;
@@ -2070,19 +2110,23 @@
                 if (promedioCard) {
                     promedioCard.textContent = formatCOP(data.promedio || 0);
                 }
-                if (ultimaVentaCard && data.ultimaVenta) {
-                    const fechaUltima = new Date(data.ultimaVenta.fecha_venta);
-                    const ahora = new Date();
-                    const diffMs = ahora - fechaUltima;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    
-                    if (diffMins < 1) {
-                        ultimaVentaCard.textContent = 'Ahora';
-                    } else if (diffMins < 60) {
-                        ultimaVentaCard.textContent = `${diffMins} min`;
+                if (ultimaVentaCard) {
+                    if (data.ultimaVenta) {
+                        const fechaUltima = new Date(data.ultimaVenta.fecha_venta);
+                        const ahora = new Date();
+                        const diffMs = ahora - fechaUltima;
+                        const diffMins = Math.floor(diffMs / 60000);
+                        
+                        if (diffMins < 1) {
+                            ultimaVentaCard.textContent = 'Ahora';
+                        } else if (diffMins < 60) {
+                            ultimaVentaCard.textContent = `${diffMins} min`;
+                        } else {
+                            const diffHours = Math.floor(diffMins / 60);
+                            ultimaVentaCard.textContent = `${diffHours} h`;
+                        }
                     } else {
-                        const diffHours = Math.floor(diffMins / 60);
-                        ultimaVentaCard.textContent = `${diffHours} h`;
+                        ultimaVentaCard.textContent = '—';
                     }
                 }
             } catch (error) {
@@ -2106,29 +2150,14 @@
 
         // Inicializar al cargar
         initializeSaleDateTime();
-        // Actualizar KPIs al cargar
-        updateSalesKPIs();
-
-        // Guardar borrador
-        if (saveDraftBtn) {
-            saveDraftBtn.addEventListener('click', () => {
-                alert('Borrador guardado exitosamente');
-            });
-        }
-
-        // Pausar venta
-        if (holdSaleBtn) {
-            holdSaleBtn.addEventListener('click', () => {
-                alert('Venta pausada. Puedes continuarla más tarde.');
-            });
-        }
-
-        // Imprimir recibo
-        if (printReceiptBtn) {
-            printReceiptBtn.addEventListener('click', () => {
-                alert('Enviando a impresora...');
-            });
-        }
+        
+        // Cargar KPIs y ventas recientes en paralelo para optimizar
+        Promise.all([
+            updateSalesKPIs(),
+            loadVentasRecientes()
+        ]).catch(error => {
+            console.error('Error cargando datos iniciales:', error);
+        });
 
         // Limpiar carrito
         if (clearCartBtn) {
@@ -2213,7 +2242,6 @@
 
         // Actualizar estadísticas (simulación)
         function updateStats() {
-            console.log('Actualizando estadísticas de ventas...');
         }
 
         // Listener para descuento global
@@ -2241,6 +2269,28 @@
         async function loadVentasRecientes() {
             try {
                 if (!window.supabaseClient) return;
+                
+                // Mostrar indicador de carga
+                const recentSalesBody = document.getElementById('recentSalesBody');
+                const recentSalesBodyMobile = document.getElementById('recentSalesBodyMobile');
+                if (recentSalesBody && recentSalesBody.querySelector('tr td[colspan]') === null) {
+                    recentSalesBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-spinner fa-spin fa-2x mb-2"></i><br>
+                                Cargando ventas recientes...
+                            </td>
+                        </tr>
+                    `;
+                }
+                if (recentSalesBodyMobile && !recentSalesBodyMobile.querySelector('.fa-spinner')) {
+                    recentSalesBodyMobile.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                            <p class="mb-0">Cargando ventas recientes...</p>
+                        </div>
+                    `;
+                }
                 
                 const offset = (currentPageVentas - 1) * pageSizeVentas;
                 
@@ -2286,58 +2336,60 @@
                     return;
                 }
 
-                // Los clientes ya vienen en el JOIN desde la consulta anterior
-                // Verificar si el JOIN funcionó correctamente
-                console.log('Ventas recibidas con JOIN:', ventas.length);
-                ventas.forEach((v, index) => {
-                    console.log(`Venta ${index + 1}:`, {
-                        numero: v.numero_venta,
-                        cliente_id: v.cliente_id,
-                        cliente_join: v.clientes ? `✅ ${v.clientes.nombre_completo}` : '❌ null'
-                    });
-                });
-
-                // Obtener IDs únicos de usuarios para consultar por separado
-                const usuarioIds = ventas.filter(v => v.usuario_id).map(v => v.usuario_id);
+                // Obtener IDs únicos para consultas paralelas
+                const usuarioIds = [...new Set(ventas.filter(v => v.usuario_id).map(v => v.usuario_id))];
                 const ventaIds = ventas.map(v => v.id);
+                const clientesFaltantes = ventas.filter(v => v.cliente_id && !v.clientes);
+                const clienteIdsFaltantes = [...new Set(clientesFaltantes.map(v => v.cliente_id))];
 
-                // Obtener información de usuarios
-                const usuariosMap = new Map();
-                if (usuarioIds.length > 0) {
-                    const { data: usuarios, error: usuariosError } = await window.supabaseClient
-                        .from('usuarios')
-                        .select('id, nombre, apellido')
-                        .in('id', usuarioIds);
+                // Hacer todas las consultas en paralelo para optimizar
+                const [usuariosResult, detallesResult, clientesFaltantesResult] = await Promise.all([
+                    // Consulta de usuarios
+                    usuarioIds.length > 0 
+                        ? window.supabaseClient
+                            .from('usuarios')
+                            .select('id, nombre_completo, email')
+                            .in('id', usuarioIds)
+                        : Promise.resolve({ data: [], error: null }),
                     
-                    if (!usuariosError && usuarios) {
-                        usuarios.forEach(u => usuariosMap.set(u.id, u));
-                    }
+                    // Consulta de detalles de venta con productos
+                    window.supabaseClient
+                        .from('ventas_detalle')
+                        .select(`
+                            venta_id,
+                            cantidad,
+                            productos:producto_id(
+                                id,
+                                nombre
+                            )
+                        `)
+                        .in('venta_id', ventaIds),
+                    
+                    // Consulta de clientes faltantes (si hay)
+                    clienteIdsFaltantes.length > 0
+                        ? window.supabaseClient
+                            .from('clientes')
+                            .select('id, nombre_completo, tipo_id, numero_id')
+                            .in('id', clienteIdsFaltantes)
+                        : Promise.resolve({ data: [], error: null })
+                ]);
+
+                // Procesar resultados de usuarios
+                const usuariosMap = new Map();
+                if (!usuariosResult.error && usuariosResult.data) {
+                    usuariosResult.data.forEach(u => usuariosMap.set(u.id, u));
                 }
 
-                // Obtener productos por venta con JOIN a la tabla productos
-                const { data: detalles, error: detallesError } = await window.supabaseClient
-                    .from('ventas_detalle')
-                    .select(`
-                        venta_id,
-                        cantidad,
-                        productos:producto_id(
-                            id,
-                            nombre
-                        )
-                    `)
-                    .in('venta_id', ventaIds);
-
-                // Agrupar productos por venta
+                // Procesar resultados de detalles y agrupar productos por venta
                 const productosPorVenta = {};
-                if (!detallesError && detalles) {
-                    detalles.forEach(d => {
+                if (!detallesResult.error && detallesResult.data) {
+                    detallesResult.data.forEach(d => {
                         if (!productosPorVenta[d.venta_id]) {
                             productosPorVenta[d.venta_id] = [];
                         }
                         if (d.productos && d.productos.nombre) {
                             const cantidad = d.cantidad || 1;
                             const nombreProducto = d.productos.nombre;
-                            // Si hay cantidad > 1, mostrar cantidad x nombre
                             const productoTexto = cantidad > 1 
                                 ? `${cantidad}x ${nombreProducto}` 
                                 : nombreProducto;
@@ -2346,48 +2398,24 @@
                     });
                 }
 
-                // Si el JOIN no funcionó, hacer consultas individuales de clientes faltantes
-                const clientesFaltantes = ventas.filter(v => v.cliente_id && !v.clientes);
-                if (clientesFaltantes.length > 0) {
-                    console.log(`⚠️ ${clientesFaltantes.length} ventas sin cliente del JOIN. Consultando individualmente...`);
-                    const clienteIdsFaltantes = [...new Set(clientesFaltantes.map(v => v.cliente_id))];
+                // Procesar clientes faltantes
+                if (!clientesFaltantesResult.error && clientesFaltantesResult.data) {
+                    const clientesMap = new Map();
+                    clientesFaltantesResult.data.forEach(c => clientesMap.set(c.id, c));
                     
-                    for (const clienteId of clienteIdsFaltantes) {
-                        try {
-                            const { data: cliente, error } = await window.supabaseClient
-                                .from('clientes')
-                                .select('id, nombre_completo, tipo_id, numero_id')
-                                .eq('id', clienteId)
-                                .maybeSingle();
-                            
-                            if (!error && cliente) {
-                                // Actualizar todas las ventas que usan este cliente
-                                ventas.forEach(v => {
-                                    if (v.cliente_id === clienteId && !v.clientes) {
-                                        v.clientes = cliente;
-                                        console.log(`✅ Cliente encontrado: "${cliente.nombre_completo}"`);
-                                    }
-                                });
-                            }
-                        } catch (err) {
-                            console.error(`Error consultando cliente ${clienteId}:`, err);
+                    ventas.forEach(v => {
+                        if (v.cliente_id && !v.clientes && clientesMap.has(v.cliente_id)) {
+                            v.clientes = clientesMap.get(v.cliente_id);
                         }
-                    }
+                    });
                 }
                 
-                // Combinar datos - los clientes ya vienen del JOIN o de las consultas individuales
+                // Combinar datos
                 ventas.forEach(v => {
                     v.usuarios = v.usuario_id ? usuariosMap.get(v.usuario_id) : null;
-                    // Obtener nombres de productos para esta venta
                     v.productos_nombres = productosPorVenta[v.id] || [];
                     v.productos_count = v.productos_nombres.length;
                 });
-                
-                console.log('Ventas procesadas:', ventas.map(v => ({
-                    numero: v.numero_venta,
-                    cliente_id: v.cliente_id,
-                    cliente_nombre: v.clientes?.nombre_completo || 'No encontrado'
-                })));
 
                 totalVentasCount = count || 0;
                 ventasRecientesData = ventas || [];
@@ -2475,8 +2503,14 @@
                         <button type="button" class="btn btn-sm btn-outline-info me-1" title="Ver detalles" onclick="verDetallesVenta('${venta.id}')">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Reimprimir" onclick="reimprimirVenta('${venta.id}')">
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar" onclick="editarVenta('${venta.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Reimprimir" onclick="reimprimirVenta('${venta.id}')">
                             <i class="fas fa-print"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminarVenta('${venta.id}')">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 `;
@@ -2506,12 +2540,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex gap-2 justify-content-end mt-2">
+                    <div class="d-flex gap-2 justify-content-end mt-2 flex-wrap">
                         <button type="button" class="btn btn-sm btn-outline-info" title="Ver detalles" onclick="verDetallesVenta('${venta.id}')">
                             <i class="fas fa-eye me-1"></i>Ver
                         </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" onclick="editarVenta('${venta.id}')">
+                            <i class="fas fa-edit me-1"></i>Editar
+                        </button>
                         <button type="button" class="btn btn-sm btn-outline-secondary" title="Reimprimir" onclick="reimprimirVenta('${venta.id}')">
                             <i class="fas fa-print me-1"></i>Imprimir
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminarVenta('${venta.id}')">
+                            <i class="fas fa-trash me-1"></i>Eliminar
                         </button>
                     </div>
                 `;
@@ -2792,9 +2832,682 @@
             }
         };
 
-        window.reimprimirVenta = function(ventaId) {
-            // TODO: Implementar reimpresión de venta
-            alert('Reimprimir venta: ' + ventaId);
+        window.reimprimirVenta = async function(ventaId) {
+            try {
+                if (!ventaId) {
+                    alert('⚠️ ID de venta no válido');
+                    return;
+                }
+
+                // Verificar que jsPDF esté disponible
+                if (typeof window.jspdf === 'undefined') {
+                    alert('❌ Error: La librería jsPDF no está cargada. Por favor, recarga la página.');
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                const loadingMessage = '🔄 Generando documento PDF...';
+                console.log(loadingMessage);
+
+                // Obtener venta con sus relaciones
+                const { data: venta, error: ventaError } = await window.supabaseClient
+                    .from('ventas')
+                    .select(`
+                        *,
+                        clientes:cliente_id(
+                            id,
+                            nombre_completo,
+                            tipo_id,
+                            numero_id,
+                            direccion,
+                            ciudad,
+                            departamento,
+                            telefono,
+                            email
+                        ),
+                        usuarios:usuario_id(
+                            id,
+                            nombre_completo,
+                            email
+                        )
+                    `)
+                    .eq('id', ventaId)
+                    .single();
+
+                if (ventaError || !venta) {
+                    console.error('Error cargando venta:', ventaError);
+                    alert('❌ No se pudo cargar la información de la venta');
+                    return;
+                }
+
+                // Obtener detalles de la venta con información de productos
+                const { data: detalles, error: detallesError } = await window.supabaseClient
+                    .from('ventas_detalle')
+                    .select(`
+                        id,
+                        cantidad,
+                        precio_unitario,
+                        descuento,
+                        tasa_impuesto,
+                        subtotal,
+                        impuesto,
+                        total,
+                        productos:producto_id(
+                            id,
+                            nombre,
+                            codigo_interno,
+                            codigo_barras,
+                            descripcion
+                        )
+                    `)
+                    .eq('venta_id', ventaId);
+
+                if (detallesError) {
+                    console.error('Error cargando detalles:', detallesError);
+                    alert('❌ No se pudo cargar el detalle de productos');
+                    return;
+                }
+
+                // Obtener configuración de la empresa
+                const configResult = await window.db.getConfiguracionEmpresa();
+                if (configResult.error) {
+                    console.error('Error cargando configuración:', configResult.error);
+                    alert('⚠️ No se pudo cargar la configuración de la empresa. Se generará el documento con datos básicos.');
+                }
+
+                const configuracion = configResult.data || {};
+
+                // Generar el PDF
+                generarPDFRecibo(venta, detalles || [], configuracion);
+
+            } catch (error) {
+                console.error('Error al generar documento:', error);
+                alert('❌ Error al generar el documento PDF: ' + error.message);
+            }
+        };
+
+        // Función para generar el PDF del recibo
+        function generarPDFRecibo(venta, detalles, configuracion) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [80, 297] // Tamaño estándar para impresoras térmicas (80mm ancho)
+                });
+
+                let yPos = 10; // Posición vertical inicial
+                const pageWidth = 80;
+                const margin = 5;
+                const contentWidth = pageWidth - (margin * 2);
+                const lineHeight = 5;
+                const fontSize = 8;
+
+                // Función auxiliar para agregar texto con límite de ancho
+                function addText(text, x, y, options = {}) {
+                    const opts = {
+                        maxWidth: contentWidth,
+                        align: options.align || 'left',
+                        fontSize: options.fontSize || fontSize
+                    };
+                    doc.setFontSize(opts.fontSize);
+                    const lines = doc.splitTextToSize(text, opts.maxWidth);
+                    doc.text(lines, x, y, { align: opts.align });
+                    return lines.length * (opts.fontSize * 0.4); // Altura aproximada
+                }
+
+                // Función para centrar texto
+                function addCenteredText(text, y, options = {}) {
+                    return addText(text, pageWidth / 2, y, { ...options, align: 'center' });
+                }
+
+                // Función para formatear moneda
+                function formatMoney(value) {
+                    return new Intl.NumberFormat('es-CO', {
+                        style: 'currency',
+                        currency: 'COP',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(value);
+                }
+
+                // Función para formatear fecha
+                function formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+
+                // ===== ENCABEZADO =====
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+
+                // Logo (si existe)
+                if (configuracion.logo_url) {
+                    try {
+                        // Nota: jsPDF básico no soporta imágenes desde URL directamente
+                        // Se puede agregar con addImage si se carga la imagen primero
+                        // Por ahora, solo mostramos el nombre de la empresa
+                    } catch (e) {
+                        console.log('No se pudo cargar el logo:', e);
+                    }
+                }
+
+                // Nombre de la empresa
+                const nombreEmpresa = configuracion.nombre_empresa || 'ADS Store';
+                yPos += addCenteredText(nombreEmpresa, yPos, { fontSize: 10 });
+                yPos += lineHeight;
+
+                // NIT
+                if (configuracion.nit) {
+                    doc.setFontSize(8);
+                    doc.setFont(undefined, 'normal');
+                    yPos += addCenteredText(`NIT: ${configuracion.nit}`, yPos, { fontSize: 8 });
+                    yPos += lineHeight * 0.5;
+                }
+
+                // Dirección
+                if (configuracion.direccion) {
+                    yPos += addCenteredText(configuracion.direccion, yPos, { fontSize: 7 });
+                    yPos += lineHeight * 0.5;
+                }
+
+                // Teléfono y Email
+                const contacto = [];
+                if (configuracion.telefono) contacto.push(`Tel: ${configuracion.telefono}`);
+                if (configuracion.email) contacto.push(configuracion.email);
+                if (contacto.length > 0) {
+                    yPos += addCenteredText(contacto.join(' | '), yPos, { fontSize: 7 });
+                    yPos += lineHeight * 0.5;
+                }
+
+                // Resolución DIAN
+                if (configuracion.resolucion_dian) {
+                    yPos += addCenteredText(`Res. DIAN: ${configuracion.resolucion_dian}`, yPos, { fontSize: 7 });
+                    if (configuracion.rango_desde && configuracion.rango_hasta) {
+                        yPos += addCenteredText(`Rango: ${configuracion.rango_desde} - ${configuracion.rango_hasta}`, yPos, { fontSize: 7 });
+                    }
+                    if (configuracion.fecha_vencimiento_resolucion) {
+                        const fechaVenc = new Date(configuracion.fecha_vencimiento_resolucion).toLocaleDateString('es-CO');
+                        yPos += addCenteredText(`Vence: ${fechaVenc}`, yPos, { fontSize: 7 });
+                    }
+                    yPos += lineHeight * 0.5;
+                }
+
+                // Línea separadora
+                doc.setLineWidth(0.5);
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight;
+
+                // ===== TÍTULO DEL DOCUMENTO =====
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                const prefijo = configuracion.prefijo_facturacion || 'REC';
+                yPos += addCenteredText(`${prefijo} - RECIBO DE VENTA`, yPos, { fontSize: 10 });
+                yPos += lineHeight * 0.5;
+
+                // Número de venta
+                doc.setFontSize(9);
+                yPos += addCenteredText(`# ${venta.numero_venta}`, yPos, { fontSize: 9 });
+                yPos += lineHeight * 0.5;
+
+                // Fecha
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'normal');
+                yPos += addCenteredText(`Fecha: ${formatDate(venta.fecha_venta)}`, yPos, { fontSize: 8 });
+                yPos += lineHeight;
+
+                // Línea separadora
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight;
+
+                // ===== DATOS DEL CLIENTE =====
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'bold');
+                doc.text('CLIENTE:', margin, yPos);
+                yPos += lineHeight;
+                doc.setFont(undefined, 'normal');
+
+                if (venta.clientes) {
+                    const cliente = venta.clientes;
+                    yPos += addText(cliente.nombre_completo || 'Cliente General', margin, yPos, { fontSize: 8 });
+                    yPos += lineHeight * 0.5;
+
+                    if (cliente.tipo_id && cliente.numero_id) {
+                        yPos += addText(`${cliente.tipo_id}: ${cliente.numero_id}`, margin, yPos, { fontSize: 7 });
+                        yPos += lineHeight * 0.5;
+                    }
+
+                    if (cliente.direccion) {
+                        const direccionCompleta = [cliente.direccion, cliente.ciudad, cliente.departamento]
+                            .filter(Boolean).join(', ');
+                        if (direccionCompleta) {
+                            yPos += addText(direccionCompleta, margin, yPos, { fontSize: 7 });
+                            yPos += lineHeight * 0.5;
+                        }
+                    }
+
+                    if (cliente.telefono) {
+                        yPos += addText(`Tel: ${cliente.telefono}`, margin, yPos, { fontSize: 7 });
+                        yPos += lineHeight * 0.5;
+                    }
+                } else {
+                    yPos += addText('Cliente General', margin, yPos, { fontSize: 8 });
+                    yPos += lineHeight * 0.5;
+                }
+
+                yPos += lineHeight * 0.5;
+
+                // Línea separadora
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight;
+
+                // ===== DETALLE DE PRODUCTOS =====
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'bold');
+                doc.text('PRODUCTOS:', margin, yPos);
+                yPos += lineHeight;
+
+                // Encabezado de tabla
+                doc.setFontSize(7);
+                doc.setFont(undefined, 'normal');
+                doc.text('Descripción', margin, yPos);
+                doc.text('Cant', pageWidth - margin - 15, yPos, { align: 'right' });
+                yPos += lineHeight * 0.8;
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight * 0.5;
+
+                // Productos
+                doc.setFontSize(7);
+                let totalProductos = 0;
+                detalles.forEach((detalle, index) => {
+                    // Verificar si necesitamos nueva página
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 10;
+                    }
+
+                    const producto = detalle.productos || {};
+                    const nombreProducto = producto.nombre || 'Producto sin nombre';
+                    const codigo = producto.codigo_interno || producto.codigo_barras || '';
+                    const cantidad = detalle.cantidad || 0;
+                    const precioUnit = detalle.precio_unitario || 0;
+                    const descuento = detalle.descuento || 0;
+                    const subtotal = detalle.subtotal || 0;
+                    const impuesto = detalle.impuesto || 0;
+                    const total = detalle.total || 0;
+
+                    // Nombre del producto
+                    yPos += addText(nombreProducto, margin, yPos, { fontSize: 7 });
+                    yPos += lineHeight * 0.3;
+
+                    // Código (si existe)
+                    if (codigo) {
+                        yPos += addText(`Cód: ${codigo}`, margin + 2, yPos, { fontSize: 6 });
+                        yPos += lineHeight * 0.3;
+                    }
+
+                    // Cantidad, precio y total
+                    const detalleLine = `${cantidad} x ${formatMoney(precioUnit)}`;
+                    if (descuento > 0) {
+                        doc.text(detalleLine, margin, yPos, { fontSize: 6 });
+                        yPos += lineHeight * 0.3;
+                        doc.text(`Desc: ${descuento}%`, margin + 2, yPos, { fontSize: 6 });
+                        yPos += lineHeight * 0.3;
+                    } else {
+                        doc.text(detalleLine, margin, yPos, { fontSize: 6 });
+                        yPos += lineHeight * 0.3;
+                    }
+
+                    // Total del item
+                    doc.setFont(undefined, 'bold');
+                    doc.text(formatMoney(total), pageWidth - margin, yPos, { align: 'right', fontSize: 7 });
+                    doc.setFont(undefined, 'normal');
+                    yPos += lineHeight * 0.5;
+
+                    totalProductos += total;
+                });
+
+                yPos += lineHeight * 0.5;
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight;
+
+                // ===== TOTALES =====
+                doc.setFontSize(8);
+                const subtotal = venta.subtotal || 0;
+                const descuento = venta.descuento || 0;
+                const impuesto = venta.impuesto || 0;
+                const total = venta.total || 0;
+
+                // Subtotal
+                doc.text('Subtotal:', margin, yPos, { fontSize: 8 });
+                doc.text(formatMoney(subtotal), pageWidth - margin, yPos, { align: 'right', fontSize: 8 });
+                yPos += lineHeight;
+
+                // Descuento (si existe)
+                if (descuento > 0) {
+                    doc.text('Descuento:', margin, yPos, { fontSize: 8 });
+                    doc.text(formatMoney(descuento), pageWidth - margin, yPos, { align: 'right', fontSize: 8 });
+                    yPos += lineHeight;
+                }
+
+                // Impuesto
+                if (impuesto > 0) {
+                    doc.text('IVA (19%):', margin, yPos, { fontSize: 8 });
+                    doc.text(formatMoney(impuesto), pageWidth - margin, yPos, { align: 'right', fontSize: 8 });
+                    yPos += lineHeight;
+                }
+
+                // Línea separadora antes del total
+                yPos += lineHeight * 0.3;
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight * 0.5;
+
+                // Total
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10);
+                doc.text('TOTAL:', margin, yPos, { fontSize: 10 });
+                doc.text(formatMoney(total), pageWidth - margin, yPos, { align: 'right', fontSize: 10 });
+                yPos += lineHeight;
+
+                // Método de pago
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(8);
+                const metodoPago = venta.metodo_pago || 'efectivo';
+                const metodoPagoText = metodoPago.charAt(0).toUpperCase() + metodoPago.slice(1);
+                yPos += lineHeight;
+                doc.text(`Método de pago: ${metodoPagoText}`, margin, yPos, { fontSize: 8 });
+                yPos += lineHeight * 0.5;
+
+                // Vendedor
+                if (venta.usuarios) {
+                    doc.text(`Vendedor: ${venta.usuarios.nombre_completo || 'N/A'}`, margin, yPos, { fontSize: 7 });
+                    yPos += lineHeight;
+                }
+
+                yPos += lineHeight;
+
+                // Línea separadora
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += lineHeight;
+
+                // ===== MENSAJE LEGAL / PIE DE PÁGINA =====
+                if (configuracion.mensaje_legal) {
+                    doc.setFontSize(6);
+                    yPos += addText(configuracion.mensaje_legal, margin, yPos, { fontSize: 6 });
+                    yPos += lineHeight;
+                }
+
+                // Mensaje por defecto
+                doc.setFontSize(6);
+                yPos += addCenteredText('¡Gracias por su compra!', yPos, { fontSize: 6 });
+                yPos += lineHeight * 0.5;
+                yPos += addCenteredText('Este documento es válido como comprobante de pago', yPos, { fontSize: 6 });
+
+                // ===== GENERAR Y DESCARGAR PDF =====
+                const fileName = `Recibo_${venta.numero_venta}_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+
+                console.log('✅ Documento PDF generado exitosamente');
+
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('❌ Error al generar el documento PDF: ' + error.message);
+            }
+        }
+
+        window.editarVenta = async function(ventaId) {
+            try {
+                if (!ventaId) {
+                    alert('⚠️ ID de venta no válido');
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                const processSaleBtn = document.getElementById('processSaleBtn');
+                if (processSaleBtn) {
+                    processSaleBtn.disabled = true;
+                    processSaleBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cargando...';
+                }
+
+                // Obtener venta con sus relaciones
+                const { data: venta, error: ventaError } = await window.supabaseClient
+                    .from('ventas')
+                    .select(`
+                        *,
+                        clientes:cliente_id(
+                            id,
+                            nombre_completo,
+                            tipo_id,
+                            numero_id,
+                            telefono,
+                            email
+                        ),
+                        usuarios:usuario_id(
+                            id,
+                            nombre_completo,
+                            email
+                        )
+                    `)
+                    .eq('id', ventaId)
+                    .single();
+
+                if (ventaError || !venta) {
+                    console.error('Error cargando venta:', ventaError);
+                    alert('❌ No se pudo cargar la información de la venta');
+                    if (processSaleBtn) {
+                        processSaleBtn.disabled = false;
+                        processSaleBtn.innerHTML = '<i class="fas fa-check me-1"></i>Procesar Venta';
+                    }
+                    return;
+                }
+
+                // Obtener detalles de la venta con información de productos
+                const { data: detalles, error: detallesError } = await window.supabaseClient
+                    .from('ventas_detalle')
+                    .select(`
+                        id,
+                        cantidad,
+                        precio_unitario,
+                        descuento,
+                        tasa_impuesto,
+                        subtotal,
+                        impuesto,
+                        total,
+                        productos:producto_id(
+                            id,
+                            nombre,
+                            codigo_interno,
+                            codigo_barras,
+                            stock_actual,
+                            activo,
+                            categoria:categorias(
+                                nombre
+                            )
+                        )
+                    `)
+                    .eq('venta_id', ventaId);
+
+                if (detallesError) {
+                    console.error('Error cargando detalles:', detallesError);
+                    alert('❌ No se pudo cargar el detalle de productos');
+                    if (processSaleBtn) {
+                        processSaleBtn.disabled = false;
+                        processSaleBtn.innerHTML = '<i class="fas fa-check me-1"></i>Procesar Venta';
+                    }
+                    return;
+                }
+
+                // Limpiar formulario y carrito
+                clearSaleForm();
+
+                // Llenar datos del cliente
+                if (venta.clientes) {
+                    const cliente = venta.clientes;
+                    const clienteNombre = cliente.nombre_completo || '';
+                    const clienteIdNumber = cliente.numero_id || '';
+                    document.getElementById('customerSearch').value = `${clienteNombre} - ${clienteIdNumber}`;
+                    document.getElementById('selectedCustomerId').value = cliente.id;
+                } else {
+                    document.getElementById('customerSearch').value = 'Cliente General';
+                    document.getElementById('selectedCustomerId').value = '99999';
+                }
+
+                // Llenar datos del vendedor
+                if (venta.usuarios) {
+                    const vendedor = venta.usuarios;
+                    const vendedorNombre = vendedor.nombre_completo || vendedor.email || '';
+                    document.getElementById('salespersonSearch').value = vendedorNombre;
+                    document.getElementById('selectedSalespersonId').value = vendedor.id;
+                }
+
+                // Llenar fecha y hora
+                const fechaVenta = new Date(venta.fecha_venta);
+                const fechaLocal = new Date(fechaVenta.getTime() - fechaVenta.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0, 16);
+                document.getElementById('saleDateTime').value = fechaLocal;
+
+                // Llenar método de pago
+                document.getElementById('paymentMethod').value = venta.metodo_pago || 'efectivo';
+
+                // Llenar observaciones
+                const observacionesTextarea = document.querySelector('#metodoPago textarea');
+                if (observacionesTextarea && venta.notas) {
+                    observacionesTextarea.value = venta.notas;
+                }
+
+                // Llenar carrito con los productos de la venta
+                cart = [];
+                if (detalles && detalles.length > 0) {
+                    for (const detalle of detalles) {
+                        const producto = detalle.productos;
+                        if (!producto) continue;
+
+                        const categoriaNombre = producto.categoria?.nombre || 'Sin categoría';
+                        const codigo = producto.codigo_interno || producto.codigo_barras || '';
+                        
+                        // Agregar al carrito
+                        addToCart(
+                            producto.id,
+                            codigo,
+                            producto.nombre,
+                            categoriaNombre,
+                            detalle.precio_unitario,
+                            producto.stock_actual || 0,
+                            detalle.cantidad,
+                            detalle.tasa_impuesto || 0
+                        );
+
+                        // Aplicar descuento si existe
+                        const lastItem = cart[cart.length - 1];
+                        if (lastItem && detalle.descuento > 0) {
+                            lastItem.discount = detalle.descuento;
+                            lastItem.subtotal = calculateItemSubtotal(
+                                lastItem.price,
+                                lastItem.quantity,
+                                lastItem.discount
+                            );
+                        }
+                    }
+                }
+
+                // Actualizar totales
+                updateCartTotals();
+
+                // Configurar modo edición
+                if (processSaleBtn) {
+                    processSaleBtn.innerHTML = '<i class="fas fa-save me-1"></i>Actualizar Venta';
+                    processSaleBtn.setAttribute('data-editing', 'true');
+                    processSaleBtn.setAttribute('data-venta-id', ventaId);
+                    processSaleBtn.disabled = false;
+                }
+
+                // Scroll al inicio del formulario
+                document.querySelector('#nuevaVenta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Mostrar mensaje informativo
+                alert(`✅ Venta #${venta.numero_venta} cargada para edición.\n\nPuede modificar los datos y hacer clic en "Actualizar Venta" para guardar los cambios.`);
+
+            } catch (error) {
+                console.error('Error en editarVenta:', error);
+                alert('❌ Ocurrió un error al cargar la venta para edición');
+                const processSaleBtn = document.getElementById('processSaleBtn');
+                if (processSaleBtn) {
+                    processSaleBtn.disabled = false;
+                    processSaleBtn.innerHTML = '<i class="fas fa-check me-1"></i>Procesar Venta';
+                }
+            }
+        };
+
+        window.eliminarVenta = async function(ventaId) {
+            try {
+                if (!ventaId) {
+                    alert('⚠️ ID de venta no válido');
+                    return;
+                }
+
+                // Confirmar eliminación
+                if (!confirm('⚠️ ¿Está seguro de que desea eliminar esta venta?\n\nEsta acción revertirá:\n- Los movimientos de inventario (devolverá el stock)\n- Los valores en finanzas mensuales\n\nEsta acción no se puede deshacer.')) {
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                const processSaleBtn = document.getElementById('processSaleBtn');
+                const originalBtnText = processSaleBtn ? processSaleBtn.innerHTML : '';
+
+                // Obtener información de la venta para mostrar en el mensaje
+                const { data: venta, error: ventaError } = await window.supabaseClient
+                    .from('ventas')
+                    .select('numero_venta, total')
+                    .eq('id', ventaId)
+                    .is('deleted_at', null)
+                    .single();
+
+                if (ventaError || !venta) {
+                    alert('❌ No se pudo encontrar la venta o ya fue eliminada');
+                    return;
+                }
+
+                // Confirmar nuevamente con información de la venta
+                const totalFormateado = formatCOP(Number(venta.total) || 0);
+                if (!confirm(`⚠️ Confirmar eliminación de la venta:\n\nNúmero: ${venta.numero_venta}\nTotal: ${totalFormateado}\n\n¿Desea continuar?`)) {
+                    return;
+                }
+
+                // Llamar a la función de eliminación
+                if (!window.db) {
+                    alert('❌ No hay conexión con el servicio de base de datos');
+                    return;
+                }
+
+                const result = await window.db.deleteVenta(ventaId);
+
+                if (result.error) {
+                    console.error('Error eliminando venta:', result.error);
+                    alert(`❌ Error al eliminar la venta: ${result.error.message || 'Error desconocido'}`);
+                    return;
+                }
+
+                // Mostrar mensaje de éxito
+                alert(`✅ Venta #${venta.numero_venta} eliminada exitosamente.\n\nSe han revertido:\n- Movimientos de inventario (stock devuelto)\n- Valores en finanzas mensuales`);
+
+                // Actualizar KPIs y recargar ventas recientes en paralelo
+                currentPageVentas = 1;
+                await Promise.all([
+                    updateSalesKPIs(),
+                    loadVentasRecientes()
+                ]);
+
+            } catch (error) {
+                console.error('Error en eliminarVenta:', error);
+                alert('❌ Ocurrió un error al eliminar la venta');
+            }
         };
 
         // Cargar ventas recientes al inicializar
