@@ -402,6 +402,7 @@
 
         let editingPurchaseId = null;
         let originalPurchaseStatus = null;
+        let isSavingPurchase = false; // Bandera para prevenir llamadas duplicadas
 
         function enterEditMode(purchaseId) {
             editingPurchaseId = purchaseId;
@@ -748,8 +749,10 @@
         }
 
         if (saveBtn) saveBtn.addEventListener('click', async () => {
+            if (isSavingPurchase) return; // Prevenir llamadas duplicadas
             if (!form.checkValidity()) { form.reportValidity(); return; }
             if (!window.db || !window.supabaseClient) { alert('No hay conexión con el servicio.'); return; }
+            isSavingPurchase = true; // Marcar como procesando
             const original = saveBtn.innerHTML; saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Creando...';
             try {
                 const totals = calculateTotals();
@@ -788,7 +791,7 @@
                     cantidad: Number(row.querySelector('.prod-qty')?.textContent || 0),
                     precio_unitario: parseCurrency(row.querySelector('.prod-price')?.textContent || 0),
                     descuento: Number((row.querySelector('.prod-disc')?.textContent || '0').replace('%', '')),
-                    tasa_impuesto: 19.0,
+                    tasa_impuesto: row.dataset.taxRate ? Number(row.dataset.taxRate) : null,
                     subtotal: 0, impuesto: 0, total: 0
                 }));
 
@@ -839,6 +842,7 @@
                 console.error('Error al crear compra:', e);
                 alert('Error inesperado al crear la orden');
             } finally {
+                isSavingPurchase = false; // Liberar bandera
                 saveBtn.disabled = false; saveBtn.innerHTML = original;
             }
         });

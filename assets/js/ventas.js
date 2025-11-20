@@ -1933,12 +1933,12 @@
                 if (isEditing) {
                     alert(`✅ Venta actualizada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
                 } else {
-                    alert(`✅ Venta procesada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
+                alert(`✅ Venta procesada exitosamente!\n\nNúmero de venta: ${numeroVenta}\nTotal: ${formatCOP(total)}`);
                 }
 
                 // Limpiar formulario y modo edición
                 clearSaleForm();
-                
+
                 // Restaurar botón a modo normal
                 if (processSaleBtn) {
                     processSaleBtn.removeAttribute('data-editing');
@@ -2112,18 +2112,18 @@
                 }
                 if (ultimaVentaCard) {
                     if (data.ultimaVenta) {
-                        const fechaUltima = new Date(data.ultimaVenta.fecha_venta);
-                        const ahora = new Date();
-                        const diffMs = ahora - fechaUltima;
-                        const diffMins = Math.floor(diffMs / 60000);
-                        
-                        if (diffMins < 1) {
-                            ultimaVentaCard.textContent = 'Ahora';
-                        } else if (diffMins < 60) {
-                            ultimaVentaCard.textContent = `${diffMins} min`;
-                        } else {
-                            const diffHours = Math.floor(diffMins / 60);
-                            ultimaVentaCard.textContent = `${diffHours} h`;
+                    const fechaUltima = new Date(data.ultimaVenta.fecha_venta);
+                    const ahora = new Date();
+                    const diffMs = ahora - fechaUltima;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    
+                    if (diffMins < 1) {
+                        ultimaVentaCard.textContent = 'Ahora';
+                    } else if (diffMins < 60) {
+                        ultimaVentaCard.textContent = `${diffMins} min`;
+                    } else {
+                        const diffHours = Math.floor(diffMins / 60);
+                        ultimaVentaCard.textContent = `${diffHours} h`;
                         }
                     } else {
                         ultimaVentaCard.textContent = '—';
@@ -2347,22 +2347,22 @@
                     // Consulta de usuarios
                     usuarioIds.length > 0 
                         ? window.supabaseClient
-                            .from('usuarios')
+                        .from('usuarios')
                             .select('id, nombre_completo, email')
                             .in('id', usuarioIds)
                         : Promise.resolve({ data: [], error: null }),
                     
                     // Consulta de detalles de venta con productos
                     window.supabaseClient
-                        .from('ventas_detalle')
-                        .select(`
-                            venta_id,
-                            cantidad,
-                            productos:producto_id(
-                                id,
-                                nombre
-                            )
-                        `)
+                    .from('ventas_detalle')
+                    .select(`
+                        venta_id,
+                        cantidad,
+                        productos:producto_id(
+                            id,
+                            nombre
+                        )
+                    `)
                         .in('venta_id', ventaIds),
                     
                     // Consulta de clientes faltantes (si hay)
@@ -2403,11 +2403,11 @@
                     const clientesMap = new Map();
                     clientesFaltantesResult.data.forEach(c => clientesMap.set(c.id, c));
                     
-                    ventas.forEach(v => {
+                                ventas.forEach(v => {
                         if (v.cliente_id && !v.clientes && clientesMap.has(v.cliente_id)) {
                             v.clientes = clientesMap.get(v.cliente_id);
-                        }
-                    });
+                                    }
+                                });
                 }
                 
                 // Combinar datos

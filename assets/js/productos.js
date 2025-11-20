@@ -325,7 +325,7 @@
             document.getElementById('profitMargin').value = p.margen_ganancia ?? '';
             document.getElementById('wholesalePrice').value = p.precio_mayorista ?? '';
             document.getElementById('maxDiscount').value = p.descuento_max ?? '';
-            document.getElementById('taxRate').value = p.tasa_impuesto ?? 19;
+            document.getElementById('taxRate').value = p.tasa_impuesto !== null && p.tasa_impuesto !== undefined ? p.tasa_impuesto : '';
             document.getElementById('currentStock').value = p.stock_actual ?? 0;
             document.getElementById('minStock').value = p.stock_min ?? 0;
             document.getElementById('maxStock').value = p.stock_max ?? 0;
@@ -379,7 +379,7 @@
             document.getElementById('detailWholesalePrice').textContent = p.precio_mayorista ? `$ ${Number(p.precio_mayorista).toLocaleString('es-CO')}` : '—';
             document.getElementById('detailProfitMargin').textContent = p.margen_ganancia ? `${Number(p.margen_ganancia).toFixed(2)}%` : '—';
             document.getElementById('detailMaxDiscount').textContent = p.descuento_max ? `${Number(p.descuento_max).toFixed(2)}%` : '0%';
-            document.getElementById('detailTaxRate').textContent = p.tasa_impuesto ? `${Number(p.tasa_impuesto).toFixed(2)}%` : '19%';
+            document.getElementById('detailTaxRate').textContent = `${Number(p.tasa_impuesto ?? 0).toFixed(2)}%`;
 
             // Inventario
             document.getElementById('detailCurrentStock').textContent = Number(p.stock_actual) || 0;

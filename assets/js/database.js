@@ -460,7 +460,7 @@ class DatabaseService {
                 precio_mayorista: productoData.precio_mayorista !== '' && productoData.precio_mayorista !== undefined ? Number(productoData.precio_mayorista) : null,
                 margen_ganancia: productoData.margen_ganancia !== '' && productoData.margen_ganancia !== undefined ? Number(productoData.margen_ganancia) : null,
                 descuento_max: productoData.descuento_max !== '' && productoData.descuento_max !== undefined ? Number(productoData.descuento_max) : 0,
-                tasa_impuesto: productoData.tasa_impuesto !== '' && productoData.tasa_impuesto !== undefined ? Number(productoData.tasa_impuesto) : 19.0,
+                tasa_impuesto: productoData.tasa_impuesto !== '' && productoData.tasa_impuesto !== undefined ? Number(productoData.tasa_impuesto) : null,
                 stock_actual: productoData.stock_actual !== '' && productoData.stock_actual !== undefined ? parseInt(productoData.stock_actual, 10) : 0,
                 stock_min: productoData.stock_min !== '' && productoData.stock_min !== undefined ? parseInt(productoData.stock_min, 10) : 0,
                 stock_max: productoData.stock_max !== '' && productoData.stock_max !== undefined ? parseInt(productoData.stock_max, 10) : 0,
@@ -516,7 +516,7 @@ class DatabaseService {
                 precio_mayorista: productoData.precio_mayorista !== undefined ? (productoData.precio_mayorista === '' ? null : Number(productoData.precio_mayorista)) : undefined,
                 margen_ganancia: productoData.margen_ganancia !== undefined ? (productoData.margen_ganancia === '' ? null : Number(productoData.margen_ganancia)) : undefined,
                 descuento_max: productoData.descuento_max !== undefined ? (productoData.descuento_max === '' ? 0 : Number(productoData.descuento_max)) : undefined,
-                tasa_impuesto: productoData.tasa_impuesto !== undefined ? (productoData.tasa_impuesto === '' ? 19.0 : Number(productoData.tasa_impuesto)) : undefined,
+                tasa_impuesto: productoData.tasa_impuesto !== undefined ? (productoData.tasa_impuesto === '' ? null : Number(productoData.tasa_impuesto)) : undefined,
                 stock_actual: productoData.stock_actual !== undefined ? (productoData.stock_actual === '' ? 0 : parseInt(productoData.stock_actual, 10)) : undefined,
                 stock_min: productoData.stock_min !== undefined ? (productoData.stock_min === '' ? 0 : parseInt(productoData.stock_min, 10)) : undefined,
                 stock_max: productoData.stock_max !== undefined ? (productoData.stock_max === '' ? 0 : parseInt(productoData.stock_max, 10)) : undefined,
@@ -915,7 +915,7 @@ class DatabaseService {
                     cantidad: Number(d.cantidad) || 0,
                     precio_unitario: Number(d.precio_unitario) || 0,
                     descuento: Number(d.descuento) || 0,
-                    tasa_impuesto: Number(d.tasa_impuesto ?? 19.0) || 19.0,
+                    tasa_impuesto: d.tasa_impuesto !== null && d.tasa_impuesto !== undefined ? Number(d.tasa_impuesto) : null,
                     subtotal: Number(d.subtotal) || 0,
                     impuesto: Number(d.impuesto) || 0,
                     total: Number(d.total) || 0
@@ -994,29 +994,32 @@ class DatabaseService {
             if (upErr) return { data: null, error: upErr };
             const compra = compraRows?.[0];
 
-            // Reemplazar detalles
-            const { error: delErr } = await this.supabase
-                .from('compras_detalle')
-                .delete()
-                .eq('compra_id', id);
-            if (delErr) return { data: compra, error: delErr };
-
-            if (Array.isArray(detalles) && detalles.length) {
-                const detallesRows = detalles.map(d => ({
-                    compra_id: id,
+            // Usar función RPC para reemplazar detalles de forma atómica
+            // Esto previene duplicados al manejar DELETE + INSERT en una sola transacción
+            const detallesJson = Array.isArray(detalles) && detalles.length > 0
+                ? detalles.map(d => ({
                     producto_id: this._isValidUUID(d.producto_id) ? d.producto_id : null,
                     cantidad: Number(d.cantidad) || 0,
                     precio_unitario: Number(d.precio_unitario) || 0,
                     descuento: Number(d.descuento) || 0,
-                    tasa_impuesto: Number(d.tasa_impuesto ?? 19.0) || 19.0,
+                    tasa_impuesto: d.tasa_impuesto !== null && d.tasa_impuesto !== undefined ? Number(d.tasa_impuesto) : null,
                     subtotal: Number(d.subtotal) || 0,
                     impuesto: Number(d.impuesto) || 0,
                     total: Number(d.total) || 0
-                }));
-                const { error: detErr } = await this.supabase
-                    .from('compras_detalle')
-                    .insert(detallesRows);
-                if (detErr) return { data: compra, error: detErr };
+                }))
+                : [];
+
+            const { data: rpcResult, error: rpcErr } = await this.supabase
+                .rpc('replace_compras_detalle', {
+                    p_compra_id: id,
+                    p_detalles: detallesJson
+                });
+
+            if (rpcErr) return { data: compra, error: rpcErr };
+            
+            // Verificar que la función RPC se ejecutó correctamente
+            if (rpcResult && !rpcResult.success) {
+                return { data: compra, error: { message: rpcResult.error || 'Error al actualizar detalles' } };
             }
 
             return { data: compra, error: null };
@@ -2010,6 +2013,544 @@ class DatabaseService {
             return { data: result.data, error: null };
         } catch (error) {
             console.error('❌ Excepción en saveConfiguracionEmpresa:', error);
+            return { data: null, error };
+        }
+    }
+
+    // ===== FUNCIONES ESPECÍFICAS PARA GASTOS =====
+
+    /**
+     * Obtiene todas las categorías de gastos activas
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getGastoCategorias() {
+        try {
+            const { data, error } = await this.supabase
+                .from('gasto_categorias')
+                .select('*')
+                .eq('activa', true)
+                .is('deleted_at', null)
+                .order('nombre', { ascending: true });
+
+            if (error) {
+                console.error('Error obteniendo categorías de gastos:', error);
+                return { data: null, error };
+            }
+
+            return { data: data || [], error: null };
+        } catch (error) {
+            console.error('Excepción en getGastoCategorias:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Busca ventas por número de venta para asociar a gastos
+     * @param {string} query - Número de venta o término de búsqueda
+     * @param {number} limit - Límite de resultados (default: 10)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async searchVentas(query, limit = 10) {
+        try {
+            // console.log('🔍 database.js - searchVentas - Query recibido:', query);
+            
+            if (!query || query.trim() === '') {
+                // console.log('🔍 Query vacío, retornando array vacío');
+                return { data: [], error: null };
+            }
+
+            const searchTerm = query.trim();
+            // console.log('🔍 Buscando ventas con término:', searchTerm);
+
+            if (!this.supabase) {
+                console.error('❌ Supabase client no disponible');
+                return { data: null, error: { message: 'Cliente de Supabase no disponible' } };
+            }
+
+            const { data, error } = await this.supabase
+                .from('ventas')
+                .select(`
+                    id,
+                    numero_venta,
+                    fecha_venta,
+                    total,
+                    cliente_id,
+                    clientes:cliente_id (
+                        nombre_completo
+                    )
+                `)
+                .ilike('numero_venta', `%${searchTerm}%`)
+                .is('deleted_at', null)
+                .order('fecha_venta', { ascending: false })
+                .limit(limit);
+
+            if (error) {
+                console.error('❌ Error en query de Supabase:', error);
+                return { data: null, error };
+            }
+
+            // console.log('✅ Ventas encontradas en BD:', data?.length || 0, data);
+            return { data: data || [], error: null };
+        } catch (error) {
+            console.error('❌ Excepción en searchVentas:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Crea un nuevo gasto
+     * @param {Object} gastoData - Datos del gasto
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async createGasto(gastoData) {
+        try {
+            // Validaciones
+            if (!gastoData.anio || !gastoData.mes || !gastoData.categoria_id) {
+                return {
+                    data: null,
+                    error: { message: 'Año, mes y categoría son obligatorios' }
+                };
+            }
+
+            if (!gastoData.monto || Number(gastoData.monto) <= 0) {
+                return {
+                    data: null,
+                    error: { message: 'El monto debe ser mayor a cero' }
+                };
+            }
+
+            // Obtener usuario actual
+            let currentUserId = null;
+            try {
+                const { data: { session } } = await this.supabase.auth.getSession();
+                currentUserId = session?.user?.id || null;
+            } catch (error) {
+                console.error('Error obteniendo sesión:', error);
+            }
+
+            // Validar venta_id si se proporciona
+            if (gastoData.venta_id) {
+                if (!this._isValidUUID(gastoData.venta_id)) {
+                    return {
+                        data: null,
+                        error: { message: 'ID de venta inválido' }
+                    };
+                }
+
+                // Verificar que la venta existe
+                const { data: venta, error: ventaError } = await this.supabase
+                    .from('ventas')
+                    .select('id')
+                    .eq('id', gastoData.venta_id)
+                    .is('deleted_at', null)
+                    .single();
+
+                if (ventaError || !venta) {
+                    return {
+                        data: null,
+                        error: { message: 'La venta especificada no existe' }
+                    };
+                }
+            }
+
+            // Preparar datos para inserción
+            const insertData = {
+                anio: parseInt(gastoData.anio),
+                mes: parseInt(gastoData.mes),
+                categoria_id: gastoData.categoria_id,
+                monto: Number(gastoData.monto),
+                venta_id: gastoData.venta_id && this._isValidUUID(gastoData.venta_id) ? gastoData.venta_id : null,
+                notas: gastoData.notas?.trim() || null,
+                created_by: currentUserId,
+                updated_by: currentUserId
+            };
+
+            const { data, error } = await this.supabase
+                .from('gastos_mensuales_detalle')
+                .insert([insertData])
+                .select(`
+                    *,
+                    categoria:gasto_categorias (
+                        id,
+                        nombre
+                    ),
+                    ventas:venta_id (
+                        id,
+                        numero_venta,
+                        fecha_venta,
+                        total
+                    )
+                `)
+                .single();
+
+            if (error) {
+                console.error('Error creando gasto:', error);
+                return { data: null, error };
+            }
+
+            return { data, error: null };
+        } catch (error) {
+            console.error('Excepción en createGasto:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene gastos con filtros opcionales
+     * @param {Object} filters - Filtros (anio, mes, categoria_id)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getGastos(filters = {}) {
+        try {
+            let query = this.supabase
+                .from('gastos_mensuales_detalle')
+                .select(`
+                    *,
+                    categoria:gasto_categorias (
+                        id,
+                        nombre,
+                        descripcion
+                    ),
+                    ventas:venta_id (
+                        id,
+                        numero_venta,
+                        fecha_venta,
+                        total
+                    )
+                `)
+                .is('deleted_at', null);
+
+            // Aplicar filtros
+            if (filters.anio) {
+                query = query.eq('anio', parseInt(filters.anio));
+            }
+
+            if (filters.mes) {
+                query = query.eq('mes', parseInt(filters.mes));
+            }
+
+            if (filters.categoria_id) {
+                query = query.eq('categoria_id', filters.categoria_id);
+            }
+
+            // Ordenar por fecha de creación (más recientes primero)
+            query = query.order('created_at', { ascending: false });
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error obteniendo gastos:', error);
+                return { data: null, error };
+            }
+
+            return { data: data || [], error: null };
+        } catch (error) {
+            console.error('Excepción en getGastos:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Actualiza un gasto existente
+     * @param {string} gastoId - ID del gasto
+     * @param {Object} gastoData - Datos a actualizar
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async updateGasto(gastoId, gastoData) {
+        try {
+            if (!gastoId || !this._isValidUUID(gastoId)) {
+                return {
+                    data: null,
+                    error: { message: 'ID de gasto inválido' }
+                };
+            }
+
+            // Validaciones
+            if (gastoData.monto !== undefined && Number(gastoData.monto) <= 0) {
+                return {
+                    data: null,
+                    error: { message: 'El monto debe ser mayor a cero' }
+                };
+            }
+
+            // Obtener usuario actual
+            let currentUserId = null;
+            try {
+                const { data: { session } } = await this.supabase.auth.getSession();
+                currentUserId = session?.user?.id || null;
+            } catch (error) {
+                console.error('Error obteniendo sesión:', error);
+            }
+
+            // Validar venta_id si se proporciona
+            if (gastoData.venta_id !== undefined) {
+                if (gastoData.venta_id && !this._isValidUUID(gastoData.venta_id)) {
+                    return {
+                        data: null,
+                        error: { message: 'ID de venta inválido' }
+                    };
+                }
+
+                if (gastoData.venta_id) {
+                    // Verificar que la venta existe
+                    const { data: venta, error: ventaError } = await this.supabase
+                        .from('ventas')
+                        .select('id')
+                        .eq('id', gastoData.venta_id)
+                        .is('deleted_at', null)
+                        .single();
+
+                    if (ventaError || !venta) {
+                        return {
+                            data: null,
+                            error: { message: 'La venta especificada no existe' }
+                        };
+                    }
+                }
+            }
+
+            // Preparar datos para actualización
+            const updateData = {};
+
+            if (gastoData.anio !== undefined) {
+                updateData.anio = parseInt(gastoData.anio);
+            }
+
+            if (gastoData.mes !== undefined) {
+                updateData.mes = parseInt(gastoData.mes);
+            }
+
+            if (gastoData.categoria_id !== undefined) {
+                updateData.categoria_id = gastoData.categoria_id;
+            }
+
+            if (gastoData.monto !== undefined) {
+                updateData.monto = Number(gastoData.monto);
+            }
+
+            if (gastoData.venta_id !== undefined) {
+                updateData.venta_id = gastoData.venta_id && this._isValidUUID(gastoData.venta_id) ? gastoData.venta_id : null;
+            }
+
+            if (gastoData.notas !== undefined) {
+                updateData.notas = gastoData.notas?.trim() || null;
+            }
+
+            updateData.updated_by = currentUserId;
+            updateData.updated_at = new Date().toISOString();
+
+            const { data, error } = await this.supabase
+                .from('gastos_mensuales_detalle')
+                .update(updateData)
+                .eq('id', gastoId)
+                .select(`
+                    *,
+                    categoria:gasto_categorias (
+                        id,
+                        nombre,
+                        descripcion
+                    ),
+                    ventas:venta_id (
+                        id,
+                        numero_venta,
+                        fecha_venta,
+                        total
+                    )
+                `)
+                .single();
+
+            if (error) {
+                console.error('Error actualizando gasto:', error);
+                return { data: null, error };
+            }
+
+            return { data, error: null };
+        } catch (error) {
+            console.error('Excepción en updateGasto:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Elimina un gasto (soft delete)
+     * @param {string} gastoId - ID del gasto
+     * @returns {Promise<Object>} - Resultado con error
+     */
+    async deleteGasto(gastoId) {
+        try {
+            if (!gastoId || !this._isValidUUID(gastoId)) {
+                return {
+                    error: { message: 'ID de gasto inválido' }
+                };
+            }
+
+            // Obtener usuario actual
+            let currentUserId = null;
+            try {
+                const { data: { session } } = await this.supabase.auth.getSession();
+                currentUserId = session?.user?.id || null;
+            } catch (error) {
+                console.error('Error obteniendo sesión:', error);
+            }
+
+            // Soft delete
+            const { error } = await this.supabase
+                .from('gastos_mensuales_detalle')
+                .update({
+                    deleted_at: new Date().toISOString(),
+                    updated_by: currentUserId,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', gastoId);
+
+            if (error) {
+                console.error('Error eliminando gasto:', error);
+                return { error };
+            }
+
+            return { error: null };
+        } catch (error) {
+            console.error('Excepción en deleteGasto:', error);
+            return { error };
+        }
+    }
+
+    /**
+     * Obtiene resumen de gastos por categoría para KPIs
+     * @param {Object} filters - Filtros (anio, mes)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getGastosResumen(filters = {}) {
+        try {
+            let query = this.supabase
+                .from('gastos_mensuales_detalle')
+                .select(`
+                    monto,
+                    categoria_id,
+                    venta_id,
+                    categoria:gasto_categorias (
+                        id,
+                        nombre
+                    )
+                `)
+                .is('deleted_at', null);
+
+            // Aplicar filtros
+            if (filters.anio) {
+                query = query.eq('anio', parseInt(filters.anio));
+            }
+
+            if (filters.mes) {
+                query = query.eq('mes', parseInt(filters.mes));
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error obteniendo resumen de gastos:', error);
+                return { data: null, error };
+            }
+
+            // Agrupar por categoría
+            const resumen = {};
+            let totalGeneral = 0;
+
+            (data || []).forEach(gasto => {
+                const categoriaId = gasto.categoria_id;
+                const categoriaNombre = gasto.categoria?.nombre || 'Sin categoría';
+                const monto = Number(gasto.monto) || 0;
+
+                if (!resumen[categoriaId]) {
+                    resumen[categoriaId] = {
+                        categoria_id: categoriaId,
+                        categoria_nombre: categoriaNombre,
+                        cantidad: 0,
+                        total: 0
+                    };
+                }
+
+                resumen[categoriaId].cantidad += 1;
+                resumen[categoriaId].total += monto;
+                totalGeneral += monto;
+            });
+
+            // Convertir a array y calcular porcentajes
+            const resumenArray = Object.values(resumen).map(item => ({
+                ...item,
+                porcentaje: totalGeneral > 0 ? ((item.total / totalGeneral) * 100).toFixed(2) : '0.00'
+            }));
+
+            // Ordenar por total descendente
+            resumenArray.sort((a, b) => b.total - a.total);
+
+            return {
+                data: {
+                    resumen: resumenArray,
+                    total_general: totalGeneral,
+                    total_registros: data?.length || 0
+                },
+                error: null
+            };
+        } catch (error) {
+            console.error('Excepción en getGastosResumen:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene los datos de finanzas mensuales para un año y mes específicos
+     * @param {number} anio - Año
+     * @param {number} mes - Mes (1-12)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getFinanzasMensuales(anio, mes) {
+        try {
+            const { data, error } = await this.supabase
+                .from('finanzas_mensuales')
+                .select('*')
+                .eq('anio', anio)
+                .eq('mes', mes)
+                .is('deleted_at', null)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Error obteniendo finanzas mensuales:', error);
+                return { data: null, error };
+            }
+
+            return { data, error: null };
+        } catch (error) {
+            console.error('Excepción en getFinanzasMensuales:', error);
+            return { data: null, error };
+        }
+    }
+
+    /**
+     * Obtiene los datos de finanzas mensuales para un rango de meses
+     * @param {number} anio - Año
+     * @param {number} mesInicio - Mes inicial (1-12)
+     * @param {number} mesFin - Mes final (1-12)
+     * @returns {Promise<Object>} - Resultado con data y error
+     */
+    async getFinanzasMensualesRango(anio, mesInicio, mesFin) {
+        try {
+            const { data, error } = await this.supabase
+                .from('finanzas_mensuales')
+                .select('*')
+                .eq('anio', anio)
+                .gte('mes', mesInicio)
+                .lte('mes', mesFin)
+                .is('deleted_at', null)
+                .order('mes', { ascending: true });
+
+            if (error) {
+                console.error('Error obteniendo finanzas mensuales rango:', error);
+                return { data: null, error };
+            }
+
+            return { data: data || [], error: null };
+        } catch (error) {
+            console.error('Excepción en getFinanzasMensualesRango:', error);
             return { data: null, error };
         }
     }

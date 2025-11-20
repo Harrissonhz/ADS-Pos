@@ -359,6 +359,7 @@ CREATE TABLE finanzas_mensuales (
     descuentos DECIMAL(14,2) NOT NULL DEFAULT 0,
     ventas_netas DECIMAL(14,2) NOT NULL DEFAULT 0,
     costo_mercaderia_vendida DECIMAL(14,2) NOT NULL DEFAULT 0,
+    compras_total DECIMAL(14,2) NOT NULL DEFAULT 0,
     gastos_operativos_total DECIMAL(14,2) NOT NULL DEFAULT 0,
     inversion_marketing DECIMAL(14,2) NOT NULL DEFAULT 0,
     otros_ingresos DECIMAL(14,2) NOT NULL DEFAULT 0,
@@ -382,13 +383,13 @@ CREATE TABLE gastos_mensuales_detalle (
     mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
     categoria_id UUID REFERENCES gasto_categorias(id) NOT NULL,
     monto DECIMAL(14,2) NOT NULL DEFAULT 0,
+    venta_id UUID REFERENCES ventas(id) ON DELETE SET NULL,
     notas TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     created_by UUID REFERENCES usuarios(id),
     updated_by UUID REFERENCES usuarios(id),
-    deleted_at TIMESTAMPTZ NULL,
-    UNIQUE(anio, mes, categoria_id)
+    deleted_at TIMESTAMPTZ NULL
 );
 
 -- Índices para búsquedas frecuentes
@@ -420,6 +421,7 @@ CREATE INDEX idx_gasto_categorias_nombre ON gasto_categorias(nombre);
 CREATE INDEX idx_finanzas_periodo ON finanzas_mensuales(anio, mes);
 CREATE INDEX idx_gastos_mensuales_periodo ON gastos_mensuales_detalle(anio, mes);
 CREATE INDEX idx_gastos_mensuales_categoria ON gastos_mensuales_detalle(categoria_id);
+CREATE INDEX idx_gastos_mensuales_venta ON gastos_mensuales_detalle(venta_id);
 
 -- Índices para soft deletes
 CREATE INDEX idx_usuarios_deleted_at ON usuarios(deleted_at);
@@ -535,6 +537,7 @@ CREATE POLICY "Usuarios autenticados pueden actualizar finanzas_mensuales" ON fi
 CREATE POLICY "Usuarios autenticados pueden ver gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden insertar gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Usuarios autenticados pueden actualizar gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR UPDATE USING (auth.role() = 'authenticated');
+CREATE POLICY "Usuarios autenticados pueden eliminar gastos_mensuales_detalle" ON gastos_mensuales_detalle FOR DELETE USING (auth.role() = 'authenticated');
 
 -- ================================================
 -- FUNCIONES AUXILIARES
@@ -834,6 +837,261 @@ $$ language 'plpgsql';
 CREATE TRIGGER recalculate_finanzas_on_venta_detalle_trigger
     AFTER INSERT OR UPDATE OR DELETE ON ventas_detalle
     FOR EACH ROW EXECUTE FUNCTION recalculate_finanzas_on_venta_detalle();
+
+-- Función para actualizar finanzas mensuales cuando se crea, actualiza o elimina un gasto
+CREATE OR REPLACE FUNCTION update_finanzas_mensuales_on_gasto()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_anio INTEGER;
+    v_mes INTEGER;
+    v_monto DECIMAL(14,2) := 0;
+    v_old_anio INTEGER;
+    v_old_mes INTEGER;
+    v_old_monto DECIMAL(14,2) := 0;
+BEGIN
+    -- Determinar año y mes según la operación
+    IF TG_OP = 'DELETE' THEN
+        v_anio := OLD.anio;
+        v_mes := OLD.mes;
+        v_monto := OLD.monto;
+    ELSE
+        v_anio := NEW.anio;
+        v_mes := NEW.mes;
+        v_monto := NEW.monto;
+    END IF;
+    
+    -- Si es UPDATE, revertir el gasto anterior
+    IF TG_OP = 'UPDATE' THEN
+        v_old_anio := OLD.anio;
+        v_old_mes := OLD.mes;
+        v_old_monto := OLD.monto;
+        
+        -- Revertir el gasto del mes anterior (si cambió de mes)
+        IF v_old_anio != v_anio OR v_old_mes != v_mes THEN
+            UPDATE finanzas_mensuales
+            SET
+                gastos_operativos_total = gastos_operativos_total - v_old_monto,
+                utilidad_neta = utilidad_neta + v_old_monto, -- Al revertir gasto, aumenta utilidad
+                updated_at = NOW()
+            WHERE anio = v_old_anio AND mes = v_old_mes;
+        END IF;
+    END IF;
+    
+    -- Si es DELETE, restar el gasto
+    IF TG_OP = 'DELETE' THEN
+        UPDATE finanzas_mensuales
+        SET
+            gastos_operativos_total = gastos_operativos_total - v_monto,
+            utilidad_neta = utilidad_neta + v_monto, -- Al eliminar gasto, aumenta utilidad
+            updated_at = NOW()
+        WHERE anio = v_anio AND mes = v_mes;
+        
+        RETURN OLD;
+    END IF;
+    
+    -- Para INSERT o UPDATE: agregar/actualizar el gasto
+    -- Si es UPDATE en el mismo mes, primero revertir el monto anterior
+    IF TG_OP = 'UPDATE' AND v_old_anio = v_anio AND v_old_mes = v_mes THEN
+        -- Revertir el monto anterior en el mismo mes
+        UPDATE finanzas_mensuales
+        SET
+            gastos_operativos_total = gastos_operativos_total - v_old_monto,
+            utilidad_neta = utilidad_neta + v_old_monto,
+            updated_at = NOW()
+        WHERE anio = v_anio AND mes = v_mes;
+    END IF;
+    
+    -- Insertar o actualizar el registro mensual (UPSERT)
+    INSERT INTO finanzas_mensuales (anio, mes, gastos_operativos_total, utilidad_neta)
+    VALUES (
+        v_anio,
+        v_mes,
+        v_monto,
+        -v_monto  -- Los gastos reducen la utilidad neta
+    )
+    ON CONFLICT (anio, mes)
+    DO UPDATE SET
+        gastos_operativos_total = finanzas_mensuales.gastos_operativos_total + v_monto,
+        utilidad_neta = finanzas_mensuales.utilidad_neta - v_monto,
+        updated_at = NOW();
+    
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger para actualizar finanzas mensuales cuando se crea, actualiza o elimina un gasto
+CREATE TRIGGER update_finanzas_mensuales_on_gasto_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON gastos_mensuales_detalle
+    FOR EACH ROW EXECUTE FUNCTION update_finanzas_mensuales_on_gasto();
+
+-- ================================================
+-- FUNCIÓN Y TRIGGER PARA ACTUALIZAR FINANZAS MENSUALES CON COMPRAS
+-- ================================================
+
+-- Función para actualizar finanzas mensuales cuando se crea, actualiza o elimina una compra
+CREATE OR REPLACE FUNCTION update_finanzas_mensuales_on_compra()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_anio INTEGER;
+    v_mes INTEGER;
+    v_total DECIMAL(14,2) := 0;
+    v_old_anio INTEGER;
+    v_old_mes INTEGER;
+    v_old_total DECIMAL(14,2) := 0;
+BEGIN
+    -- Determinar año y mes según la operación
+    IF TG_OP = 'DELETE' THEN
+        -- Solo procesar compras no canceladas
+        IF OLD.estado = 'cancelada' THEN
+            RETURN OLD;
+        END IF;
+        v_anio := EXTRACT(YEAR FROM OLD.fecha_compra);
+        v_mes := EXTRACT(MONTH FROM OLD.fecha_compra);
+        v_total := OLD.total;
+    ELSE
+        -- Solo procesar compras no canceladas
+        IF NEW.estado = 'cancelada' THEN
+            -- Si se cancela una compra que antes no estaba cancelada, revertir su impacto
+            IF TG_OP = 'UPDATE' AND OLD.estado != 'cancelada' THEN
+                v_old_anio := EXTRACT(YEAR FROM OLD.fecha_compra);
+                v_old_mes := EXTRACT(MONTH FROM OLD.fecha_compra);
+                v_old_total := OLD.total;
+                
+                UPDATE finanzas_mensuales
+                SET
+                    compras_total = compras_total - v_old_total,
+                    updated_at = NOW()
+                WHERE anio = v_old_anio AND mes = v_old_mes;
+            END IF;
+            RETURN NEW;
+        END IF;
+        
+        v_anio := EXTRACT(YEAR FROM NEW.fecha_compra);
+        v_mes := EXTRACT(MONTH FROM NEW.fecha_compra);
+        v_total := NEW.total;
+    END IF;
+    
+    -- Si es UPDATE, revertir la compra anterior (si cambió de mes o si antes estaba cancelada)
+    IF TG_OP = 'UPDATE' THEN
+        v_old_anio := EXTRACT(YEAR FROM OLD.fecha_compra);
+        v_old_mes := EXTRACT(MONTH FROM OLD.fecha_compra);
+        v_old_total := OLD.total;
+        
+        -- Solo revertir si la compra anterior no estaba cancelada
+        IF OLD.estado != 'cancelada' THEN
+            -- Revertir la compra del mes anterior (si cambió de mes)
+            IF v_old_anio != v_anio OR v_old_mes != v_mes THEN
+                UPDATE finanzas_mensuales
+                SET
+                    compras_total = compras_total - v_old_total,
+                    updated_at = NOW()
+                WHERE anio = v_old_anio AND mes = v_old_mes;
+            END IF;
+        END IF;
+    END IF;
+    
+    -- Si es DELETE, restar la compra
+    IF TG_OP = 'DELETE' THEN
+        UPDATE finanzas_mensuales
+        SET
+            compras_total = compras_total - v_total,
+            updated_at = NOW()
+        WHERE anio = v_anio AND mes = v_mes;
+        
+        RETURN OLD;
+    END IF;
+    
+    -- Para INSERT o UPDATE: agregar/actualizar la compra
+    -- Si es UPDATE en el mismo mes, primero revertir el total anterior
+    IF TG_OP = 'UPDATE' AND v_old_anio = v_anio AND v_old_mes = v_mes AND OLD.estado != 'cancelada' THEN
+        -- Revertir el total anterior en el mismo mes
+        UPDATE finanzas_mensuales
+        SET
+            compras_total = compras_total - v_old_total,
+            updated_at = NOW()
+        WHERE anio = v_anio AND mes = v_mes;
+    END IF;
+    
+    -- Insertar o actualizar el registro mensual (UPSERT)
+    INSERT INTO finanzas_mensuales (anio, mes, compras_total)
+    VALUES (
+        v_anio,
+        v_mes,
+        v_total
+    )
+    ON CONFLICT (anio, mes)
+    DO UPDATE SET
+        compras_total = finanzas_mensuales.compras_total + v_total,
+        updated_at = NOW();
+    
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger para actualizar finanzas mensuales cuando se crea, actualiza o elimina una compra
+CREATE TRIGGER update_finanzas_mensuales_on_compra_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON compras
+    FOR EACH ROW EXECUTE FUNCTION update_finanzas_mensuales_on_compra();
+
+-- ================================================
+-- FUNCIÓN RPC PARA ACTUALIZAR DETALLES DE COMPRA (ATÓMICA)
+-- ================================================
+
+-- Función para reemplazar detalles de compra de forma atómica
+-- Esto previene duplicados al eliminar e insertar en una sola transacción
+CREATE OR REPLACE FUNCTION replace_compras_detalle(
+    p_compra_id UUID,
+    p_detalles JSONB
+)
+RETURNS JSONB AS $$
+DECLARE
+    v_result JSONB;
+    v_detalle JSONB;
+BEGIN
+    -- Eliminar todos los detalles existentes para esta compra
+    DELETE FROM compras_detalle WHERE compra_id = p_compra_id;
+    
+    -- Insertar los nuevos detalles
+    IF p_detalles IS NOT NULL AND jsonb_array_length(p_detalles) > 0 THEN
+        FOR v_detalle IN SELECT * FROM jsonb_array_elements(p_detalles)
+        LOOP
+            INSERT INTO compras_detalle (
+                compra_id,
+                producto_id,
+                cantidad,
+                precio_unitario,
+                descuento,
+                tasa_impuesto,
+                subtotal,
+                impuesto,
+                total
+            ) VALUES (
+                p_compra_id,
+                (v_detalle->>'producto_id')::UUID,
+                (v_detalle->>'cantidad')::DECIMAL,
+                (v_detalle->>'precio_unitario')::DECIMAL,
+                COALESCE((v_detalle->>'descuento')::DECIMAL, 0),
+                CASE 
+                    WHEN v_detalle->>'tasa_impuesto' IS NULL OR v_detalle->>'tasa_impuesto' = 'null' THEN NULL
+                    ELSE (v_detalle->>'tasa_impuesto')::DECIMAL
+                END,
+                COALESCE((v_detalle->>'subtotal')::DECIMAL, 0),
+                COALESCE((v_detalle->>'impuesto')::DECIMAL, 0),
+                COALESCE((v_detalle->>'total')::DECIMAL, 0)
+            );
+        END LOOP;
+    END IF;
+    
+    -- Retornar resultado exitoso
+    RETURN jsonb_build_object('success', true, 'message', 'Detalles actualizados correctamente');
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN jsonb_build_object('success', false, 'error', SQLERRM);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Permitir que usuarios autenticados ejecuten esta función
+GRANT EXECUTE ON FUNCTION replace_compras_detalle(UUID, JSONB) TO authenticated;
 
 -- ================================================
 -- DATOS INICIALES
