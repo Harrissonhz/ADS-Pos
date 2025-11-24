@@ -257,9 +257,9 @@
                                     <small class="text-white-50">Mes actual</small>
                                 </div>
                                 <div class="col-12 col-lg-2 col-md-6 text-center">
-                                    <i class="fas fa-coins fa-3x text-warning mb-2"></i>
-                                    <h3 id="kpiUtilidadNetaMes" class="text-white">—</h3>
-                                    <p class="text-white-50 mb-1">Utilidad Neta</p>
+                                    <i class="fas fa-shopping-bag fa-3x text-warning mb-2"></i>
+                                    <h3 id="kpiComprasMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Compras del Mes</p>
                                     <small class="text-white-50">Mes actual</small>
                                 </div>
                                 <div class="col-12 col-lg-2 col-md-6 text-center">
@@ -269,7 +269,13 @@
                                     <small class="text-white-50">Mes actual</small>
                                 </div>
                                 <div class="col-12 col-lg-2 col-md-6 text-center">
-                                    <i class="fas fa-balance-scale fa-3x text-info mb-2"></i>
+                                    <i class="fas fa-coins fa-3x text-info mb-2"></i>
+                                    <h3 id="kpiUtilidadNetaMes" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Utilidad Neta</p>
+                                    <small class="text-white-50">Mes actual</small>
+                                </div>
+                                <div class="col-12 col-lg-2 col-md-6 text-center">
+                                    <i class="fas fa-balance-scale fa-3x text-secondary mb-2"></i>
                                     <h3 id="kpiMargenUtilidadMes" class="text-white">—</h3>
                                     <p class="text-white-50 mb-1">Margen de Utilidad</p>
                                     <small class="text-white-50">Mes actual</small>
@@ -308,6 +314,22 @@
                                     <div class="d-flex justify-content-center">
                                         <div style="position: relative; height: 300px; width: 100%; max-width: 100%;" class="chart-container-responsive">
                                             <canvas id="ventasMensualesChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
+                                        <h6 class="text-white mb-0"><i class="fas fa-chart-bar me-2"></i>Análisis de Flujo: Ventas, Gastos y Flujo Operativo</h6>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <label class="text-white-50 mb-0">Año:</label>
+                                            <select class="form-select form-select-sm" id="selectAnioFlujoOperativo" style="width: auto; min-width: 100px;">
+                                                <!-- Se llenará dinámicamente -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div style="position: relative; height: 300px; width: 100%; max-width: 100%;" class="chart-container-responsive">
+                                            <canvas id="flujoOperativoChart"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -354,21 +376,21 @@
                             <div class="row g-4">
                                 <div class="col-12 col-lg-3 col-md-6 text-center">
                                     <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
-                                    <h3 id="kpiVentasHoy" class="text-white">—</h3>
-                                    <p class="text-white-50 mb-1">Ventas Hoy</p>
-                                    <small class="text-white-50"><i class="fas fa-arrow-right-arrow-left me-1"></i>Vs ayer: <span id="kpiVentasHoyVsAyer">—</span></small>
+                                    <h3 id="kpiVentasTotales" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ventas Totales</p>
+                                    <small class="text-white-50">Suma de todas las ventas</small>
                                 </div>
                                 <div class="col-lg-3 col-md-6 text-center">
-                                    <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
-                                    <h3 id="kpiTransaccionesHoy" class="text-white">—</h3>
-                                    <p class="text-white-50 mb-1">Transacciones Hoy</p>
-                                    <small class="text-white-50">—</small>
+                                    <i class="fas fa-wallet fa-2x text-danger mb-2"></i>
+                                    <h3 id="kpiGastosTotales" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Gastos Totales</p>
+                                    <small class="text-white-50">Suma de todos los gastos</small>
                                 </div>
                                 <div class="col-lg-3 col-md-6 text-center">
-                                    <i class="fas fa-box fa-2x text-warning mb-2"></i>
-                                    <h3 id="kpiProductosVendidosHoy" class="text-white">—</h3>
-                                    <p class="text-white-50 mb-1">Productos Vendidos Hoy</p>
-                                    <small class="text-white-50">—</small>
+                                    <i class="fas fa-balance-scale fa-2x text-warning mb-2"></i>
+                                    <h3 id="kpiPuntoEquilibrioTotal" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Punto Equilibrio Total</p>
+                                    <small class="text-white-50">Ventas - Gastos</small>
                                 </div>
                                 <div class="col-lg-3 col-md-6 text-center">
                                     <i class="fas fa-triangle-exclamation fa-2x text-danger mb-2"></i>
@@ -388,42 +410,9 @@
                 </div>
             </div>
 
-            <!-- KPIs Comparativos/Tendencias -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card pos-card">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>KPIs Comparativos y Tendencias</h5>
-                                <small class="text-white-50">Análisis comparativo y tendencias del negocio</small>
-                            </div>
-                            <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#kpiComparativos" aria-expanded="true" aria-controls="kpiComparativos">
-                                <i class="fas fa-chevron-up"></i>
-                            </button>
-                        </div>
-                        <div class="card-body collapse show" id="kpiComparativos">
-                            <div class="row g-4">
-                                <div class="col-lg-12">
-                                    <div class="card pos-card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0"><i class="fas fa-list-ol me-2"></i>Top 3 Categorías de Gastos del Mes</h6>
-                                        </div>
-                        <div class="card-body">
-                                            <div id="topGastosContainer" class="text-white-50">
-                                                <p class="mb-0">Los datos se cargarán próximamente...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Gráficos Principales -->
             <div class="row g-4 mb-4">
-                <div class="col-lg-8">
+                <div class="col-12">
                     <div class="card pos-card">
                         <div class="card-header d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
@@ -438,72 +427,6 @@
                         </div>
                         <div class="card-body">
                             <canvas id="ventasChart" height="100"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card pos-card">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-chart-pie me-2"></i>
-                            <h5 class="mb-0">Ventas por Categoría</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="categoriasChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Información de Caja -->
-            <div class="row g-4 mb-4">
-                <div class="col-lg-6">
-                    <div class="card pos-card">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-cash-register me-2"></i>
-                            <h5 class="mb-0">Estado de Caja</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row text-center">
-                                <div class="col-4">
-                                    <h4 class="text-success">$1,250,000</h4>
-                                    <p class="text-white-50 mb-0">Efectivo</p>
-                                </div>
-                                <div class="col-4">
-                                    <h4 class="text-primary">$850,000</h4>
-                                    <p class="text-white-50 mb-0">Tarjeta</p>
-                                </div>
-                                <div class="col-4">
-                                    <h4 class="text-info">$350,000</h4>
-                                    <p class="text-white-50 mb-0">Transferencia</p>
-                                </div>
-                            </div>
-                            <hr class="my-3">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-white-50">Total en Caja:</span>
-                                <span class="text-white fw-bold">$2,450,000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card pos-card">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <h5 class="mb-0">Alertas del Sistema</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-warning d-flex align-items-center mb-2" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <small>5 productos con stock bajo</small>
-                            </div>
-                            <div class="alert alert-info d-flex align-items-center mb-2" role="alert">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <small>3 facturas pendientes de pago</small>
-                            </div>
-                            <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <small>Sistema funcionando correctamente</small>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -555,74 +478,6 @@
                 </div>
             </div>
 
-            <!-- Tabla de Ventas Recientes -->
-            <div class="card pos-card mb-4">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-history me-2"></i>
-                        <h5 class="mb-0">Ventas Recientes</h5>
-                    </div>
-                    <a href="./ventas-historial.html" class="btn btn-sm btn-outline-light">Ver Todas</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                    <th># Factura</th>
-                                    <th>Cliente</th>
-                                    <th>Productos</th>
-                                    <th>Total</th>
-                                    <th>Estado</th>
-                                    <th>Hora</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#001234</td>
-                                    <td>Juan Pérez</td>
-                                    <td>3</td>
-                                    <td>$125,000</td>
-                                    <td><span class="badge bg-success">Pagado</span></td>
-                                    <td>14:30</td>
-                                </tr>
-                                <tr>
-                                    <td>#001235</td>
-                                    <td>María García</td>
-                                    <td>1</td>
-                                    <td>$85,000</td>
-                                    <td><span class="badge bg-success">Pagado</span></td>
-                                    <td>14:15</td>
-                                </tr>
-                                <tr>
-                                    <td>#001236</td>
-                                    <td>Carlos López</td>
-                                    <td>5</td>
-                                    <td>$320,000</td>
-                                    <td><span class="badge bg-warning">Pendiente</span></td>
-                                    <td>14:00</td>
-                                </tr>
-                                <tr>
-                                    <td>#001237</td>
-                                    <td>Ana Martínez</td>
-                                    <td>2</td>
-                                    <td>$95,000</td>
-                                    <td><span class="badge bg-success">Pagado</span></td>
-                                    <td>13:45</td>
-                                </tr>
-                                <tr>
-                                    <td>#001238</td>
-                                    <td>Luis Rodríguez</td>
-                                    <td>4</td>
-                                    <td>$180,000</td>
-                                    <td><span class="badge bg-success">Pagado</span></td>
-                                    <td>13:30</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -667,7 +522,7 @@
             }
 
             // Sincronizar chevrons de los colapsos de KPIs
-            const collapseElements = ['kpiFinancieros', 'kpiFinancierosComparativos', 'kpiOperativos', 'kpiComparativos'];
+            const collapseElements = ['kpiFinancieros', 'kpiFinancierosComparativos', 'kpiOperativos'];
             collapseElements.forEach(id => {
                 const collapseElement = document.getElementById(id);
                 if (collapseElement) {
@@ -706,15 +561,22 @@
             // Inicializar selectores de año
             inicializarSelectorAnio();
             inicializarSelectoresComparativos();
+            inicializarSelectorAnioFlujoOperativo();
             
             // Cargar KPIs financieros
             await cargarKPIsFinancieros();
+            
+            // Cargar KPIs operativos
+            await cargarKPIsOperativos();
             
             // Cargar KPIs comparativos (usará el año por defecto del selector)
             await cargarKPIsComparativos();
             
             // Cargar gráfico comparativo de años
             await cargarVentasComparativas();
+            
+            // Cargar gráfico de flujo operativo
+            await cargarFlujoOperativoMensual();
             
             // Inicializar gráficos
             inicializarGraficos();
@@ -767,6 +629,7 @@
                     actualizarKPIs({
                         ventas_netas: 0,
                         gastos_operativos_total: 0,
+                        compras_total: 0,
                         utilidad_neta: 0,
                         flujo_operativo: 0,
                         margen_utilidad: 0
@@ -791,6 +654,7 @@
                 actualizarKPIs({
                     ventas_netas: ventasNetas,
                     gastos_operativos_total: gastosOperativos,
+                    compras_total: comprasTotal,
                     utilidad_neta: utilidadNeta,
                     flujo_operativo: flujoOperativo,
                     margen_utilidad: margenUtilidad
@@ -816,18 +680,10 @@
                 kpiGastosMes.textContent = formatearMoneda(datos.gastos_operativos_total);
             }
 
-            // Utilidad Neta
-            const kpiUtilidadNetaMes = document.getElementById('kpiUtilidadNetaMes');
-            if (kpiUtilidadNetaMes) {
-                kpiUtilidadNetaMes.textContent = formatearMoneda(datos.utilidad_neta);
-                // Cambiar color según si es positivo o negativo
-                if (datos.utilidad_neta >= 0) {
-                    kpiUtilidadNetaMes.classList.remove('text-danger');
-                    kpiUtilidadNetaMes.classList.add('text-success');
-                } else {
-                    kpiUtilidadNetaMes.classList.remove('text-success');
-                    kpiUtilidadNetaMes.classList.add('text-danger');
-                }
+            // Compras del Mes
+            const kpiComprasMes = document.getElementById('kpiComprasMes');
+            if (kpiComprasMes) {
+                kpiComprasMes.textContent = formatearMoneda(datos.compras_total);
             }
 
             // Flujo Operativo
@@ -841,6 +697,20 @@
                 } else {
                     kpiFlujoOperativoMes.classList.remove('text-success');
                     kpiFlujoOperativoMes.classList.add('text-danger');
+                }
+            }
+
+            // Utilidad Neta
+            const kpiUtilidadNetaMes = document.getElementById('kpiUtilidadNetaMes');
+            if (kpiUtilidadNetaMes) {
+                kpiUtilidadNetaMes.textContent = formatearMoneda(datos.utilidad_neta);
+                // Cambiar color según si es positivo o negativo
+                if (datos.utilidad_neta >= 0) {
+                    kpiUtilidadNetaMes.classList.remove('text-danger');
+                    kpiUtilidadNetaMes.classList.add('text-success');
+                } else {
+                    kpiUtilidadNetaMes.classList.remove('text-success');
+                    kpiUtilidadNetaMes.classList.add('text-danger');
                 }
             }
 
@@ -864,7 +734,7 @@
 
         // Función para mostrar error en los KPIs
         function mostrarErrorKPIs() {
-            const elementos = ['kpiVentasMes', 'kpiGastosMes', 'kpiUtilidadNetaMes', 'kpiFlujoOperativoMes', 'kpiMargenUtilidadMes'];
+            const elementos = ['kpiVentasMes', 'kpiGastosMes', 'kpiComprasMes', 'kpiFlujoOperativoMes', 'kpiUtilidadNetaMes', 'kpiMargenUtilidadMes'];
             elementos.forEach(id => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
@@ -874,11 +744,111 @@
             });
         }
 
+        // Función para cargar KPIs operativos
+        async function cargarKPIsOperativos() {
+            try {
+                if (!window.db || !window.supabaseClient) {
+                    console.error('No hay conexión con el servicio de base de datos');
+                    return;
+                }
+
+                // Obtener todas las finanzas mensuales para calcular ventas totales y gastos totales
+                const { data: todasFinanzas, error: errorFinanzas } = await window.supabaseClient
+                    .from('finanzas_mensuales')
+                    .select('ventas_netas, gastos_operativos_total, compras_total');
+
+                // Obtener todos los gastos históricos de gastos_mensuales_detalle
+                const { data: todosGastosDetalle, error: errorGastos } = await window.supabaseClient
+                    .from('gastos_mensuales_detalle')
+                    .select('monto')
+                    .is('deleted_at', null); // Solo gastos no eliminados
+
+                if (errorFinanzas) {
+                    console.error('Error cargando finanzas totales:', errorFinanzas);
+                }
+                if (errorGastos) {
+                    console.error('Error cargando gastos detalle:', errorGastos);
+                }
+
+                // Calcular la suma de todas las ventas netas
+                let ventasTotales = 0;
+                // Calcular la suma de todos los gastos (gastos operativos + compras + gastos de detalle)
+                let gastosTotales = 0;
+                
+                // Sumar gastos de finanzas_mensuales (gastos operativos + compras)
+                if (todasFinanzas && Array.isArray(todasFinanzas)) {
+                    todasFinanzas.forEach(finanza => {
+                        ventasTotales += (Number(finanza.ventas_netas) || 0);
+                        const gastosOperativos = Number(finanza.gastos_operativos_total) || 0;
+                        const compras = Number(finanza.compras_total) || 0;
+                        gastosTotales += (gastosOperativos + compras);
+                    });
+                }
+
+                // Sumar gastos históricos de gastos_mensuales_detalle
+                if (todosGastosDetalle && Array.isArray(todosGastosDetalle)) {
+                    todosGastosDetalle.forEach(gasto => {
+                        gastosTotales += (Number(gasto.monto) || 0);
+                    });
+                }
+
+                // Actualizar el KPI de Ventas Totales
+                const kpiVentasTotales = document.getElementById('kpiVentasTotales');
+                if (kpiVentasTotales) {
+                    kpiVentasTotales.textContent = formatearMoneda(ventasTotales);
+                    kpiVentasTotales.classList.remove('text-danger');
+                }
+
+                // Actualizar el KPI de Gastos Totales
+                const kpiGastosTotales = document.getElementById('kpiGastosTotales');
+                if (kpiGastosTotales) {
+                    kpiGastosTotales.textContent = formatearMoneda(gastosTotales);
+                    kpiGastosTotales.classList.remove('text-danger');
+                }
+
+                // Calcular Punto Equilibrio Total: Ventas Totales - Gastos Totales
+                const puntoEquilibrioTotal = ventasTotales - gastosTotales;
+
+                // Actualizar el KPI de Punto Equilibrio Total
+                const kpiPuntoEquilibrioTotal = document.getElementById('kpiPuntoEquilibrioTotal');
+                if (kpiPuntoEquilibrioTotal) {
+                    kpiPuntoEquilibrioTotal.textContent = formatearMoneda(puntoEquilibrioTotal);
+                    // Cambiar color según si es positivo o negativo
+                    kpiPuntoEquilibrioTotal.classList.remove('text-danger', 'text-success', 'text-warning');
+                    if (puntoEquilibrioTotal >= 0) {
+                        kpiPuntoEquilibrioTotal.classList.add('text-success');
+                    } else {
+                        kpiPuntoEquilibrioTotal.classList.add('text-danger');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error en cargarKPIsOperativos:', error);
+                const kpiVentasTotales = document.getElementById('kpiVentasTotales');
+                const kpiGastosTotales = document.getElementById('kpiGastosTotales');
+                const kpiPuntoEquilibrioTotal = document.getElementById('kpiPuntoEquilibrioTotal');
+                if (kpiVentasTotales) {
+                    kpiVentasTotales.textContent = 'Error';
+                    kpiVentasTotales.classList.add('text-danger');
+                }
+                if (kpiGastosTotales) {
+                    kpiGastosTotales.textContent = 'Error';
+                    kpiGastosTotales.classList.add('text-danger');
+                }
+                if (kpiPuntoEquilibrioTotal) {
+                    kpiPuntoEquilibrioTotal.textContent = 'Error';
+                    kpiPuntoEquilibrioTotal.classList.add('text-danger');
+                }
+            }
+        }
+
         // Variables globales para los gráficos
         let ventasMensualesChart = null;
         let ventasComparativasChart = null;
+        let flujoOperativoChart = null;
         let cargandoKPIsComparativos = false; // Bandera para prevenir múltiples cargas
         let cargandoVentasComparativas = false; // Bandera para prevenir múltiples cargas del gráfico comparativo
+        let cargandoFlujoOperativo = false; // Bandera para prevenir múltiples cargas del gráfico de flujo operativo
 
         // Función para inicializar el selector de año
         function inicializarSelectorAnio() {
@@ -908,6 +878,244 @@
                 const anioSeleccionado = parseInt(this.value);
                 if (anioSeleccionado) {
                     cargarKPIsComparativos(anioSeleccionado);
+                }
+            });
+        }
+
+        // Función para inicializar el selector de año del gráfico de flujo operativo
+        function inicializarSelectorAnioFlujoOperativo() {
+            const selectAnio = document.getElementById('selectAnioFlujoOperativo');
+            if (!selectAnio) return;
+
+            // Obtener año actual
+            const anioActual = new Date().getFullYear();
+            
+            // Generar opciones de años (desde 2020 hasta 5 años en el futuro)
+            const anioInicio = 2020;
+            const anioFin = anioActual + 5;
+            
+            selectAnio.innerHTML = '';
+            for (let anio = anioFin; anio >= anioInicio; anio--) {
+                const option = document.createElement('option');
+                option.value = anio;
+                option.textContent = anio;
+                if (anio === anioActual) {
+                    option.selected = true;
+                }
+                selectAnio.appendChild(option);
+            }
+
+            // Agregar event listener para actualizar el gráfico cuando cambie el año
+            selectAnio.addEventListener('change', function() {
+                const anioSeleccionado = parseInt(this.value);
+                if (anioSeleccionado) {
+                    cargarFlujoOperativoMensual(anioSeleccionado);
+                }
+            });
+        }
+
+        // Función para cargar el gráfico de flujo operativo mensual
+        async function cargarFlujoOperativoMensual(anio = null) {
+            // Prevenir múltiples ejecuciones simultáneas
+            if (cargandoFlujoOperativo) {
+                return;
+            }
+
+            try {
+                cargandoFlujoOperativo = true;
+
+                if (!window.db || !window.supabaseClient) {
+                    console.error('No hay conexión con el servicio de base de datos');
+                    return;
+                }
+
+                // Si no se proporciona año, usar el año actual o el seleccionado
+                if (!anio) {
+                    const selectAnio = document.getElementById('selectAnioFlujoOperativo');
+                    anio = selectAnio ? parseInt(selectAnio.value) : new Date().getFullYear();
+                }
+
+                // Obtener datos de finanzas mensuales del año seleccionado (todos los meses)
+                const { data: finanzasRango, error: errorFinanzas } = await window.db.getFinanzasMensualesRango(anio, 1, 12);
+
+                // Obtener gastos detalle del año seleccionado
+                const { data: gastosDetalleAnio, error: errorGastos } = await window.supabaseClient
+                    .from('gastos_mensuales_detalle')
+                    .select('mes, monto')
+                    .eq('anio', anio)
+                    .is('deleted_at', null); // Solo gastos no eliminados
+
+                if (errorFinanzas) {
+                    console.error('Error cargando finanzas mensuales rango:', errorFinanzas);
+                }
+                if (errorGastos) {
+                    console.error('Error cargando gastos detalle:', errorGastos);
+                }
+
+                // Preparar datos para el gráfico
+                const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                const ventasMensuales = new Array(12).fill(0);
+                const gastosMensuales = new Array(12).fill(0);
+                const flujoOperativoMensual = new Array(12).fill(0);
+
+                // Mapear los datos recibidos de finanzas_mensuales
+                if (finanzasRango && Array.isArray(finanzasRango)) {
+                    finanzasRango.forEach(finanza => {
+                        const mes = finanza.mes - 1; // Los meses en el array son 0-indexed
+                        if (mes >= 0 && mes < 12) {
+                            const ventas = Number(finanza.ventas_netas) || 0;
+                            const gastosOperativos = Number(finanza.gastos_operativos_total) || 0;
+                            const compras = Number(finanza.compras_total) || 0;
+                            const gastosTotales = gastosOperativos + compras;
+
+                            ventasMensuales[mes] = ventas;
+                            gastosMensuales[mes] = gastosTotales;
+                        }
+                    });
+                }
+
+                // Sumar gastos de gastos_mensuales_detalle por mes
+                if (gastosDetalleAnio && Array.isArray(gastosDetalleAnio)) {
+                    gastosDetalleAnio.forEach(gasto => {
+                        const mes = gasto.mes - 1; // Los meses en el array son 0-indexed
+                        if (mes >= 0 && mes < 12) {
+                            const monto = Number(gasto.monto) || 0;
+                            gastosMensuales[mes] += monto;
+                        }
+                    });
+                }
+
+                // Calcular flujo operativo mensual (ventas - gastos totales)
+                for (let i = 0; i < 12; i++) {
+                    flujoOperativoMensual[i] = ventasMensuales[i] - gastosMensuales[i];
+                }
+
+                // Crear o actualizar el gráfico de barras
+                inicializarGraficoFlujoOperativo(meses, ventasMensuales, gastosMensuales, flujoOperativoMensual);
+
+            } catch (error) {
+                console.error('Error en cargarFlujoOperativoMensual:', error);
+            } finally {
+                cargandoFlujoOperativo = false;
+            }
+        }
+
+        // Función para inicializar el gráfico de flujo operativo
+        function inicializarGraficoFlujoOperativo(meses, ventas, gastos, flujoOperativo) {
+            const canvas = document.getElementById('flujoOperativoChart');
+            if (!canvas) return;
+
+            // Destruir gráfico anterior si existe
+            if (flujoOperativoChart) {
+                flujoOperativoChart.destroy();
+                flujoOperativoChart = null;
+            }
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Detectar tamaño de pantalla para ajustar el gráfico
+            const isMobile = window.innerWidth < 768;
+            const isTablet = window.innerWidth >= 768 && window.innerWidth < 992;
+
+            flujoOperativoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: meses,
+                    datasets: [
+                        {
+                            label: 'Ventas (Ingresos)',
+                            data: ventas,
+                            backgroundColor: 'rgba(40, 167, 69, 0.6)', // Verde
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Gastos Totales (Operativos + Compras)',
+                            data: gastos,
+                            backgroundColor: 'rgba(220, 53, 69, 0.6)', // Rojo
+                            borderColor: 'rgba(220, 53, 69, 1)',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Flujo Operativo',
+                            data: flujoOperativo,
+                            backgroundColor: 'rgba(255, 193, 7, 0.6)', // Amarillo/Naranja
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: isMobile ? 1.2 : isTablet ? 2.0 : 2.5,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: isMobile ? 'bottom' : 'top',
+                            labels: {
+                                color: '#fff',
+                                font: {
+                                    size: isMobile ? 11 : 12
+                                },
+                                padding: isMobile ? 10 : 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatearMoneda(context.parsed.y);
+                                }
+                            },
+                            titleFont: {
+                                size: isMobile ? 11 : 12
+                            },
+                            bodyFont: {
+                                size: isMobile ? 10 : 11
+                            },
+                            padding: isMobile ? 8 : 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff',
+                                font: {
+                                    size: isMobile ? 9 : 11
+                                },
+                                maxTicksLimit: isMobile ? 6 : 10,
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return '$' + (value / 1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff',
+                                font: {
+                                    size: isMobile ? 9 : 11
+                                },
+                                maxRotation: isMobile ? 45 : 0,
+                                minRotation: isMobile ? 45 : 0
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -1358,35 +1566,6 @@
                 }
             });
 
-            // Gráfico de Categorías
-            const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
-            new Chart(categoriasCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Electrónicos', 'Accesorios', 'Audio', 'Otros'],
-                    datasets: [{
-                        data: [45, 30, 15, 10],
-                        backgroundColor: [
-                            '#007bff',
-                            '#28a745',
-                            '#ffc107',
-                            '#dc3545'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#fff'
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         // Cambiar período del gráfico
@@ -1426,11 +1605,17 @@
                 // Recargar KPIs financieros
                 await cargarKPIsFinancieros();
                 
+                // Recargar KPIs operativos
+                await cargarKPIsOperativos();
+                
                 // Recargar KPIs comparativos
                 await cargarKPIsComparativos();
                 
                 // Recargar gráfico comparativo de años
                 await cargarVentasComparativas();
+                
+                // Recargar gráfico de flujo operativo
+                await cargarFlujoOperativoMensual();
                 
                 // Recargar gráficos (si es necesario)
                 // inicializarGraficos();

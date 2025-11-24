@@ -952,7 +952,8 @@ body.pos-app .form-check-label {
     }
     #selectAnioVentas,
     #selectAnioComparativo1,
-    #selectAnioComparativo2 {
+    #selectAnioComparativo2,
+    #selectAnioFlujoOperativo {
         width: 100% !important;
         min-width: 100% !important;
     }
