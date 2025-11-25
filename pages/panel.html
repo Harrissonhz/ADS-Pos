@@ -752,12 +752,13 @@
                     return;
                 }
 
-                // Obtener todas las finanzas mensuales para calcular ventas totales y gastos totales
+                // Obtener todas las finanzas mensuales para calcular ventas totales
                 const { data: todasFinanzas, error: errorFinanzas } = await window.supabaseClient
                     .from('finanzas_mensuales')
-                    .select('ventas_netas, gastos_operativos_total, compras_total');
+                    .select('ventas_netas');
 
                 // Obtener todos los gastos históricos de gastos_mensuales_detalle
+                // Para KPIs Operativos, mostramos la suma total histórica de todos los gastos
                 const { data: todosGastosDetalle, error: errorGastos } = await window.supabaseClient
                     .from('gastos_mensuales_detalle')
                     .select('monto')
@@ -772,20 +773,18 @@
 
                 // Calcular la suma de todas las ventas netas
                 let ventasTotales = 0;
-                // Calcular la suma de todos los gastos (gastos operativos + compras + gastos de detalle)
+                // Calcular la suma de todos los gastos desde gastos_mensuales_detalle
+                // (suma histórica total de todos los gastos registrados)
                 let gastosTotales = 0;
                 
-                // Sumar gastos de finanzas_mensuales (gastos operativos + compras)
+                // Sumar ventas de finanzas_mensuales
                 if (todasFinanzas && Array.isArray(todasFinanzas)) {
                     todasFinanzas.forEach(finanza => {
                         ventasTotales += (Number(finanza.ventas_netas) || 0);
-                        const gastosOperativos = Number(finanza.gastos_operativos_total) || 0;
-                        const compras = Number(finanza.compras_total) || 0;
-                        gastosTotales += (gastosOperativos + compras);
                     });
                 }
 
-                // Sumar gastos históricos de gastos_mensuales_detalle
+                // Sumar todos los gastos históricos de gastos_mensuales_detalle
                 if (todosGastosDetalle && Array.isArray(todosGastosDetalle)) {
                     todosGastosDetalle.forEach(gasto => {
                         gastosTotales += (Number(gasto.monto) || 0);
@@ -936,20 +935,12 @@
                 }
 
                 // Obtener datos de finanzas mensuales del año seleccionado (todos los meses)
+                // Nota: gastos_operativos_total ya incluye los gastos de gastos_mensuales_detalle
+                // gracias a los triggers de la base de datos, por lo que no es necesario consultarlos por separado
                 const { data: finanzasRango, error: errorFinanzas } = await window.db.getFinanzasMensualesRango(anio, 1, 12);
-
-                // Obtener gastos detalle del año seleccionado
-                const { data: gastosDetalleAnio, error: errorGastos } = await window.supabaseClient
-                    .from('gastos_mensuales_detalle')
-                    .select('mes, monto')
-                    .eq('anio', anio)
-                    .is('deleted_at', null); // Solo gastos no eliminados
 
                 if (errorFinanzas) {
                     console.error('Error cargando finanzas mensuales rango:', errorFinanzas);
-                }
-                if (errorGastos) {
-                    console.error('Error cargando gastos detalle:', errorGastos);
                 }
 
                 // Preparar datos para el gráfico
@@ -959,6 +950,8 @@
                 const flujoOperativoMensual = new Array(12).fill(0);
 
                 // Mapear los datos recibidos de finanzas_mensuales
+                // gastos_operativos_total ya incluye todos los gastos de gastos_mensuales_detalle
+                // gracias a los triggers de la base de datos
                 if (finanzasRango && Array.isArray(finanzasRango)) {
                     finanzasRango.forEach(finanza => {
                         const mes = finanza.mes - 1; // Los meses en el array son 0-indexed
@@ -966,21 +959,11 @@
                             const ventas = Number(finanza.ventas_netas) || 0;
                             const gastosOperativos = Number(finanza.gastos_operativos_total) || 0;
                             const compras = Number(finanza.compras_total) || 0;
+                            // Gastos totales = gastos operativos (ya incluye gastos_mensuales_detalle) + compras
                             const gastosTotales = gastosOperativos + compras;
 
                             ventasMensuales[mes] = ventas;
                             gastosMensuales[mes] = gastosTotales;
-                        }
-                    });
-                }
-
-                // Sumar gastos de gastos_mensuales_detalle por mes
-                if (gastosDetalleAnio && Array.isArray(gastosDetalleAnio)) {
-                    gastosDetalleAnio.forEach(gasto => {
-                        const mes = gasto.mes - 1; // Los meses en el array son 0-indexed
-                        if (mes >= 0 && mes < 12) {
-                            const monto = Number(gasto.monto) || 0;
-                            gastosMensuales[mes] += monto;
                         }
                     });
                 }
@@ -1026,8 +1009,8 @@
                         {
                             label: 'Ventas (Ingresos)',
                             data: ventas,
-                            backgroundColor: 'rgba(40, 167, 69, 0.6)', // Verde
-                            borderColor: 'rgba(40, 167, 69, 1)',
+                            backgroundColor: 'rgba(0, 123, 255, 0.6)', // Azul
+                            borderColor: 'rgba(0, 123, 255, 1)',
                             borderWidth: 2,
                             borderRadius: 4
                         },
@@ -1042,8 +1025,8 @@
                         {
                             label: 'Flujo Operativo',
                             data: flujoOperativo,
-                            backgroundColor: 'rgba(255, 193, 7, 0.6)', // Amarillo/Naranja
-                            borderColor: 'rgba(255, 193, 7, 1)',
+                            backgroundColor: 'rgba(40, 167, 69, 0.6)', // Verde
+                            borderColor: 'rgba(40, 167, 69, 1)',
                             borderWidth: 2,
                             borderRadius: 4
                         }
