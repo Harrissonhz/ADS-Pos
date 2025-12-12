@@ -162,26 +162,26 @@
         }
 
         // Búsqueda de ventas
-        const ventaSearch = document.getElementById('ventaSearch');
-        if (ventaSearch) {
-            // console.log('✅ Campo ventaSearch encontrado');
-            ventaSearch.addEventListener('input', handleVentaSearch);
-            ventaSearch.addEventListener('keydown', handleVentaSearchKeydown);
-            ventaSearch.addEventListener('blur', () => {
+        const buscarNumeroVenta = document.getElementById('buscarNumeroVenta');
+        if (buscarNumeroVenta) {
+            // console.log('✅ Campo buscarNumeroVenta encontrado');
+            buscarNumeroVenta.addEventListener('input', handleVentaSearch);
+            buscarNumeroVenta.addEventListener('keydown', handleVentaSearchKeydown);
+            buscarNumeroVenta.addEventListener('blur', () => {
                 if (!isInteractingWithVentaSuggestions) {
                     hideVentaSuggestions();
                 }
             });
-            // console.log('✅ Event listeners de ventaSearch configurados');
+            // console.log('✅ Event listeners de buscarNumeroVenta configurados');
         } else {
-            console.error('❌ Campo ventaSearch NO encontrado');
+            console.error('❌ Campo buscarNumeroVenta NO encontrado');
         }
 
         const searchVentaBtn = document.getElementById('searchVentaBtn');
         if (searchVentaBtn) {
             // console.log('✅ Botón searchVentaBtn encontrado');
             searchVentaBtn.addEventListener('click', () => {
-                const query = ventaSearch ? ventaSearch.value.trim() : '';
+                const query = buscarNumeroVenta ? buscarNumeroVenta.value.trim() : '';
                 // console.log('🔍 Botón búsqueda clickeado - Query:', query);
                 if (query) {
                     searchVentas(query);
@@ -216,7 +216,7 @@
 
         // Cerrar sugerencias al hacer clic fuera
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('#ventaSearch') && !e.target.closest('#ventaSuggestions')) {
+            if (!e.target.closest('#buscarNumeroVenta') && !e.target.closest('#ventaSuggestions')) {
                 hideVentaSuggestions();
             }
         });
@@ -360,9 +360,9 @@
             return;
         }
 
-        const inputElement = document.getElementById('ventaSearch');
+        const inputElement = document.getElementById('buscarNumeroVenta');
         if (!inputElement) {
-            console.error('❌ Input ventaSearch no encontrado');
+            console.error('❌ Input buscarNumeroVenta no encontrado');
             return;
         }
 
@@ -473,7 +473,7 @@
 
     function positionVentaSuggestions() {
         const container = document.getElementById('ventaSuggestions');
-        const inputElement = document.getElementById('ventaSearch');
+        const inputElement = document.getElementById('buscarNumeroVenta');
         if (!container || !inputElement) return;
 
         const inputRect = inputElement.getBoundingClientRect();
@@ -511,7 +511,7 @@
         const ventaNumero = item.getAttribute('data-venta-numero');
 
         document.getElementById('selectedVentaId').value = ventaId;
-        document.getElementById('ventaSearch').value = ventaNumero;
+        document.getElementById('buscarNumeroVenta').value = ventaNumero;
         document.getElementById('clearVentaBtn').style.display = 'block';
 
         hideVentaSuggestions();
@@ -519,7 +519,7 @@
 
     function clearVentaAsociada() {
         document.getElementById('selectedVentaId').value = '';
-        document.getElementById('ventaSearch').value = '';
+        document.getElementById('buscarNumeroVenta').value = '';
         document.getElementById('clearVentaBtn').style.display = 'none';
     }
 
@@ -874,7 +874,7 @@
 
             if (gasto.venta_id) {
                 document.getElementById('selectedVentaId').value = gasto.venta_id;
-                document.getElementById('ventaSearch').value = gasto.ventas?.numero_venta || '';
+                document.getElementById('buscarNumeroVenta').value = gasto.ventas?.numero_venta || '';
                 document.getElementById('clearVentaBtn').style.display = 'block';
             } else {
                 clearVentaAsociada();
