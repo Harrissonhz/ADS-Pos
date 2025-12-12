@@ -752,10 +752,10 @@
                     return;
                 }
 
-                // Obtener todas las finanzas mensuales para calcular ventas totales
+                // Obtener todas las finanzas mensuales para calcular ventas totales y compras totales
                 const { data: todasFinanzas, error: errorFinanzas } = await window.supabaseClient
                     .from('finanzas_mensuales')
-                    .select('ventas_netas');
+                    .select('ventas_netas, compras_total');
 
                 // Obtener todos los gastos históricos de gastos_mensuales_detalle
                 // Para KPIs Operativos, mostramos la suma total histórica de todos los gastos
@@ -773,14 +773,17 @@
 
                 // Calcular la suma de todas las ventas netas
                 let ventasTotales = 0;
+                // Calcular la suma de todas las compras totales
+                let comprasTotales = 0;
                 // Calcular la suma de todos los gastos desde gastos_mensuales_detalle
                 // (suma histórica total de todos los gastos registrados)
                 let gastosTotales = 0;
                 
-                // Sumar ventas de finanzas_mensuales
+                // Sumar ventas y compras de finanzas_mensuales
                 if (todasFinanzas && Array.isArray(todasFinanzas)) {
                     todasFinanzas.forEach(finanza => {
                         ventasTotales += (Number(finanza.ventas_netas) || 0);
+                        comprasTotales += (Number(finanza.compras_total) || 0);
                     });
                 }
 
@@ -805,8 +808,8 @@
                     kpiGastosTotales.classList.remove('text-danger');
                 }
 
-                // Calcular Punto Equilibrio Total: Ventas Totales - Gastos Totales
-                const puntoEquilibrioTotal = ventasTotales - gastosTotales;
+                // Calcular Punto Equilibrio Total: Ventas Totales - (Gastos Totales + Compras Totales)
+                const puntoEquilibrioTotal = ventasTotales - (gastosTotales + comprasTotales);
 
                 // Actualizar el KPI de Punto Equilibrio Total
                 const kpiPuntoEquilibrioTotal = document.getElementById('kpiPuntoEquilibrioTotal');
