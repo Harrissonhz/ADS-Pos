@@ -849,6 +849,52 @@ DECLARE
     v_old_mes INTEGER;
     v_old_monto DECIMAL(14,2) := 0;
 BEGIN
+    -- Detectar soft delete: cuando deleted_at cambia de NULL a un valor
+    IF TG_OP = 'UPDATE' AND OLD.deleted_at IS NULL AND NEW.deleted_at IS NOT NULL THEN
+        -- Es un soft delete: restar el gasto de finanzas_mensuales
+        v_anio := OLD.anio;
+        v_mes := OLD.mes;
+        v_monto := OLD.monto;
+        
+        UPDATE finanzas_mensuales
+        SET
+            gastos_operativos_total = gastos_operativos_total - v_monto,
+            utilidad_neta = utilidad_neta + v_monto, -- Al eliminar gasto, aumenta utilidad
+            updated_at = NOW()
+        WHERE anio = v_anio AND mes = v_mes;
+        
+        RETURN NEW;
+    END IF;
+    
+    -- Detectar restauración: cuando deleted_at cambia de un valor a NULL
+    IF TG_OP = 'UPDATE' AND OLD.deleted_at IS NOT NULL AND NEW.deleted_at IS NULL THEN
+        -- Es una restauración: agregar el gasto a finanzas_mensuales
+        v_anio := NEW.anio;
+        v_mes := NEW.mes;
+        v_monto := NEW.monto;
+        
+        -- Insertar o actualizar el registro mensual (UPSERT)
+        INSERT INTO finanzas_mensuales (anio, mes, gastos_operativos_total, utilidad_neta)
+        VALUES (
+            v_anio,
+            v_mes,
+            v_monto,
+            -v_monto  -- Los gastos reducen la utilidad neta
+        )
+        ON CONFLICT (anio, mes)
+        DO UPDATE SET
+            gastos_operativos_total = finanzas_mensuales.gastos_operativos_total + v_monto,
+            utilidad_neta = finanzas_mensuales.utilidad_neta - v_monto,
+            updated_at = NOW();
+        
+        RETURN NEW;
+    END IF;
+    
+    -- Si es UPDATE y el registro ya está eliminado (deleted_at NOT NULL), no hacer nada
+    IF TG_OP = 'UPDATE' AND NEW.deleted_at IS NOT NULL THEN
+        RETURN NEW;
+    END IF;
+    
     -- Determinar año y mes según la operación
     IF TG_OP = 'DELETE' THEN
         v_anio := OLD.anio;
