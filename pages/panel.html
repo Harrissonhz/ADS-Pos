@@ -393,19 +393,37 @@
                                     <small class="text-white-50">Ventas - Gastos</small>
                                 </div>
                                 <div class="col-lg-3 col-md-6 text-center">
-                                    <i class="fas fa-triangle-exclamation fa-2x text-danger mb-2"></i>
-                                    <h3 id="kpiStockBajo" class="text-white">—</h3>
-                                    <p class="text-white-50 mb-1">Productos con Stock Bajo</p>
-                                    <small class="text-white-50">—</small>
+                                    <i class="fas fa-percentage fa-2x text-info mb-2"></i>
+                                    <h3 id="kpiRentabilidadGlobal" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Rentabilidad Global</p>
+                                    <small class="text-white-50">Margen neto histórico</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-boxes-stacked fa-2x text-success mb-2"></i>
+                                    <h3 id="kpiValorInventario" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Valor Inventario</p>
+                                    <small class="text-white-50">Valor actual del inventario</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-receipt fa-2x text-warning mb-2"></i>
+                                    <h3 id="kpiTicketPromedio" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Ticket Promedio (desde 2026)</p>
+                                    <small class="text-white-50">Promedio por venta ≥ 2026</small>
                                 </div>
                                 <div class="col-lg-3 col-md-6 text-center">
                                     <i class="fas fa-cubes fa-2x text-info mb-2"></i>
                                     <h3 id="kpiTotalProductos" class="text-white">—</h3>
                                     <p class="text-white-50 mb-1">Total Productos</p>
                                     <small class="text-white-50">—</small>
+                                </div>
+                                <div class="col-lg-3 col-md-6 text-center">
+                                    <i class="fas fa-triangle-exclamation fa-2x text-danger mb-2"></i>
+                                    <h3 id="kpiStockBajo" class="text-white">—</h3>
+                                    <p class="text-white-50 mb-1">Productos con Stock Bajo</p>
+                                    <small class="text-white-50">—</small>
+                                </div>
                     </div>
                 </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -419,14 +437,44 @@
                                 <i class="fas fa-chart-line me-2"></i>
                                 <h5 class="mb-0">Ventas de los Últimos 7 Días</h5>
                             </div>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-light active" onclick="cambiarPeriodo('7d')">7D</button>
-                                <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('30d')">30D</button>
-                                <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('90d')">90D</button>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-light active" onclick="cambiarPeriodo('7d')">7D</button>
+                                    <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('30d')">30D</button>
+                                    <button class="btn btn-sm btn-outline-light" onclick="cambiarPeriodo('90d')">90D</button>
+                                </div>
+                                <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#ventasPeriodoSection" aria-expanded="true" aria-controls="ventasPeriodoSection">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <canvas id="ventasChart" height="100"></canvas>
+                        <div class="card-body collapse show" id="ventasPeriodoSection">
+                            <div style="position: relative; height: 260px; width: 100%; max-width: 100%;" class="mb-3">
+                                <canvas id="ventasChart"></canvas>
+                            </div>
+                            <div class="mt-2">
+                                <h6 class="text-white mb-2">
+                                    <i class="fas fa-star me-2"></i>Top 5 productos más vendidos
+                                </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th class="text-end">Cantidad</th>
+                                                <th class="text-end">Valor vendido</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="topProductosPeriodoBody">
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted small">
+                                                    Sin datos para el período seleccionado.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -436,11 +484,16 @@
             <div class="row g-4 mb-4">
                 <div class="col-12">
                     <div class="card pos-card">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-bolt me-2"></i>
-                            <h5 class="mb-0">Accesos Rápidos</h5>
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bolt me-2"></i>
+                                <h5 class="mb-0">Accesos Rápidos</h5>
+                            </div>
+                            <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#accesosRapidosSection" aria-expanded="true" aria-controls="accesosRapidosSection">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body collapse show" id="accesosRapidosSection">
                             <div class="row g-3">
                                 <div class="col-lg-2 col-md-4 col-sm-6">
                                     <a href="./facturacion.html" class="btn btn-success w-100">
@@ -521,8 +574,8 @@
                 });
             }
 
-            // Sincronizar chevrons de los colapsos de KPIs
-            const collapseElements = ['kpiFinancieros', 'kpiFinancierosComparativos', 'kpiOperativos'];
+            // Sincronizar chevrons de los colapsos de KPIs y secciones principales
+            const collapseElements = ['kpiFinancieros', 'kpiFinancierosComparativos', 'kpiOperativos', 'ventasPeriodoSection', 'accesosRapidosSection'];
             collapseElements.forEach(id => {
                 const collapseElement = document.getElementById(id);
                 if (collapseElement) {
@@ -752,10 +805,10 @@
                     return;
                 }
 
-                // Obtener todas las finanzas mensuales para calcular ventas totales y compras totales
+                // Obtener todas las finanzas mensuales para calcular ventas, compras y utilidad neta totales
                 const { data: todasFinanzas, error: errorFinanzas } = await window.supabaseClient
                     .from('finanzas_mensuales')
-                    .select('ventas_netas, compras_total');
+                    .select('ventas_netas, compras_total, utilidad_neta');
 
                 // Obtener todos los gastos históricos de gastos_mensuales_detalle
                 // Para KPIs Operativos, mostramos la suma total histórica de todos los gastos
@@ -778,12 +831,15 @@
                 // Calcular la suma de todos los gastos desde gastos_mensuales_detalle
                 // (suma histórica total de todos los gastos registrados)
                 let gastosTotales = 0;
+                // Calcular la suma histórica de la utilidad neta
+                let utilidadTotal = 0;
                 
-                // Sumar ventas y compras de finanzas_mensuales
+                // Sumar ventas, compras y utilidad de finanzas_mensuales
                 if (todasFinanzas && Array.isArray(todasFinanzas)) {
                     todasFinanzas.forEach(finanza => {
                         ventasTotales += (Number(finanza.ventas_netas) || 0);
                         comprasTotales += (Number(finanza.compras_total) || 0);
+                        utilidadTotal += (Number(finanza.utilidad_neta) || 0);
                     });
                 }
 
@@ -824,11 +880,114 @@
                     }
                 }
 
+                // Calcular Rentabilidad Global Acumulada (margen neto histórico)
+                let rentabilidadGlobal = 0;
+                if (ventasTotales > 0) {
+                    rentabilidadGlobal = (utilidadTotal / ventasTotales) * 100;
+                }
+
+                const kpiRentabilidadGlobal = document.getElementById('kpiRentabilidadGlobal');
+                if (kpiRentabilidadGlobal) {
+                    kpiRentabilidadGlobal.textContent = formatearPorcentaje(rentabilidadGlobal);
+                    // Colorear según umbrales de rentabilidad
+                    kpiRentabilidadGlobal.classList.remove('text-danger', 'text-success', 'text-warning');
+                    if (rentabilidadGlobal >= 20) {
+                        kpiRentabilidadGlobal.classList.add('text-success');
+                    } else if (rentabilidadGlobal >= 10) {
+                        kpiRentabilidadGlobal.classList.add('text-warning');
+                    } else {
+                        kpiRentabilidadGlobal.classList.add('text-danger');
+                    }
+                }
+
+                // Calcular valor del inventario actual (precio_venta * stock_actual)
+                let valorInventario = 0;
+                // Contadores de inventario para KPIs operativos
+                let stockBajoCount = 0;
+                let totalProductosCount = 0;
+                try {
+                    const { data: productos, error: errorProductos } = await window.db.getProductos({
+                        orderBy: 'nombre',
+                        ascending: true,
+                        limit: 1000,
+                        offset: 0
+                    });
+
+                    if (errorProductos) {
+                        console.error('Error cargando productos para valor de inventario:', errorProductos);
+                    } else if (Array.isArray(productos)) {
+                        productos.forEach(p => {
+                            const stock = Number(p.stock_actual) || 0;
+                            const precioVenta = Number(p.precio_venta) || 0;
+                            const stockMin = Number(p.stock_min) || 0;
+
+                            // Contar producto para total
+                            totalProductosCount += 1;
+
+                            // Valor de inventario a precio de venta
+                            valorInventario += stock * precioVenta;
+
+                            // Producto con stock bajo: stock <= stock mínimo o sin stock
+                            if (stock <= 0 || (stockMin > 0 && stock <= stockMin)) {
+                                stockBajoCount += 1;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error calculando valor de inventario:', e);
+                }
+
+                // Actualizar KPI de Valor Inventario
+                const kpiValorInventario = document.getElementById('kpiValorInventario');
+                if (kpiValorInventario) {
+                    kpiValorInventario.textContent = formatearMoneda(valorInventario);
+                    kpiValorInventario.classList.remove('text-danger');
+                }
+
+                // Calcular Ticket Promedio Histórico (desde 2026 en adelante)
+                try {
+                    const fechaInicioTicket = '2026-01-01';
+                    const { data: ventasStats, error: ventasStatsError } = await window.db.getVentasStats({
+                        fechaInicio: fechaInicioTicket
+                    });
+
+                    if (ventasStatsError) {
+                        console.error('Error cargando estadísticas de ventas para ticket promedio:', ventasStatsError);
+                    } else if (ventasStats && typeof ventasStats.promedio === 'number') {
+                        const kpiTicketPromedio = document.getElementById('kpiTicketPromedio');
+                        if (kpiTicketPromedio) {
+                            kpiTicketPromedio.textContent = formatearMoneda(ventasStats.promedio);
+                            kpiTicketPromedio.classList.remove('text-danger');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error calculando ticket promedio histórico:', e);
+                }
+
+                // Actualizar KPI de Productos con Stock Bajo
+                const kpiStockBajo = document.getElementById('kpiStockBajo');
+                if (kpiStockBajo) {
+                    kpiStockBajo.textContent = (stockBajoCount || 0).toLocaleString('es-CO');
+                    kpiStockBajo.classList.remove('text-danger');
+                }
+
+                // Actualizar KPI de Total Productos
+                const kpiTotalProductos = document.getElementById('kpiTotalProductos');
+                if (kpiTotalProductos) {
+                    kpiTotalProductos.textContent = (totalProductosCount || 0).toLocaleString('es-CO');
+                    kpiTotalProductos.classList.remove('text-danger');
+                }
+
             } catch (error) {
                 console.error('Error en cargarKPIsOperativos:', error);
                 const kpiVentasTotales = document.getElementById('kpiVentasTotales');
                 const kpiGastosTotales = document.getElementById('kpiGastosTotales');
                 const kpiPuntoEquilibrioTotal = document.getElementById('kpiPuntoEquilibrioTotal');
+                const kpiRentabilidadGlobal = document.getElementById('kpiRentabilidadGlobal');
+                const kpiValorInventario = document.getElementById('kpiValorInventario');
+                const kpiStockBajo = document.getElementById('kpiStockBajo');
+                const kpiTotalProductos = document.getElementById('kpiTotalProductos');
+                const kpiTicketPromedio = document.getElementById('kpiTicketPromedio');
                 if (kpiVentasTotales) {
                     kpiVentasTotales.textContent = 'Error';
                     kpiVentasTotales.classList.add('text-danger');
@@ -841,6 +1000,26 @@
                     kpiPuntoEquilibrioTotal.textContent = 'Error';
                     kpiPuntoEquilibrioTotal.classList.add('text-danger');
                 }
+                if (kpiRentabilidadGlobal) {
+                    kpiRentabilidadGlobal.textContent = 'Error';
+                    kpiRentabilidadGlobal.classList.add('text-danger');
+                }
+                if (kpiValorInventario) {
+                    kpiValorInventario.textContent = 'Error';
+                    kpiValorInventario.classList.add('text-danger');
+                }
+                if (kpiStockBajo) {
+                    kpiStockBajo.textContent = 'Error';
+                    kpiStockBajo.classList.add('text-danger');
+                }
+                if (kpiTotalProductos) {
+                    kpiTotalProductos.textContent = 'Error';
+                    kpiTotalProductos.classList.add('text-danger');
+                }
+                if (kpiTicketPromedio) {
+                    kpiTicketPromedio.textContent = 'Error';
+                    kpiTicketPromedio.classList.add('text-danger');
+                }
             }
         }
 
@@ -848,6 +1027,8 @@
         let ventasMensualesChart = null;
         let ventasComparativasChart = null;
         let flujoOperativoChart = null;
+        let ventasPeriodoChart = null; // Gráfico de ventas últimos 7/30/90 días
+        let periodoVentasActual = '7d'; // Período seleccionado por defecto
         let cargandoKPIsComparativos = false; // Bandera para prevenir múltiples cargas
         let cargandoVentasComparativas = false; // Bandera para prevenir múltiples cargas del gráfico comparativo
         let cargandoFlujoOperativo = false; // Bandera para prevenir múltiples cargas del gráfico de flujo operativo
@@ -1502,15 +1683,19 @@
 
         // Gráfico de Ventas
         function inicializarGraficos() {
-            // Gráfico de Ventas por Día
-            const ventasCtx = document.getElementById('ventasChart').getContext('2d');
-            new Chart(ventasCtx, {
+            const canvas = document.getElementById('ventasChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            ventasPeriodoChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    labels: [],
                     datasets: [{
                         label: 'Ventas ($)',
-                        data: [180000, 220000, 190000, 250000, 300000, 280000, 320000],
+                        data: [],
                         borderColor: '#007bff',
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         tension: 0.4,
@@ -1533,7 +1718,12 @@
                             ticks: {
                                 color: '#fff',
                                 callback: function(value) {
-                                    return '$' + (value / 1000) + 'K';
+                                    if (value >= 1000000) {
+                                        return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return '$' + (value / 1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
                                 }
                             },
                             grid: {
@@ -1552,6 +1742,225 @@
                 }
             });
 
+            // Cargar datos iniciales (últimos 7 días)
+            cargarVentasPorPeriodo(periodoVentasActual);
+            cargarTopProductosPeriodo(periodoVentasActual);
+        }
+
+        // Obtener fechas de inicio y fin según período
+        function obtenerRangoFechas(periodo) {
+            const hoy = new Date();
+            const fechaFin = new Date(hoy);
+            fechaFin.setHours(23, 59, 59, 999);
+
+            const fechaInicio = new Date(hoy);
+            if (periodo === '7d') {
+                fechaInicio.setDate(fechaInicio.getDate() - 6);
+            } else if (periodo === '30d') {
+                fechaInicio.setDate(fechaInicio.getDate() - 29);
+            } else if (periodo === '90d') {
+                fechaInicio.setDate(fechaInicio.getDate() - 89);
+            }
+            fechaInicio.setHours(0, 0, 0, 0);
+
+            return {
+                inicioISO: fechaInicio.toISOString(),
+                finISO: fechaFin.toISOString(),
+                inicio: fechaInicio,
+                fin: fechaFin
+            };
+        }
+
+        // Cargar datos reales de ventas para el gráfico de período
+        async function cargarVentasPorPeriodo(periodo) {
+            try {
+                if (!window.supabaseClient) {
+                    console.error('No hay conexión con Supabase para cargar ventas del período');
+                    return;
+                }
+
+                const rango = obtenerRangoFechas(periodo);
+
+                const { data, error } = await window.supabaseClient
+                    .from('ventas')
+                    .select('fecha_venta, total')
+                    .eq('estado', 'completada')
+                    .is('deleted_at', null)
+                    .gte('fecha_venta', rango.inicioISO)
+                    .lte('fecha_venta', rango.finISO)
+                    .order('fecha_venta', { ascending: true });
+
+                if (error) {
+                    console.error('Error cargando ventas para el gráfico de período:', error);
+                    return;
+                }
+
+                const ventas = Array.isArray(data) ? data : [];
+
+                // Agrupar por día (YYYY-MM-DD)
+                const mapaPorDia = new Map();
+                ventas.forEach(v => {
+                    const fecha = new Date(v.fecha_venta);
+                    // Normalizar a fecha local YYYY-MM-DD
+                    const key = fecha.getFullYear() + '-' +
+                        String(fecha.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(fecha.getDate()).padStart(2, '0');
+
+                    const total = Number(v.total) || 0;
+                    mapaPorDia.set(key, (mapaPorDia.get(key) || 0) + total);
+                });
+
+                // Generar arreglo de días consecutivos en el rango para mostrar días sin ventas como 0
+                const labels = [];
+                const valores = [];
+                const cursor = new Date(rango.inicio);
+                while (cursor <= rango.fin) {
+                    const key = cursor.getFullYear() + '-' +
+                        String(cursor.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(cursor.getDate()).padStart(2, '0');
+
+                    labels.push(cursor.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' }));
+                    valores.push(mapaPorDia.get(key) || 0);
+
+                    cursor.setDate(cursor.getDate() + 1);
+                }
+
+                if (ventasPeriodoChart) {
+                    ventasPeriodoChart.data.labels = labels;
+                    ventasPeriodoChart.data.datasets[0].data = valores;
+                    ventasPeriodoChart.update();
+                }
+            } catch (error) {
+                console.error('Error en cargarVentasPorPeriodo:', error);
+            }
+        }
+
+        // Cargar Top 5 productos más vendidos para el mismo período
+        async function cargarTopProductosPeriodo(periodo) {
+            try {
+                if (!window.supabaseClient) {
+                    console.error('No hay conexión con Supabase para cargar top de productos');
+                    return;
+                }
+
+                const tbody = document.getElementById('topProductosPeriodoBody');
+                if (!tbody) return;
+
+                const rango = obtenerRangoFechas(periodo);
+
+                // 1) Obtener ventas completadas en el rango
+                const { data: ventas, error: errorVentas } = await window.supabaseClient
+                    .from('ventas')
+                    .select('id, fecha_venta')
+                    .eq('estado', 'completada')
+                    .is('deleted_at', null)
+                    .gte('fecha_venta', rango.inicioISO)
+                    .lte('fecha_venta', rango.finISO);
+
+                if (errorVentas) {
+                    console.error('Error cargando ventas para top de productos:', errorVentas);
+                    return;
+                }
+
+                const ventasArr = Array.isArray(ventas) ? ventas : [];
+                const ventaIds = ventasArr.map(v => v.id);
+
+                if (!ventaIds.length) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted small">Sin datos para el período seleccionado.</td></tr>';
+                    return;
+                }
+
+                // 2) Obtener detalles de ventas en ese conjunto de ventas
+                const { data: detalles, error: errorDetalles } = await window.supabaseClient
+                    .from('ventas_detalle')
+                    .select('producto_id, cantidad, total')
+                    .in('venta_id', ventaIds);
+
+                if (errorDetalles) {
+                    console.error('Error cargando detalles de ventas para top de productos:', errorDetalles);
+                    return;
+                }
+
+                const detallesArr = Array.isArray(detalles) ? detalles : [];
+                if (!detallesArr.length) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted small">Sin datos para el período seleccionado.</td></tr>';
+                    return;
+                }
+
+                // 3) Agrupar por producto_id
+                const mapa = new Map();
+                detallesArr.forEach(det => {
+                    const id = det.producto_id;
+                    const cantidad = Number(det.cantidad) || 0;
+                    const valor = Number(det.total) || 0;
+
+                    if (!mapa.has(id)) {
+                        mapa.set(id, { id, cantidad: 0, valor: 0, nombre: 'Sin nombre' });
+                    }
+                    const item = mapa.get(id);
+                    item.cantidad += cantidad;
+                    item.valor += valor;
+                });
+
+                const items = Array.from(mapa.values());
+
+                // 4) Traer nombres de productos para los IDs involucrados
+                try {
+                    if (window.db && typeof window.db.getProductos === 'function') {
+                        const { data: productos, error: errorProductos } = await window.db.getProductos({
+                            orderBy: 'nombre',
+                            ascending: true,
+                            limit: 1000,
+                            offset: 0
+                        });
+
+                        if (!errorProductos && Array.isArray(productos)) {
+                            const nombreMap = new Map();
+                            productos.forEach(p => {
+                                if (p.id) {
+                                    nombreMap.set(p.id, p.nombre || 'Sin nombre');
+                                }
+                            });
+                            items.forEach(item => {
+                                item.nombre = nombreMap.get(item.id) || item.nombre;
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error cargando nombres de productos para top:', e);
+                }
+
+                // 5) Ordenar: primero por cantidad descendente, luego por valor descendente
+                items.sort((a, b) => {
+                    if (b.cantidad !== a.cantidad) return b.cantidad - a.cantidad;
+                    return b.valor - a.valor;
+                });
+
+                const top5 = items.slice(0, 5);
+
+                // 6) Renderizar en la tabla
+                if (!top5.length) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted small">Sin datos para el período seleccionado.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                top5.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.nombre}</td>
+                        <td class="text-end">${item.cantidad.toLocaleString('es-CO')}</td>
+                        <td class="text-end">${formatearMoneda(item.valor)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error en cargarTopProductosPeriodo:', error);
+                const tbody = document.getElementById('topProductosPeriodoBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger small">Error al cargar el Top de productos.</td></tr>';
+                }
+            }
         }
 
         // Cambiar período del gráfico
@@ -1564,8 +1973,10 @@
             // Agregar clase active al botón clickeado
             event.target.classList.add('active');
             
-            // Aquí se actualizaría el gráfico según el período seleccionado
-            console.log('Cambiando período a:', periodo);
+            // Actualizar período actual y recargar datos del gráfico y top de productos
+            periodoVentasActual = periodo;
+            cargarVentasPorPeriodo(periodoVentasActual);
+            cargarTopProductosPeriodo(periodoVentasActual);
         }
 
         // Actualizar dashboard
@@ -1602,9 +2013,9 @@
                 
                 // Recargar gráfico de flujo operativo
                 await cargarFlujoOperativoMensual();
-                
-                // Recargar gráficos (si es necesario)
-                // inicializarGraficos();
+                // Recargar gráfico de ventas y Top de productos por período actual
+                await cargarVentasPorPeriodo(periodoVentasActual);
+                await cargarTopProductosPeriodo(periodoVentasActual);
                 
                 btn.innerHTML = originalText;
                 btn.disabled = false;

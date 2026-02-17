@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Costos - ADS-POS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos principales del proyecto y POS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
+    <link rel="icon" href="../assets/img/logo.png">
+    <meta name="description" content="Calculadora de costos para productos - ADS-POS">
+</head>
+<body class="pos-app">
+    <!-- Menú hamburguesa -->
+    <nav class="pos-navbar">
+        <div class="pos-navbar-brand">
+            <button class="btn btn-link pos-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#posSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="pos-navbar-actions">
+            <a href="./Menu.html" class="btn btn-link pos-home-btn" title="Ir al Menu">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start pos-sidebar" tabindex="-1" id="posSidebar">
+        <div class="offcanvas-header pos-sidebar-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-sidebar-logo">
+                <h5 class="mb-0">ADS Store POS</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body pos-sidebar-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="./panel.html">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas.html">
+                        <i class="fas fa-shopping-cart me-2"></i>Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./facturacion.html">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Facturación
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./ventas-historial.html">
+                        <i class="fas fa-history me-2"></i>Historial de Ventas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#inventarioMenu" role="button" aria-expanded="false" aria-controls="inventarioMenu">
+                        <i class="fas fa-warehouse me-2"></i>Inventario
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="inventarioMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./productos.html">
+                                    <i class="fas fa-box me-2"></i>Productos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./categorias.html">
+                                    <i class="fas fa-tags me-2"></i>Categorías
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./inventario.html">
+                                    <i class="fas fa-warehouse me-2"></i>Inventario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./movimientos.html">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movimientos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#clientesProveedoresMenu" role="button" aria-expanded="false" aria-controls="clientesProveedoresMenu">
+                        <i class="fas fa-users me-2"></i>Clientes y Proveedores
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="clientesProveedoresMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./clientes.html">
+                                    <i class="fas fa-users me-2"></i>Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./proveedores.html">
+                                    <i class="fas fa-truck me-2"></i>Proveedores
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./compras.html">
+                                    <i class="fas fa-shopping-bag me-2"></i>Compras
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="./calculadora.html">
+                                    <i class="fas fa-calculator me-2"></i>Calculadora
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#cajaFinanzasMenu" role="button" aria-expanded="false" aria-controls="cajaFinanzasMenu">
+                        <i class="fas fa-cash-register me-2"></i>Caja y Finanzas
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="cajaFinanzasMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-apertura.html">
+                                    <i class="fas fa-cash-register me-2"></i>Apertura de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-cierre.html">
+                                    <i class="fas fa-lock me-2"></i>Cierre de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./caja-historial.html">
+                                    <i class="fas fa-chart-line me-2"></i>Historial de Caja
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./gastos.html">
+                                    <i class="fas fa-money-bill-wave me-2"></i>Gastos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./reportes.html">
+                                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-header-collapse" data-bs-toggle="collapse" href="#configuracionMenu" role="button" aria-expanded="false" aria-controls="configuracionMenu">
+                        <i class="fas fa-cog me-2"></i>Configuración
+                        <i class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <div class="collapse" id="configuracionMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./usuarios.html">
+                                    <i class="fas fa-user-cog me-2"></i>Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./configuracion.html">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./perfil.html">
+                                    <i class="fas fa-user me-2"></i>Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./ayuda.html">
+                                    <i class="fas fa-question-circle me-2"></i>Ayuda
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="../index.html">
+                        <i class="fas fa-home me-2"></i>Volver a Tienda
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="container-fluid py-4">
+        <div>
+            <div class="pos-login-header d-flex align-items-center position-relative">
+                <h2 class="w-100 text-center mb-0"><i class="fas fa-calculator me-2"></i>Calculadora de Costos</h2>
+                <div class="logo-icon position-absolute end-0">
+                    <img src="../assets/img/logo.png" alt="Logo ADS" class="pos-logo-img">
+                </div>
+            </div>
+
+            <form id="formCalculadora" class="mt-4">
+                <!-- A. Datos del producto -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="fas fa-box me-2"></i>A. Datos del producto</h5>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDatosProducto" aria-expanded="true" aria-controls="collapseDatosProducto">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="collapseDatosProducto">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label class="form-label text-white-50">Nombre del producto</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" id="nombreProducto" placeholder="Ej: Auriculares Bluetooth">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label class="form-label text-white-50">SKU / Referencia</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" id="skuReferencia" placeholder="Ej: SKU-001">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label class="form-label text-white-50">Plataforma de compra</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="plataforma">
+                                    <option value="">Seleccione...</option>
+                                    <option value="aliexpress">AliExpress</option>
+                                    <option value="temu">Temu</option>
+                                    <option value="amazon">Amazon</option>
+                                    <option value="alibaba">Alibaba</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label class="form-label text-white-50">Cantidad comprada</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="cantidad" min="1" value="1" placeholder="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B. Costes de compra (Importación) -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>B. Costes de compra (Importación)</h5>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCostesCompra" aria-expanded="true" aria-controls="collapseCostesCompra">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="collapseCostesCompra">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Precio unitario del producto (COP o USD)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="precioUnitario" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">TRM aplicada (si precio en USD)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="trm" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Envío internacional (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="envioInternacional" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Impuestos de importación (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="impuestos" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">IVA de importación (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="ivaImportacion" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Otros costos (aduana, operador logístico, etc.) (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="otrosCostos" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                        </div>
+                        <hr class="my-3 border-secondary">
+                        <p class="text-white-50 small mb-1">Resultado automático</p>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <span class="text-white-50">Costo total de compra:</span>
+                                <strong id="resultadoCostoTotalCompra" class="text-info ms-2">—</strong>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <span class="text-white-50">Costo unitario real:</span>
+                                <strong id="resultadoCostoUnitarioReal" class="text-info ms-2">—</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C. Costos de venta (Mercado Libre) -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="fas fa-store me-2"></i>C. Costos de venta (Mercado Libre)</h5>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCostosML" aria-expanded="true" aria-controls="collapseCostosML">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="collapseCostosML">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Tipo de publicación</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="tipoPublicacion">
+                                    <option value="clasica">Clásica</option>
+                                    <option value="premium">Premium</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Comisión Mercado Libre (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="comisionML" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Costo fijo por venta (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="costoFijo" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Envío Mercado Libre (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="envioML" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Retención en la fuente (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="retenciones" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">IVA sobre comisión (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="ivaComision" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">Otros gastos operativos (COP)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="otrosGastosOp" min="0" step="0.01" value="0" placeholder="0">
+                            </div>
+                        </div>
+                        <hr class="my-3 border-secondary">
+                        <p class="text-white-50 small mb-1">Resultado automático</p>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <span class="text-white-50">Costo total de venta:</span>
+                                <strong id="resultadoCostoTotalVenta" class="text-info ms-2">—</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- D. Margen y precio de venta -->
+                <div class="card pos-card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><i class="fas fa-percent me-2"></i>D. Margen y precio de venta</h5>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMargen" aria-expanded="true" aria-controls="collapseMargen">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="collapseMargen">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="form-label text-white-50">% de ganancia deseado</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary input-costo" id="pctGanancia" min="0" max="100" step="0.01" value="20" placeholder="20">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Calcular -->
+                <div class="text-center mb-4">
+                    <button type="button" class="btn btn-warning btn-lg" id="btnCalcular">
+                        <i class="fas fa-calculator me-2"></i>Calcular
+                    </button>
+                </div>
+
+                <!-- RESULTADOS -->
+                <div class="card pos-card mb-4 border-success" id="cardResultados" style="display: none;">
+                    <div class="card-header bg-success bg-opacity-25 d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0 text-white"><i class="fas fa-chart-line me-2"></i>RESULTADOS</h5>
+                        <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResultados" aria-expanded="true" aria-controls="collapseResultados">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body collapse show" id="collapseResultados">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6 col-lg-3 text-center">
+                                <p class="text-white-50 mb-1">Precio de venta sugerido</p>
+                                <h4 id="resultadoPrecioSugerido" class="text-success">—</h4>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3 text-center">
+                                <p class="text-white-50 mb-1">Ganancia neta por unidad</p>
+                                <h4 id="resultadoGananciaUnidad" class="text-info">—</h4>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3 text-center">
+                                <p class="text-white-50 mb-1">% de rentabilidad real</p>
+                                <h4 id="resultadoRentabilidad" class="text-warning">—</h4>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3 text-center">
+                                <p class="text-white-50 mb-1">Estado</p>
+                                <h4 id="resultadoEstado"><span class="badge bg-secondary">—</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="text-center mt-4 pos-login-footer">
+        <a href="../index.html" class="text-decoration-none"><i class="fas fa-home me-2"></i>Volver a la tienda</a>
+        <div class="text-center mt-3">
+            <a href="https://www.facebook.com/profile.php?id=61550078453724" class="text-white me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="https://www.instagram.com/OutletShop_for_my/" class="text-white me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="https://www.youtube.com/@OutletShopTiendaVirtual" class="text-white me-3" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+            <a href="https://tiktok.com/@outletshoptienda" class="text-white me-3" target="_blank"><i class="fab fa-tiktok fa-2x"></i></a>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-white-50 mb-0">
+                <i class="fas fa-copyright me-1"></i>
+                2024 ADS-POS. Sistema de Punto de Venta Profesional.
+            </p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnCalcular = document.getElementById('btnCalcular');
+            const cardResultados = document.getElementById('cardResultados');
+
+            // Sincronizar chevrons de las secciones colapsables
+            const collapseIds = ['collapseDatosProducto', 'collapseCostesCompra', 'collapseCostosML', 'collapseMargen', 'collapseResultados'];
+            collapseIds.forEach(function(id) {
+                const collapseEl = document.getElementById(id);
+                if (collapseEl) {
+                    const header = collapseEl.previousElementSibling;
+                    const button = header ? header.querySelector('button[data-bs-toggle="collapse"]') : null;
+                    const chevron = button ? button.querySelector('.fa-chevron-up, .fa-chevron-down') : null;
+                    if (chevron) {
+                        collapseEl.addEventListener('show.bs.collapse', function() {
+                            chevron.classList.remove('fa-chevron-down');
+                            chevron.classList.add('fa-chevron-up');
+                        });
+                        collapseEl.addEventListener('hide.bs.collapse', function() {
+                            chevron.classList.remove('fa-chevron-up');
+                            chevron.classList.add('fa-chevron-down');
+                        });
+                    }
+                }
+            });
+
+            function parseNum(id) {
+                const el = document.getElementById(id);
+                const v = el && el.value ? parseFloat(el.value) : 0;
+                return isNaN(v) ? 0 : v;
+            }
+
+            function formatearMoneda(valor) {
+                if (valor === null || valor === undefined || isNaN(valor)) return '$ 0';
+                return new Intl.NumberFormat('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(valor);
+            }
+
+            // Actualizar resultados automáticos del bloque B (Costo total compra, Costo unitario real)
+            function actualizarResultadosCompra() {
+                const precioUnitario = parseNum('precioUnitario');
+                const trm = parseNum('trm');
+                const precioProductoCOP = trm > 0 ? precioUnitario * trm : precioUnitario;
+                const envioInt = parseNum('envioInternacional');
+                const impuestos = parseNum('impuestos');
+                const ivaImportacion = parseNum('ivaImportacion');
+                const otrosCostos = parseNum('otrosCostos');
+                const cantidad = Math.max(1, parseNum('cantidad'));
+
+                // CostoTotalProducto = (PrecioProducto * TRM) + EnvíoInternacional + Impuestos + IVAImportación + OtrosCostos
+                const costoTotalProducto = precioProductoCOP + envioInt + impuestos + ivaImportacion + otrosCostos;
+                const costoUnitario = cantidad > 0 ? costoTotalProducto / cantidad : 0;
+
+                document.getElementById('resultadoCostoTotalCompra').textContent = formatearMoneda(costoTotalProducto);
+                document.getElementById('resultadoCostoUnitarioReal').textContent = formatearMoneda(costoUnitario);
+            }
+
+            // Actualizar resultado automático del bloque C (Costo total de venta - parte fija)
+            function actualizarResultadosVenta() {
+                const costoFijo = parseNum('costoFijo');
+                const envioML = parseNum('envioML');
+                const retenciones = parseNum('retenciones');
+                const ivaComision = parseNum('ivaComision');
+                const otrosGastosOp = parseNum('otrosGastosOp');
+                const costoTotalVentaFijo = costoFijo + envioML + retenciones + ivaComision + otrosGastosOp;
+                document.getElementById('resultadoCostoTotalVenta').textContent = formatearMoneda(costoTotalVentaFijo);
+            }
+
+            ['precioUnitario', 'trm', 'envioInternacional', 'impuestos', 'ivaImportacion', 'otrosCostos', 'cantidad'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', actualizarResultadosCompra);
+                    el.addEventListener('change', actualizarResultadosCompra);
+                }
+            });
+            ['comisionML', 'costoFijo', 'envioML', 'retenciones', 'ivaComision', 'otrosGastosOp'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', actualizarResultadosVenta);
+                    el.addEventListener('change', actualizarResultadosVenta);
+                }
+            });
+            actualizarResultadosCompra();
+            actualizarResultadosVenta();
+
+            btnCalcular.addEventListener('click', function() {
+                // --- B. Costes de compra ---
+                const precioUnitario = parseNum('precioUnitario');
+                const trm = parseNum('trm');
+                const precioProductoCOP = trm > 0 ? precioUnitario * trm : precioUnitario;
+                const envioInt = parseNum('envioInternacional');
+                const impuestos = parseNum('impuestos');
+                const ivaImportacion = parseNum('ivaImportacion');
+                const otrosCostos = parseNum('otrosCostos');
+                const cantidad = Math.max(1, parseNum('cantidad'));
+
+                // CostoTotalProducto = (PrecioProducto * TRM) + EnvíoInternacional + Impuestos + IVAImportación + OtrosCostos
+                const costoTotalProducto = precioProductoCOP + envioInt + impuestos + ivaImportacion + otrosCostos;
+                // CostoUnitario = CostoTotalProducto / Cantidad
+                const costoUnitario = costoTotalProducto / cantidad;
+
+                // --- C. Costos ML (fijos por venta) ---
+                const comisionML = parseNum('comisionML'); // Comisión en COP (valor que cobra ML)
+                const costoFijo = parseNum('costoFijo');
+                const envioML = parseNum('envioML');
+                const retenciones = parseNum('retenciones');
+                const ivaComision = parseNum('ivaComision');
+                const otrosGastosOp = parseNum('otrosGastosOp');
+                const costosFijosML = costoFijo + envioML + retenciones + ivaComision + otrosGastosOp;
+
+                const margenDeseado = parseNum('pctGanancia') / 100;
+
+                // CostoML por unidad = (Comisión ML en COP + costos fijos ML) / Cantidad
+                const costosMLPorUnidad = (comisionML + costosFijosML) / cantidad;
+
+                // PrecioVenta = (CostoUnitario + CostosML por unidad) / (1 - MargenDeseado)
+                const denominador = 1 - margenDeseado;
+                const precioVentaSugerido = denominador > 0
+                    ? (costoUnitario + costosMLPorUnidad) / denominador
+                    : 0;
+
+                // Costo total de venta (ML) por unidad
+                const costoTotalVentaML = costosMLPorUnidad;
+
+                // Ganancia = PrecioVenta - CostoUnitario - CostosML
+                const gananciaNeta = precioVentaSugerido - costoUnitario - costoTotalVentaML;
+                const rentabilidadPct = precioVentaSugerido > 0
+                    ? (gananciaNeta / precioVentaSugerido) * 100
+                    : 0;
+
+                const esRentable = rentabilidadPct >= (margenDeseado * 100);
+
+                // Mostrar resultado automático C: Costo total de venta (por unidad: CostoML = comisión + costos fijos por unidad)
+                document.getElementById('resultadoCostoTotalVenta').textContent = formatearMoneda(costoTotalVentaML);
+
+                document.getElementById('resultadoPrecioSugerido').textContent = formatearMoneda(precioVentaSugerido);
+                document.getElementById('resultadoGananciaUnidad').textContent = formatearMoneda(gananciaNeta);
+                document.getElementById('resultadoRentabilidad').textContent = rentabilidadPct.toFixed(2) + '%';
+
+                const estadoEl = document.getElementById('resultadoEstado');
+                estadoEl.innerHTML = esRentable
+                    ? '<span class="badge bg-success">Rentable</span>'
+                    : '<span class="badge bg-danger">No rentable</span>';
+
+                cardResultados.style.display = 'block';
+            });
+
+            document.querySelectorAll('.input-costo').forEach(function(input) {
+                input.addEventListener('input', function() {
+                    cardResultados.style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
