@@ -49,12 +49,13 @@
         const reason = document.getElementById('reason');
         const reference = document.getElementById('reference');
 
-        // Formateador COP
+        // Formateador COP (sin decimales, redondeando al entero más cercano)
         function formatCOP(value) {
             return new Intl.NumberFormat('es-CO', {
                 style: 'currency',
                 currency: 'COP',
-                minimumFractionDigits: 0
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
             }).format(Number(value) || 0);
         }
 
@@ -125,32 +126,68 @@
                 if (!window.db) {
                     throw new Error('Servicio de base de datos no disponible');
                 }
-                const offset = (inventoryPage - 1) * inventoryPageSize;
+
                 const search = (searchInput?.value || '').trim();
                 const internalCode = (filterInternalCode?.value || '').trim();
                 const stockFilter = (filterStock?.value || '').trim();
-                const { data, error, count } = await window.db.getProductos({ orderBy: 'nombre', ascending: true, limit: inventoryPageSize, offset, search, internalCode });
-                if (error) {
-                    console.error('Error cargando productos (inventario):', error);
+
+                // Caso 1: SIN filtro de estado de stock -> paginación desde el servidor (más eficiente)
+                if (!stockFilter) {
+                    const offset = (inventoryPage - 1) * inventoryPageSize;
+                    const { data, error, count } = await window.db.getProductos({
+                        orderBy: 'nombre',
+                        ascending: true,
+                        limit: inventoryPageSize,
+                        offset,
+                        search,
+                        internalCode
+                    });
+                    if (error) {
+                        console.error('Error cargando productos (inventario):', error);
+                        inventoryBody.innerHTML = '<tr><td colspan="10" class="text-center text-danger py-4">Error al cargar productos</td></tr>';
+                        return;
+                    }
+                    const rows = Array.isArray(data) ? data : [];
+                    inventoryTotal = Number(count || 0);
+                    renderInventoryRows(rows);
+                    renderInventoryPagination();
+                    return;
+                }
+
+                // Caso 2: CON filtro de estado de stock ->
+                // necesitamos aplicar el filtro sobre un conjunto completo y luego paginar en memoria
+                const { data: allData, error: allError } = await window.db.getProductos({
+                    orderBy: 'nombre',
+                    ascending: true,
+                    limit: 1000,
+                    offset: 0,
+                    search,
+                    internalCode
+                });
+                if (allError) {
+                    console.error('Error cargando productos (inventario, filtro stock):', allError);
                     inventoryBody.innerHTML = '<tr><td colspan="10" class="text-center text-danger py-4">Error al cargar productos</td></tr>';
                     return;
                 }
-                let rows = Array.isArray(data) ? data : [];
-                if (stockFilter) {
-                    rows = rows.filter(p => {
-                        const stock = Number(p.stock_actual) || 0;
-                        const min = Number(p.stock_min) || 0;
-                        const activo = !!p.activo;
-                        if (stockFilter === 'Sin Stock') return stock <= 0;
-                        if (stockFilter === 'Stock Bajo') return stock > 0 && stock <= min;
-                        if (stockFilter === 'Activo') return activo;
-                        if (stockFilter === 'Inactivo') return !activo;
-                        return true;
-                    });
-                }
-                inventoryTotal = Number(count || 0);
-                if (stockFilter) inventoryTotal = rows.length + offset;
-                renderInventoryRows(rows);
+
+                let rows = Array.isArray(allData) ? allData : [];
+                rows = rows.filter(p => {
+                    const stock = Number(p.stock_actual) || 0;
+                    const min = Number(p.stock_min) || 0;
+                    const activo = !!p.activo;
+                    if (stockFilter === 'Sin Stock') return stock <= 0;
+                    if (stockFilter === 'Stock Bajo') return stock > 0 && stock <= min;
+                    if (stockFilter === 'Activo') return activo;
+                    if (stockFilter === 'Inactivo') return !activo;
+                    return true;
+                });
+
+                // Paginación en memoria sobre el resultado filtrado
+                inventoryTotal = rows.length;
+                const start = (inventoryPage - 1) * inventoryPageSize;
+                const end = start + inventoryPageSize;
+                const pageRows = rows.slice(start, end);
+                renderInventoryRows(pageRows);
                 renderInventoryPagination();
             } catch (err) {
                 console.error('Error general cargando inventario:', err);

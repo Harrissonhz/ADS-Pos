@@ -32,6 +32,14 @@
     - Módulos: `ventas.js`, `compras.js`, `inventario.js`, `movimientos.js`, `productos.js`, `categorias.js`, `clientes.js`, `proveedores.js`, `usuarios.js`, `gastos.js`.
   - `crear_base_datos_supabase.sql` + documentación en `DOCUMENTACION_*` – definen el modelo de BD.
 
+- **PWA (Progressive Web App)**:
+  - `manifest.json` en la raíz con:
+    - `start_url: /index.html`, `display: "standalone"`, `theme_color: "#007bff"`.
+    - Iconos: `/assets/img/icon-192.png`, `/assets/img/icon-512.png`.
+  - `service-worker.js`:
+    - Precacha el shell de la app (index, login, menú, panel, CSS/JS base, logos).
+    - Ignora llamadas a Supabase (`supabase.co`) para que siempre vayan a red.
+
 - **Conexión a Supabase**:
   - `supabase-config.js` crea `window.supabaseClient` y `window.ensureAuthenticated()` (login automático con admin sembrado en desarrollo).
   - `database.js` expone `DatabaseService` (usualmente `window.db`) con:

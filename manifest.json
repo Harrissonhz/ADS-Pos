@@ -1,0 +1,26 @@
+{
+  "name": "ADS-POS \u2013 Sistema de Punto de Venta",
+  "short_name": "ADS-POS",
+  "id": "/",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "lang": "es",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/assets/img/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/img/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

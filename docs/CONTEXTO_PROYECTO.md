@@ -58,6 +58,27 @@ Centralizar en una sola aplicación la operación diaria de una tienda física o
   - **Vercel** para hosting del frontend (configurado vía `vercel.json`).
   - GitHub como repositorio principal (según README).
 
+### 2.3 Capa PWA (Progressive Web App)
+
+- El frontend está empaquetado como **PWA instalable** en dispositivos móviles:
+  - `manifest.json` en la raíz define:
+    - `name`: `ADS-POS – Sistema de Punto de Venta`
+    - `short_name`: `ADS-POS`
+    - `start_url`: `/index.html`
+    - `display: "standalone"` (se ve como app nativa, sin barra del navegador)
+    - `theme_color`: `#007bff` y `background_color`: `#ffffff`
+    - Iconos: `/assets/img/icon-192.png` y `/assets/img/icon-512.png`
+  - `index.html` incluye:
+    - `<link rel="manifest" href="/manifest.json">`
+    - Meta‑tags PWA (`theme-color`, `mobile-web-app-capable`, `apple-mobile-web-app-capable`, etc.)
+    - `apple-touch-icon` apuntando a `assets/img/icon-192.png`.
+  - `service-worker.js` en la raíz:
+    - Precacha el **shell** de la app (landing, login, menú, panel, CSS, JS principales, logo e iconos).
+    - Implementa:
+      - Estrategia **Network First** para navegación (HTML) con fallback al cache.
+      - Estrategia **Cache First** para recursos estáticos (CSS, JS, imágenes).
+    - Ignora explícitamente llamadas a Supabase (`supabase.co`), que siempre van a red.
+
 ### 2.3 Estructura de carpetas
 
 Raíz del proyecto:
@@ -112,7 +133,8 @@ Raíz del proyecto:
 
 ### 3.1 Inicio
 
-1. El usuario accede a `index.html` o directamente a una página en `pages/` (en producción, vía Vercel).
+1. El usuario accede a `index.html` (landing principal) o directamente a una página en `pages/` (en producción, vía Vercel).
+   - Cuando la app está **instalada como PWA**, el sistema se abre a través de `start_url` definido en `manifest.json` (actualmente `/index.html`).
 2. La autenticación se maneja con Supabase:
    - En `supabase-config.js` se crea el cliente y se define `ensureAuthenticated()`.
    - Para entornos de desarrollo, `ensureAuthenticated()` inicia sesión automáticamente con un usuario sembrado (admin por defecto).
@@ -128,7 +150,7 @@ Raíz del proyecto:
 
 - `panel.html` (Dashboard):
   - Muestra KPIs financieros (ventas del mes, gastos, utilidad, flujo operativo, margen, comparativos).
-  - Muestra **KPIs operativos** (ventas totales históricas, gastos totales, punto de equilibrio, productos con stock bajo, total de productos, valor de inventario).
+  - Muestra **KPIs operativos** (ventas totales históricas, gastos totales, punto de equilibrio, rentabilidad global, productos con stock bajo, total de productos, valor de inventario, ticket promedio histórico desde 2026).
   - Incluye gráficos (Chart.js) de ventas por periodo, comparativos anuales y flujo operativo.
 
 - Los demás módulos (`ventas.html`, `compras.html`, `inventario.html`, etc.) utilizan un layout común:
@@ -219,9 +241,11 @@ Raíz del proyecto:
   - **Ventas Totales**: suma histórica de `ventas_netas`.
   - **Gastos Totales**: suma histórica de `gastos_mensuales_detalle.monto` (y/o agregados financieros).
   - **Punto Equilibrio Total**: `Ventas Totales − (Gastos Totales + Compras Totales)`.
+  - **Rentabilidad Global**: margen neto histórico \(\sum utilidad\_neta / \sum ventas\_netas\).
   - **Productos con Stock Bajo**: conteo de productos donde `stock_actual <= 0` o `stock_actual <= stock_min`.
   - **Total Productos**: número total de productos en la tabla `productos`.
   - **Valor Inventario**: suma de `stock_actual * precio_venta` para todos los productos.
+  - **Ticket Promedio (desde 2026)**: promedio de `ventas.total` para ventas completadas con `fecha_venta >= 2026-01-01`.
 
 ### 4.6 Calculadora de Costos (calculadora.html)
 
